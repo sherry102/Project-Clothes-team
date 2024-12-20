@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Project.Models.Tmember>
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<h2>會員資料</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               序
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Maccount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mphoto)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model) {
+                count++;
+        <tr>
+            <td>
+                @count
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Maccount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mphoto)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) |
+                        @Html.ActionLink("細節", "Details", new { id = item.Mid }) |
+                        @Html.ActionLink("刪除", "Delete", new { id = item.Mid })
+            </td>
+        </tr>
+}}
+    </tbody>
+</table>
