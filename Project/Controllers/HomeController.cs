@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project.Models;
 using Project.ViewModel;
 using System.Diagnostics;
@@ -21,12 +22,17 @@ namespace Project.Controllers
 
             var today = DateTime.Today;
             var currentMonth = DateTime.Today.Month;
-            var currentYear = DateTime.Today.Year;
+            var currentYear = DateTime.Today.Year;  
 
             List<Torder> order = db.Torders.ToList();
             List<TorderDetail> orderDetail = db.TorderDetails.ToList();
-			List<TorderDetail> SalesCount_TOP5 = db.TorderDetails.OrderByDescending(t => t.Odcounts).Take(5).ToList();
 
+			ViewBag.SalesCount_TOP5_Today = db.TorderDetails.Where(td => db.Torders.Where(t => t.Odate.Date == today).Select(t => t.Oid).Contains(td.Oid)).GroupBy(t => t.Pid).Select(g => new {pid=g.Key,count=g.Sum(td=>td.Odcounts),name=g.FirstOrDefault().Pname,price=g.FirstOrDefault().Pprice, totalprice = g.Sum(td => td.Odcounts * td.Pprice), image=g.FirstOrDefault().Cimage }).OrderByDescending(g => g.count).Take(5).ToList();
+
+			ViewBag.SalesCount_TOP5_Month = db.TorderDetails.Where(td => db.Torders.Where(t => t.Odate.Month == currentMonth && t.Odate.Year == currentYear).Select(t => t.Oid).Contains(td.Oid)).GroupBy(t => t.Pid).Select(g => new { pid = g.Key, count = g.Sum(td => td.Odcounts), name = g.FirstOrDefault().Pname, price = g.FirstOrDefault().Pprice, totalprice = g.Sum(td => td.Odcounts * td.Pprice), image = g.FirstOrDefault().Cimage }).OrderByDescending(g => g.count).Take(5).ToList();
+
+			ViewBag.SalesCount_TOP5_Year = db.TorderDetails.Where(td => db.Torders.Where(t => t.Odate.Year == currentYear).Select(t => t.Oid).Contains(td.Oid)).GroupBy(t => t.Pid).Select(g => new { pid = g.Key, count = g.Sum(td => td.Odcounts), name = g.FirstOrDefault().Pname, price = g.FirstOrDefault().Pprice, totalprice = g.Sum(td => td.Odcounts * td.Pprice), image = g.FirstOrDefault().Cimage }).OrderByDescending(g => g.count).Take(5).ToList();
+			
 			int totalprice_today = db.Torders.Where(t=>t.Odate.Date==today).Sum(t => t.OtotalPrice);
             int totalprice_month = db.Torders.Where(t => t.Odate.Month==currentMonth && t.Odate.Year==currentYear).Sum(t => t.OtotalPrice);
             int totalprice_year = db.Torders.Where(t => t.Odate.Year == currentYear).Sum(t => t.OtotalPrice);
@@ -44,7 +50,6 @@ namespace Project.Controllers
             TotalSales_Today=totalsales_today,
             TotalSales_Month=totalsales_month,
             TotalSales_Year=totalsales_year,
-            SalesCount_TOP5= SalesCount_TOP5
 			};
             return View(viewModel);
         }
