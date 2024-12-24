@@ -274,9 +274,9 @@
 
 						<div class="filter">
 							<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="SalesRanking_List">
 								<li class="dropdown-header text-start">
-									<h6>篩選</h6>
+									<h6 >篩選</h6>
 								</li>
 
 								<li><a class="dropdown-item" href="#">今天</a></li>
@@ -286,7 +286,7 @@
 						</div>
 
 						<div class="card-body pb-0">
-							<h5 class="card-title fw-bold fs-5">銷售排行 <span>| 今天</span></h5>
+							<h5 class="card-title fw-bold fs-5">銷售排行 <span id="SalesRanking_Date">| 今天</span></h5>
 
 							<table class="table table-borderless">
 								<thead>
@@ -541,83 +541,162 @@
 	</div>
 </section>
 
-<!--訂單計算-->
-<script>
-	const TotalSales_Today = @Model.TotalSales_Today;
-	const TotalSales_Month = @Model.TotalSales_Month;
-	const TotalSales_Year = @Model.TotalSales_Year;
+@section Scripts {
 
-	let Sales_List = document.getElementById("Sales_List");
-	let Sales = document.getElementById("Sales");
-	Sales.innerHTML = TotalSales_Today.toLocaleString();
+	<!--訂單計算-->
+	<script>
+		const TotalSales_Today = @Model.TotalSales_Today;
+		const TotalSales_Month = @Model.TotalSales_Month;
+		const TotalSales_Year = @Model.TotalSales_Year;
 
-	Sales_List.addEventListener("click", (e) => {
-		e.preventDefault(); // 防止跳轉
+		let Sales_List = document.getElementById("Sales_List");
+		let Sales = document.getElementById("Sales");
+		Sales.innerHTML = TotalSales_Today.toLocaleString();
 
-		const Sales_filter = e.target.textContent.trim();
-		document.getElementById("Sales_Date").innerHTML = "| " + Sales_filter;
-		switch (Sales_filter) {
-			case "今天":
-				Sales.innerHTML = TotalSales_Today.toLocaleString();
-				break;
-			case "這個月":
-				Sales.innerHTML = TotalSales_Month.toLocaleString();
-				break;
-			case "今年":
-				Sales.innerHTML = TotalSales_Year.toLocaleString();
-				break;
+		Sales_List.addEventListener("click", (e) => {
+			e.preventDefault(); // 防止跳轉
+
+			const Sales_filter = e.target.textContent.trim();
+			if (Sales_filter === "篩選") {
+				return;
+			}
+			document.getElementById("Sales_Date").innerHTML = "| " + Sales_filter;
+			switch (Sales_filter) {
+				case "今天":
+					Sales.innerHTML = TotalSales_Today.toLocaleString();
+					break;
+				case "這個月":
+					Sales.innerHTML = TotalSales_Month.toLocaleString();
+					break;
+				case "今年":
+					Sales.innerHTML = TotalSales_Year.toLocaleString();
+					break;
+			}
+		})
+
+	</script>
+
+	<!--收入計算-->
+	<script>
+		const TotalPrice_Today = @Model.TotalPrice_Today;
+		const TotalPrice_Month = @Model.TotalPrice_Month;
+		const TotalPrice_Year = @Model.TotalPrice_Year;
+
+		let Revenue_List = document.getElementById("Revenue_List");
+		let Revenue = document.getElementById("Revenue");
+		Revenue.innerHTML = TotalPrice_Today.toLocaleString();
+
+		Revenue_List.addEventListener("click", (e) => {
+
+			e.preventDefault(); // 防止跳轉
+
+			const Revenue_filter = e.target.textContent.trim();
+			if (Revenue_filter === "篩選") {
+				return;
+			}
+			document.getElementById("Revenue_Date").innerHTML = "| " + Revenue_filter;
+			switch (Revenue_filter) {
+				case "今天":
+					Revenue.innerHTML = TotalPrice_Today.toLocaleString();
+					break;
+				case "這個月":
+					Revenue.innerHTML = TotalPrice_Month.toLocaleString();
+					break;
+				case "今年":
+					Revenue.innerHTML = TotalPrice_Year.toLocaleString();
+					break;
+			}
+		})
+
+	</script>
+
+	<!--銷售排行-->
+	<script>
+		const SalesRanking = document.getElementById("SalesRanking");
+		const SalesRanking_List = document.getElementById("SalesRanking_List");
+		function TOP5_Today() {
+				SalesRanking.innerHTML = "";
+				@foreach (var product in ViewBag.SalesCount_TOP5_Today)
+				{
+					var totalprice = product.totalprice.ToString("N0"); // 轉換為千位符號
+					var price = product.price.ToString("N0"); // 轉換為千位符號
+					<text>
+								SalesRanking.innerHTML += `
+								<tr>
+									<th scope="row"><a href="#"><img src="~/assets/img/@product.image" alt="" style="width:60px;height:60px;"></a></th>
+									<td><a href="#" class="text-primary fw-bold">@product.name</a></td>
+									<td>@price</td>
+									<td class="fw-bold">@product.count</td>
+									<td>@totalprice</td>
+								</tr>
+								`;
+					</text>
+				}
+		};
+		function TOP5_Month() {
+			SalesRanking.innerHTML = "";
+		@foreach (var product in ViewBag.SalesCount_TOP5_Month)
+		{
+			var totalprice = product.totalprice.ToString("N0"); // 轉換為千位符號
+			var price = product.price.ToString("N0"); // 轉換為千位符號
+			<text>
+						SalesRanking.innerHTML += `
+						<tr>
+							<th scope="row"><a href="#"><img src="~/assets/img/@product.image" alt="" style="width:60px;height:60px;"></a></th>
+							<td><a href="#" class="text-primary fw-bold">@product.name</a></td>
+							<td>@price</td>
+							<td class="fw-bold">@product.count</td>
+							<td>@totalprice</td>
+						</tr>
+						`;
+			</text>
 		}
-	})
-
-</script>
-
-<!--收入計算-->
-<script>
-	const TotalPrice_Today = @Model.TotalPrice_Today;
-	const TotalPrice_Month = @Model.TotalPrice_Month;
-	const TotalPrice_Year = @Model.TotalPrice_Year;
-
-	let Revenue_List = document.getElementById("Revenue_List");
-	let Revenue = document.getElementById("Revenue");
-	Revenue.innerHTML = TotalPrice_Today.toLocaleString();
-
-	Revenue_List.addEventListener("click", (e) => {
-		e.preventDefault(); // 防止跳轉
-
-		const Revenue_filter = e.target.textContent.trim();
-		document.getElementById("Revenue_Date").innerHTML = "| " + Revenue_filter;
-		switch (Revenue_filter) {
-			case "今天":
-				Revenue.innerHTML = TotalPrice_Today.toLocaleString();
-				break;
-			case "這個月":
-				Revenue.innerHTML = TotalPrice_Month.toLocaleString();
-				break;
-			case "今年":
-				Revenue.innerHTML = TotalPrice_Year.toLocaleString();
-				break;
+				};
+		function TOP5_Year() {
+			SalesRanking.innerHTML = "";
+		@foreach (var product in ViewBag.SalesCount_TOP5_Year)
+		{
+			var totalprice = product.totalprice.ToString("N0"); // 轉換為千位符號
+			var price = product.price.ToString("N0"); // 轉換為千位符號
+			<text>
+						SalesRanking.innerHTML += `
+						<tr>
+							<th scope="row"><a href="#"><img src="~/assets/img/@product.image" alt="" style="width:60px;height:60px;"></a></th>
+							<td><a href="#" class="text-primary fw-bold">@product.name</a></td>
+							<td>@price</td>
+							<td class="fw-bold">@product.count</td>
+							<td>@totalprice</td>
+						</tr>
+						`;
+			</text>
 		}
-	})
+						};
 
-</script>
+		TOP5_Today();
+		SalesRanking_List.addEventListener("click", (e) => {
+			
+			let date = e.target.textContent.trim();
+			if (date === "篩選") {
+				return;
+			}
+			e.preventDefault();
+			document.getElementById("SalesRanking_Date").innerHTML = "| " + date;
+			switch (date) {
+				case "今天":
+					TOP5_Today();
+						break;
 
-<!--銷售排行-->
-<script>
-	const SalesRanking = document.getElementById("SalesRanking");
-	@foreach (var product in Model.SalesCount_TOP5) {
-		var totalprice = product.OtotalPrice.ToString("N0"); // 轉換為千位符號
-		var price = product.Pprice.ToString("N0"); // 轉換為千位符號
-		<text>
-				SalesRanking.innerHTML += `
-				<tr>
-					<th scope="row"><a href="#"><img src="~/assets/img/@product.Cimage" alt=""></a></th>
-					<td><a href="#" class="text-primary fw-bold">@product.Pname</a></td>
-					<td>@price</td>
-					<td class="fw-bold">@product.Odcounts</td>
-					<td>@totalprice</td>
-				</tr>
-				`;
-		</text>
-	}
-	
-</script>
+				case "這個月":
+					TOP5_Month();
+						break;
+				case "今年":
+					TOP5_Year();
+						break;
+			}
+		})
+
+	</script>
+}
+
+
+
