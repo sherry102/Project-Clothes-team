@@ -20,7 +20,5 @@ namespace Project.ViewModel
 
         public int TotalSales_Year { get; set; }
 
-        public List<TorderDetail> SalesCount_TOP5 { get; set; }
-
 	}
 }
