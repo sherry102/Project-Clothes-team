@@ -130,10 +130,10 @@ h6 {
   text-decoration: none;
 }
 
-.dropdown-menu .dropdown-divider {
-  color: #a5c5fe;
-  margin: 0;
-}
+    .dropdown-menu .dropdown-divider, dropdown-divider {
+        color: #a5c5fe;
+        margin: 0;
+    }
 
 .dropdown-menu .dropdown-item {
   font-size: 14px;
@@ -498,33 +498,37 @@ h6 {
   inset: 8px -15px auto auto !important;
 }
 
-.header-nav .notifications .notification-item {
-  display: flex;
-  align-items: center;
-  padding: 15px 10px;
-  transition: 0.3s;
-}
+    .header-nav .notifications .notification-item, .notification-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 10px;
+        transition: 0.3s;
+    }
 
-.header-nav .notifications .notification-item i {
-  margin: 0 20px 0 10px;
-  font-size: 24px;
-}
+        .header-nav .notifications .notification-item i, .notification-item i {
+            margin: 0 20px 0 10px;
+            font-size: 24px;
+        }
 
-.header-nav .notifications .notification-item h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
+        .header-nav .notifications .notification-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .notification-item h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .header-nav .notifications .notification-item p, .notification-item p {
+            font-size: 13px;
+            margin-bottom: 3px;
+            color: #919191;
+        }
 
-.header-nav .notifications .notification-item p {
-  font-size: 13px;
-  margin-bottom: 3px;
-  color: #919191;
-}
-
-.header-nav .notifications .notification-item:hover {
-  background-color: #f6f9ff;
-}
+        .header-nav .notifications .notification-item:hover, .notification-item:hover {
+            background-color: #f6f9ff;
+        }
 
 .header-nav .messages {
   inset: 8px -15px auto auto !important;

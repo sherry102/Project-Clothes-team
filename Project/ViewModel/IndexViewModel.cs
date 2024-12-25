@@ -8,7 +8,11 @@ namespace Project.ViewModel
 
         public List<TorderDetail> TorderDetail { get; set; }
 
-        public int TotalPrice_Today { get; set; }
+		public List<Tproduct> Tproduct_none { get; set; }
+
+		public List<Torder> Torder_none { get; set; }
+
+		public int TotalPrice_Today { get; set; }
 
         public int TotalPrice_Month { get; set; }
 

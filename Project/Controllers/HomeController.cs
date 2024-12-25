@@ -26,6 +26,8 @@ namespace Project.Controllers
 
             List<Torder> order = db.Torders.ToList();
             List<TorderDetail> orderDetail = db.TorderDetails.ToList();
+            List<Tproduct> product_none = db.Tproducts.Where(t => t.Pinventory == 0).ToList();
+            List<Torder> order_none = db.Torders.Where(t => t.Ostatus == "«Ý¼f®Ö" && t.Odate <= today.AddDays(-3)).ToList();
 
 			ViewBag.SalesCount_TOP5_Today = db.TorderDetails.Where(td => db.Torders.Where(t => t.Odate.Date == today).Select(t => t.Oid).Contains(td.Oid)).GroupBy(t => t.Pid).Select(g => new {pid=g.Key,count=g.Sum(td=>td.Odcounts),name=g.FirstOrDefault().Pname,price=g.FirstOrDefault().Pprice, totalprice = g.Sum(td => td.Odcounts * td.Pprice), image=g.FirstOrDefault().Cimage }).OrderByDescending(g => g.count).Take(5).ToList();
 
@@ -50,6 +52,8 @@ namespace Project.Controllers
             TotalSales_Today=totalsales_today,
             TotalSales_Month=totalsales_month,
             TotalSales_Year=totalsales_year,
+            Torder_none=order_none,
+            Tproduct_none=product_none,
 			};
             return View(viewModel);
         }
@@ -61,17 +65,19 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Login(MemberViewModel m)
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
+			//DbuniPayContext db = new DbuniPayContext();
+			//Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
 
-            if (T != null && T.Mpassword == m.Password) 
-            {
-                string json = JsonSerializer.Serialize(T); 
-                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER,json);
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
+			//if (T != null && T.Mpassword == m.Password) 
+			//{
+			//    string json = JsonSerializer.Serialize(T); 
+			//    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER,json);
+			//    return RedirectToAction("Index");
+			//}
+			//return View();
+
+			return RedirectToAction("Index");
+		}
 
         public IActionResult Privacy()
         {
