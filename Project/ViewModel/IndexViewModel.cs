@@ -12,6 +12,16 @@ namespace Project.ViewModel
 
 		public List<Torder> Torder_none { get; set; }
 
+        public List<int> members_count_Month { get; set; }
+
+		public List<int> members_count_Year { get; set; }
+
+		public List<int> month_Days { get; set; }
+
+        public List<int> product_inventory { get; set; }
+
+		public List<string> product_name { get; set; }
+
 		public int TotalPrice_Today { get; set; }
 
         public int TotalPrice_Month { get; set; }

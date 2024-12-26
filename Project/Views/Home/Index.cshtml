@@ -1,6 +1,8 @@
-﻿@model Project.ViewModel.IndexViewModel
+﻿@using System.Text.Json
+@model Project.ViewModel.IndexViewModel
 @{
 	ViewData["Title"] = "Home Page";
+
 }
 
 
@@ -120,75 +122,23 @@
 
 						<div class="filter">
 							<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="member_List">
 								<li class="dropdown-header text-start">
-									<h6>Filter</h6>
+									<h6>篩選</h6>
 								</li>
 
-								<li><a class="dropdown-item" href="#">Today</a></li>
-								<li><a class="dropdown-item" href="#">This Month</a></li>
-								<li><a class="dropdown-item" href="#">This Year</a></li>
+								<li><a class="dropdown-item" href="#">這個月</a></li>
+								<li><a class="dropdown-item" href="#">今年</a></li>
 							</ul>
 						</div>
 
 						<div class="card-body">
-							<h5 class="card-title">Reports <span>/Today</span></h5>
+							<h5 class="card-title fs-5 fw-bold">會員註冊人數 <span id="member_date">/這個月</span></h5>
 
 							<!-- Line Chart -->
-							<div id="reportsChart"></div>
+							<div id="lineChart"></div>
 
-							<script>
-								document.addEventListener("DOMContentLoaded", () => {
-									new ApexCharts(document.querySelector("#reportsChart"), {
-										series: [{
-											name: 'Sales',
-											data: [31, 40, 28, 51, 42, 82, 56],
-										}, {
-											name: 'Revenue',
-											data: [11, 32, 45, 32, 34, 52, 41]
-										}, {
-											name: 'Customers',
-											data: [15, 11, 32, 18, 9, 24, 11]
-										}],
-										chart: {
-											height: 350,
-											type: 'area',
-											toolbar: {
-												show: false
-											},
-										},
-										markers: {
-											size: 4
-										},
-										colors: ['#4154f1', '#2eca6a', '#ff771d'],
-										fill: {
-											type: "gradient",
-											gradient: {
-												shadeIntensity: 1,
-												opacityFrom: 0.3,
-												opacityTo: 0.4,
-												stops: [0, 90, 100]
-											}
-										},
-										dataLabels: {
-											enabled: false
-										},
-										stroke: {
-											curve: 'smooth',
-											width: 2
-										},
-										xaxis: {
-											type: 'datetime',
-											categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-										},
-										tooltip: {
-											x: {
-												format: 'dd/MM/yy HH:mm'
-											},
-										}
-									}).render();
-								});
-							</script>
+							
 							<!-- End Line Chart -->
 
 						</div>
@@ -316,83 +266,21 @@
 			<div class="card">
 				<div class="card-body pb-1">
 					<h5 class="card-title fs-5 fw-bold pb-0">通知</h5>
-					<div id="notification" style="max-height: 330px; overflow-y: auto;">
+					<div id="notification" style="max-height: 360px; overflow-y: auto;">
 					</div>
 				</div>
 			</div><!-- End 通知 -->
 			<!-- Budget Report -->
 			<div class="card">
-				<div class="filter">
-					<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-						<li class="dropdown-header text-start">
-							<h6>Filter</h6>
-						</li>
+				
+				<div class="card-body pb-0 mb-0">
+					<h5 class="card-title pb-0 fs-5 fw-bold">商品庫存</h5>
 
-						<li><a class="dropdown-item" href="#">Today</a></li>
-						<li><a class="dropdown-item" href="#">This Month</a></li>
-						<li><a class="dropdown-item" href="#">This Year</a></li>
-					</ul>
-				</div>
-
-				<div class="card-body pb-0">
-					<h5 class="card-title">Budget Report <span>| This Month</span></h5>
-
-					<div id="budgetChart" style="min-height: 400px;" class="echart"></div>
-
-					<script>
-						document.addEventListener("DOMContentLoaded", () => {
-							var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
-								legend: {
-									data: ['Allocated Budget', 'Actual Spending']
-								},
-								radar: {
-									// shape: 'circle',
-									indicator: [{
-										name: 'Sales',
-										max: 6500
-									},
-									{
-										name: 'Administration',
-										max: 16000
-									},
-									{
-										name: 'Information Technology',
-										max: 30000
-									},
-									{
-										name: 'Customer Support',
-										max: 38000
-									},
-									{
-										name: 'Development',
-										max: 52000
-									},
-									{
-										name: 'Marketing',
-										max: 25000
-									}
-									]
-								},
-								series: [{
-									name: 'Budget vs spending',
-									type: 'radar',
-									data: [{
-										value: [4200, 3000, 20000, 35000, 50000, 18000],
-										name: 'Allocated Budget'
-									},
-									{
-										value: [5000, 14000, 28000, 26000, 42000, 21000],
-										name: 'Actual Spending'
-									}
-									]
-								}]
-							});
-						});
-					</script>
+					<!-- 商品庫存 -->
+					<div id="barChart"></div>
 
 				</div>
-			</div><!-- End Budget Report -->
+			</div><!-- End Bar Chart -->
 			<!-- Website Traffic -->
 			<div class="card">
 				<div class="filter">
@@ -662,7 +550,7 @@
 							<i class="bi bi-exclamation-circle text-warning"></i>
 							<div>
 								<h3 style="color:darkred;">訂單未處理</h3>
-								<p class="fs-6">訂單編號: @item.Oid 尚未處理</p>
+								<p class="fs-6">訂單編號: @item.Oid 已超過三日未處理</p>
 							</div>
 						</a>
 						<div>
@@ -673,6 +561,143 @@
 		}
 		notification_refresh();
 
+	</script>
+
+	<!--會員人數-->
+	<script>
+		let memberCountMonth = @Html.Raw(JsonSerializer.Serialize(Model.members_count_Month))
+		let memberCountYear = @Html.Raw(JsonSerializer.Serialize(Model.members_count_Year))
+		let monthDays = @Html.Raw(JsonSerializer.Serialize(Model.month_Days))
+		let yearMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		let chart;
+
+		function MemberCountMonth() {
+			if (chart) chart.destroy();
+			chart=new ApexCharts(document.querySelector("#lineChart"), {
+				series: [{
+					name: "會員",
+					data: memberCountMonth
+				}],
+				chart: {
+					height: 350,
+					type: 'line',
+					zoom: {
+						enabled: false
+					}
+				},
+				dataLabels: {
+					enabled: false
+				},
+				stroke: {
+					curve: 'straight'
+				},
+				grid: {
+					row: {
+						colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+						opacity: 0.5
+					},
+				},
+				xaxis: {
+					categories: monthDays,
+				},
+				yaxis: {
+					min: 0,  // 設置 Y 軸最小值
+					tickAmount: 5, // 設置 Y 軸的刻度數量
+				}
+			});
+			chart.render();
+		}
+
+		function MemberCountYear() {
+			if (chart) chart.destroy();
+			chart=new ApexCharts(document.querySelector("#lineChart"), {
+				series: [{
+					name: "會員",
+					data: memberCountYear
+				}],
+				chart: {
+					height: 350,
+					type: 'line',
+					zoom: {
+						enabled: false
+					}
+				},
+				dataLabels: {
+					enabled: false
+				},
+				stroke: {
+					curve: 'straight'
+				},
+				grid: {
+					row: {
+						colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+						opacity: 0.5
+					},
+				},
+				xaxis: {
+					categories: yearMonth,
+				},
+				yaxis: {
+					min: 0,  // 設置 Y 軸最小值
+					tickAmount: 5, // 設置 Y 軸的刻度數量
+				}
+			});
+			chart.render();
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+
+			MemberCountMonth();
+		});
+
+		$(function () {
+			$("#member_List").on("click", (e) => {
+				e.preventDefault();
+				let date = e.target.textContent.trim();
+				$("#member_date").text(`/${date}`);
+				switch (date) {
+
+					case "這個月":
+						MemberCountMonth();
+						break;
+					case "今年":
+						MemberCountYear();
+						break;
+
+				}
+			})
+		})
+	</script>
+
+	<!--商品庫存-->
+	<script>
+		let productInventory = @Html.Raw(JsonSerializer.Serialize(Model.product_inventory));
+		let productName = @Html.Raw(JsonSerializer.Serialize(Model.product_name));
+
+		document.addEventListener("DOMContentLoaded", () => {
+			new ApexCharts(document.querySelector("#barChart"), {
+				series: [{
+					name: "庫存",
+					data: productInventory
+				}],
+				chart: {
+					type: 'bar',
+					height: 350
+				},
+				plotOptions: {
+					bar: {
+						borderRadius: 4,
+						horizontal: true,
+					}
+				},
+				dataLabels: {
+					enabled: false
+				},
+				xaxis: {
+					categories: productName,
+				},
+			}).render();
+		});
 	</script>
 }
 

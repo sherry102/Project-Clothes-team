@@ -22,12 +22,39 @@ namespace Project.Controllers
 
             var today = DateTime.Today;
             var currentMonth = DateTime.Today.Month;
-            var currentYear = DateTime.Today.Year;  
+            var currentYear = DateTime.Today.Year;
+            var lastDayOfMonth = DateTime.DaysInMonth(currentYear, currentMonth);
 
             List<Torder> order = db.Torders.ToList();
             List<TorderDetail> orderDetail = db.TorderDetails.ToList();
             List<Tproduct> product_none = db.Tproducts.Where(t => t.Pinventory == 0).ToList();
             List<Torder> order_none = db.Torders.Where(t => t.Ostatus == "«Ý¼f®Ö" && t.Odate <= today.AddDays(-3)).ToList();
+            List<int> month_Days = new List<int>();
+            List<int> members_count_Month = new List<int>();
+			List<int> members_count_Year = new List<int>();
+			List<int> product_inventory = new List<int>();
+            List<string> product_name = new List<string>();
+
+
+			int sumday = 0;
+            int summonth = 0;
+
+			for (int day = 1; day<=lastDayOfMonth;day++) 
+            {
+				sumday += db.Tmembers.Count(t => t.McreatedDate.Month == currentMonth && t.McreatedDate.Year == currentYear && t.McreatedDate.Day == day);
+
+				members_count_Month.Add(sumday);
+                month_Days.Add(day);
+            }
+
+			for (int month = 1; month <= 12; month++)
+			{
+				summonth += db.Tmembers.Count(t => t.McreatedDate.Month == month && t.McreatedDate.Year == currentYear);
+				members_count_Year.Add(summonth);
+			}
+
+            product_inventory.AddRange(db.Tproducts.Where(t => t.Pinventory <= 50).Select(t=>t.Pinventory).ToList());
+			product_name.AddRange(db.Tproducts.Where(t => t.Pinventory <= 50).Select(t => t.Pname).ToList());
 
 			ViewBag.SalesCount_TOP5_Today = db.TorderDetails.Where(td => db.Torders.Where(t => t.Odate.Date == today).Select(t => t.Oid).Contains(td.Oid)).GroupBy(t => t.Pid).Select(g => new {pid=g.Key,count=g.Sum(td=>td.Odcounts),name=g.FirstOrDefault().Pname,price=g.FirstOrDefault().Pprice, totalprice = g.Sum(td => td.Odcounts * td.Pprice), image=g.FirstOrDefault().Cimage }).OrderByDescending(g => g.count).Take(5).ToList();
 
@@ -54,6 +81,12 @@ namespace Project.Controllers
             TotalSales_Year=totalsales_year,
             Torder_none=order_none,
             Tproduct_none=product_none,
+            members_count_Month=members_count_Month,
+            members_count_Year=members_count_Year,
+            month_Days=month_Days,
+			product_inventory= product_inventory,
+			product_name= product_name
+
 			};
             return View(viewModel);
         }
