@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Project.Models.OrderWrap>
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<h1>訂單管理</h1>
+
+<div>
+    <a href="@Url.Action("List", "Order", new { status = "All" })" class="btn btn-light text-dark me-3">全部訂單</a>
+    <a href="@Url.Action("List", "Order", new { status = "待出貨" })" class="btn btn-light text-dark me-3">待出貨</a>
+    <a href="@Url.Action("List", "Order", new { status = "運送中" })" class="btn btn-light text-dark me-3">運送中</a>
+    <a href="@Url.Action("List", "Order", new { status = "已完成" })" class="btn btn-light text-dark me-3">已完成</a>
+    <a href="@Url.Action("List", "Order", new { status = "退款" })" class="btn btn-light text-dark me-3">退貨/退款</a>
+</div> 
+<br /> 
+
+<!-- 訂單編號搜尋框 -->
+<form class="d-flex mb-3" method="get" action="@Url.Action("List", "Order")">
+    <input type="text" name="orderId" class="form-control" placeholder="輸入訂單編號" style="height: 35px; width: 94%;" />
+    <button type="submit" class="btn btn-primary ms-2" style="height: 35px;">搜尋</button>
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Oid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Odiscountedprice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OtotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Odate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oaddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ophone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ostatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Opayment)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Odiscountedprice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OtotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Odate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oaddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ophone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ostatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Opayment)
+            </td>
+            <td>
+                    @Html.ActionLink("修改", "Edit", new { id = item.Oid }) |
+                @Html.ActionLink("訂單細節", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("刪除", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
