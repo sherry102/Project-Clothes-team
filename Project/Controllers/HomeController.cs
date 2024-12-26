@@ -12,7 +12,7 @@ namespace Project.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
-            _logger = logger;//12346452
+            _logger = logger;//68786789654894
         }
 
         public IActionResult Index()
