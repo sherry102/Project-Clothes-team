@@ -2,7 +2,6 @@
 @model Project.ViewModel.IndexViewModel
 @{
 	ViewData["Title"] = "Home Page";
-
 }
 
 
@@ -116,7 +115,7 @@
 					</div>
 
 				</div><!-- End Customers Card -->
-				<!-- Reports -->
+				<!-- 會員人數 -->
 				<div class="col-12">
 					<div class="card">
 
@@ -144,83 +143,10 @@
 						</div>
 
 					</div>
-				</div><!-- End Reports -->
-				<!-- Recent Sales -->
-				<div class="col-12">
-					<div class="card recent-sales overflow-auto">
-
-						<div class="filter">
-							<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-								<li class="dropdown-header text-start">
-									<h6>Filter</h6>
-								</li>
-
-								<li><a class="dropdown-item" href="#">Today</a></li>
-								<li><a class="dropdown-item" href="#">This Month</a></li>
-								<li><a class="dropdown-item" href="#">This Year</a></li>
-							</ul>
-						</div>
-
-						<div class="card-body">
-							<h5 class="card-title">Recent Sales <span>| Today</span></h5>
-
-							<table class="table table-borderless datatable">
-								<thead>
-									<tr>
-										<th scope="col">#</th>
-										<th scope="col">Customer</th>
-										<th scope="col">Product</th>
-										<th scope="col">Price</th>
-										<th scope="col">Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<th scope="row"><a href="#">#2457</a></th>
-										<td>Brandon Jacob</td>
-										<td><a href="#" class="text-primary">At praesentium minu</a></td>
-										<td>$64</td>
-										<td><span class="badge bg-success">Approved</span></td>
-									</tr>
-									<tr>
-										<th scope="row"><a href="#">#2147</a></th>
-										<td>Bridie Kessler</td>
-										<td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-										<td>$47</td>
-										<td><span class="badge bg-warning">Pending</span></td>
-									</tr>
-									<tr>
-										<th scope="row"><a href="#">#2049</a></th>
-										<td>Ashleigh Langosh</td>
-										<td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-										<td>$147</td>
-										<td><span class="badge bg-success">Approved</span></td>
-									</tr>
-									<tr>
-										<th scope="row"><a href="#">#2644</a></th>
-										<td>Angus Grady</td>
-										<td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-										<td>$67</td>
-										<td><span class="badge bg-danger">Rejected</span></td>
-									</tr>
-									<tr>
-										<th scope="row"><a href="#">#2644</a></th>
-										<td>Raheem Lehner</td>
-										<td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-										<td>$165</td>
-										<td><span class="badge bg-success">Approved</span></td>
-									</tr>
-								</tbody>
-							</table>
-
-						</div>
-
-					</div>
-				</div><!-- End Recent Sales -->
+				</div><!-- End 會員人數 -->
 				<!-- 銷售排行 -->
 				<div class="col-12">
-					<div class="card top-selling overflow-auto">
+					<div class="card top-selling overflow-auto" style="min-height:220px;">
 
 						<div class="filter">
 							<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -265,101 +191,47 @@
 			<!-- 通知 -->
 			<div class="card">
 				<div class="card-body pb-1">
-					<h5 class="card-title fs-5 fw-bold pb-0">通知</h5>
-					<div id="notification" style="max-height: 360px; overflow-y: auto;">
+					<div class="d-flex align-items-center pt-4 pb-3">
+						<h5 class="card-title fs-5 fw-bold py-0 mb-0">通知</h5>
+						<!--<a href="#" class="ms-auto " id="refresh"><i class="ri-refresh-line refresh" style="font-size:22px;"></i></a>-->
+					</div>
+					<div id="notification" style="max-height: 350px; overflow-y: auto;">
 					</div>
 				</div>
 			</div><!-- End 通知 -->
-			<!-- Budget Report -->
+			<!-- 商品庫存 -->
 			<div class="card">
 				
 				<div class="card-body pb-0 mb-0">
-					<h5 class="card-title pb-0 fs-5 fw-bold">商品庫存</h5>
+					<h5 class="card-title pb-0 fs-5 fw-bold">商品庫存 <span>| 數量少於50</span></h5>
 
 					<!-- 商品庫存 -->
 					<div id="barChart"></div>
 
 				</div>
-			</div><!-- End Bar Chart -->
-			<!-- Website Traffic -->
+			</div><!-- End 商品庫存 -->
+			<!-- 類別銷量 -->
 			<div class="card">
 				<div class="filter">
 					<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="sales_filter">
 						<li class="dropdown-header text-start">
-							<h6>Filter</h6>
+							<h6>篩選</h6>
 						</li>
 
-						<li><a class="dropdown-item" href="#">Today</a></li>
-						<li><a class="dropdown-item" href="#">This Month</a></li>
-						<li><a class="dropdown-item" href="#">This Year</a></li>
+						<li><a class="dropdown-item" href="#">今天</a></li>
+						<li><a class="dropdown-item" href="#">這個月</a></li>
+						<li><a class="dropdown-item" href="#">今年</a></li>
 					</ul>
 				</div>
 
 				<div class="card-body pb-0">
-					<h5 class="card-title">Website Traffic <span>| Today</span></h5>
+					<h5 class="card-title fw-bold fs-5">類別銷量 <span id="sales_date">| 今天</span></h5>
 
 					<div id="trafficChart" style="min-height: 400px;" class="echart"></div>
 
-					<script>
-						document.addEventListener("DOMContentLoaded", () => {
-							echarts.init(document.querySelector("#trafficChart")).setOption({
-								tooltip: {
-									trigger: 'item'
-								},
-								legend: {
-									top: '5%',
-									left: 'center'
-								},
-								series: [{
-									name: 'Access From',
-									type: 'pie',
-									radius: ['40%', '70%'],
-									avoidLabelOverlap: false,
-									label: {
-										show: false,
-										position: 'center'
-									},
-									emphasis: {
-										label: {
-											show: true,
-											fontSize: '18',
-											fontWeight: 'bold'
-										}
-									},
-									labelLine: {
-										show: false
-									},
-									data: [{
-										value: 1048,
-										name: 'Search Engine'
-									},
-									{
-										value: 735,
-										name: 'Direct'
-									},
-									{
-										value: 580,
-										name: 'Email'
-									},
-									{
-										value: 484,
-										name: 'Union Ads'
-									},
-									{
-										value: 300,
-										name: 'Video Ads'
-									}
-									]
-								}]
-							});
-						});
-					</script>
-
 				</div>
-			</div><!-- End Website Traffic -->
-
-
+			</div><!-- End 類別銷量 -->
 		</div><!-- End Right side columns -->
 
 	</div>
@@ -534,7 +406,7 @@
 					<i class="bi bi-exclamation-circle text-warning"></i>
 					<div>
 						<h3 style="color:deepblue;">商品缺貨</h3>
-						<p class="fs-6">@item.Pname 已無庫存</p>
+								<p class="fs-6" style="color:#707070;">@item.Pname 已無庫存</p>
 					</div>
 				</a>
 				<div>
@@ -550,7 +422,7 @@
 							<i class="bi bi-exclamation-circle text-warning"></i>
 							<div>
 								<h3 style="color:darkred;">訂單未處理</h3>
-								<p class="fs-6">訂單編號: @item.Oid 已超過三日未處理</p>
+								<p class="fs-6" style="color:#707070 ;">訂單編號: @item.Oid 已超過三日未處理</p>
 							</div>
 						</a>
 						<div>
@@ -678,7 +550,7 @@
 			new ApexCharts(document.querySelector("#barChart"), {
 				series: [{
 					name: "庫存",
-					data: productInventory
+					data: productInventory,
 				}],
 				chart: {
 					type: 'bar',
@@ -698,6 +570,153 @@
 				},
 			}).render();
 		});
+	</script>
+
+	<!--類別銷量-->
+	<script>
+		let typesales_today = @Html.Raw(JsonSerializer.Serialize(ViewBag.typesales_today));
+		let typesales_month = @Html.Raw(JsonSerializer.Serialize(ViewBag.typesales_month));
+		let typesales_year = @Html.Raw(JsonSerializer.Serialize(ViewBag.typesales_year));
+		let echart;
+
+		function echart_today() {
+			if(echart) echart.dispose();
+			echart = echarts.init(document.querySelector("#trafficChart"));
+			echart.setOption({
+				tooltip: {
+					trigger: 'item'
+				},
+				legend: {
+					top: '5%',
+					left: 'center',
+					textStyle: {
+						fontSize: 16,
+					}
+				},
+				series: [{
+					name: '類別銷量',
+					type: 'pie',
+					radius: ['40%', '70%'],
+					avoidLabelOverlap: false,
+					label: {
+						show: false,
+						position: 'center'
+					},
+					emphasis: {
+						label: {
+							show: true,
+							fontSize: '18',
+							fontWeight: 'bold'
+						}
+					},
+					labelLine: {
+						show: false
+					},
+					data: typesales_today
+				}]
+			})
+		}
+
+		function echart_month() {
+			if (echart) echart.dispose();
+			echart = echarts.init(document.querySelector("#trafficChart"));
+			echart.setOption({
+				tooltip: {
+					trigger: 'item'
+				},
+				legend: {
+					top: '5%',
+					left: 'center',
+					textStyle: {
+						fontSize: 16,
+					}
+				},
+				series: [{
+					name: '類別銷量',
+					type: 'pie',
+					radius: ['40%', '70%'],
+					avoidLabelOverlap: false,
+					label: {
+						show: false,
+						position: 'center'
+					},
+					emphasis: {
+						label: {
+							show: true,
+							fontSize: '18',
+							fontWeight: 'bold'
+						}
+					},
+					labelLine: {
+						show: false
+					},
+					data: typesales_month
+				}]
+			})
+		}
+
+		function echart_year() {
+			if (echart) echart.dispose();
+			echart = echarts.init(document.querySelector("#trafficChart"));
+			echart.setOption({
+				tooltip: {
+					trigger: 'item'
+				},
+				legend: {
+					top: '5%',
+					left: 'center',
+					textStyle: {
+						fontSize: 16,
+					}
+				},
+				series: [{
+					name: '類別銷量',
+					type: 'pie',
+					radius: ['40%', '70%'],
+					avoidLabelOverlap: false,
+					label: {
+						show: false,
+						position: 'center'
+					},
+					emphasis: {
+						label: {
+							show: true,
+							fontSize: '18',
+							fontWeight: 'bold'
+						}
+					},
+					labelLine: {
+						show: false
+					},
+					data: typesales_year
+				}]
+			})
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			echart_today();
+		});
+
+
+		$(function () { 
+			$("#sales_filter").on("click", (e) => {
+				e.preventDefault();
+				let salesDate = e.target.textContent.trim();
+				$("#sales_date").text(`| ${salesDate}`);
+				switch (salesDate) { 
+					case "今天":
+						echart_today();
+						break;
+					case "這個月":
+						echart_month();
+						break;
+					case "今年":
+						echart_year();
+						break;
+				}
+				})
+			})
+		
 	</script>
 }
 

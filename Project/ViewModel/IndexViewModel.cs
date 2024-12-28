@@ -22,6 +22,7 @@ namespace Project.ViewModel
 
 		public List<string> product_name { get; set; }
 
+
 		public int TotalPrice_Today { get; set; }
 
         public int TotalPrice_Month { get; set; }
