@@ -153,10 +153,24 @@ namespace Project.Controllers
 			int totalprice_today = db.Torders.Where(t => t.Odate.Date == today).Sum(t => t.OtotalPrice);
 			int totalprice_month = db.Torders.Where(t => t.Odate.Month == currentMonth && t.Odate.Year == currentYear).Sum(t => t.OtotalPrice);
 			int totalprice_year = db.Torders.Where(t => t.Odate.Year == currentYear).Sum(t => t.OtotalPrice);
+			int totalprice_yesterday = db.Torders.Where(t => t.Odate.Date == today.AddDays(-1)).Sum(t => t.OtotalPrice);
+			int totalprice_lastmonth = db.Torders.Where(t => t.Odate.Month == currentMonth-1 && t.Odate.Year == currentYear).Sum(t => t.OtotalPrice);
+			int totalprice_lastyear = db.Torders.Where(t => t.Odate.Year == currentYear-1).Sum(t => t.OtotalPrice);
 
 			int totalsales_today = db.Torders.Where(t => t.Odate.Date == today).Count();
 			int totalsales_month = db.Torders.Where(t => t.Odate.Month == currentMonth && t.Odate.Year == currentYear).Count();
 			int totalsales_year = db.Torders.Where(t => t.Odate.Year == currentYear).Count();
+			int totalsales_yesterday = db.Torders.Where(t => t.Odate.Date == today.AddDays(-1)).Count();
+			int totalsales_lastmonth = db.Torders.Where(t => t.Odate.Month == currentMonth-1 && t.Odate.Year == currentYear).Count();
+			int totalsales_lastyear = db.Torders.Where(t => t.Odate.Year == currentYear-1).Count();
+
+
+			int CustService_today = db.Tcservices.Where(t => t.Csmtimes.Date == today).Count();
+			int CustSercive_month = db.Tcservices.Where(t => t.Csmtimes.Month == currentMonth && t.Csmtimes.Year == currentYear).Count();
+			int CustSercive_year = db.Tcservices.Where(t => t.Csmtimes.Year == currentYear).Count();
+			int CustService_yesterday = db.Tcservices.Where(t => t.Csmtimes.Date == today.AddDays(-1)).Count();
+			int CustSercive_lastmonth = db.Tcservices.Where(t => t.Csmtimes.Month == currentMonth-1 && t.Csmtimes.Year == currentYear).Count();
+			int CustSercive_lastyear = db.Tcservices.Where(t => t.Csmtimes.Year == currentYear-1).Count();
 
 
 			var viewModel = new IndexViewModel
@@ -166,9 +180,15 @@ namespace Project.Controllers
 				TotalPrice_Today = totalprice_today,
 				TotalPrice_Month = totalprice_month,
 				TotalPrice_Year = totalprice_year,
+				TotalPrice_Yesterday=totalprice_yesterday,
+				TotalPrice_LastMonth=totalprice_lastmonth,
+				TotalPrice_LastYear=totalprice_lastyear,
 				TotalSales_Today = totalsales_today,
 				TotalSales_Month = totalsales_month,
 				TotalSales_Year = totalsales_year,
+				TotalSales_Yesterday=totalsales_yesterday,
+				TotalSales_LastMonth=totalsales_lastmonth,
+				TotalSales_LastYear=totalprice_lastyear,
 				Torder_none = order_none,
 				Tproduct_none = product_none,
 				members_count_Month = members_count_Month,
@@ -176,6 +196,12 @@ namespace Project.Controllers
 				month_Days = month_Days,
 				product_inventory = product_inventory,
 				product_name = product_name,
+				CustService_today=CustService_today,
+				CustService_month=CustSercive_month,
+				CustService_year=CustSercive_year,
+				CustService_yesterday=CustService_yesterday,
+				CustService_lastmonth= CustSercive_lastmonth,
+				CustService_lastyear= CustSercive_lastyear,
 			};
 			return View(viewModel);
 		}
