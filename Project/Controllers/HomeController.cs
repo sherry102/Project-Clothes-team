@@ -28,16 +28,16 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Login(MemberViewModel m)
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
+            //DbuniPayContext db = new DbuniPayContext();
+            //Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
 
-            if (T != null && T.Mpassword == m.Password) 
-            {
-                string json = JsonSerializer.Serialize(T); 
-                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER,json);
+            //if (T != null && T.Mpassword == m.Password) 
+            //{
+            //    string json = JsonSerializer.Serialize(T); 
+            //    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER,json);
                 return RedirectToAction("Index");
-            }
-            return View();
+            //}
+            //return View();
         }
 
         public IActionResult Privacy()

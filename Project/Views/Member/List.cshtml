@@ -43,9 +43,8 @@
                 @Html.DisplayFor(modelItem => item.Mphoto)
             </td>
             <td>
-                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) |
-                        @Html.ActionLink("細節", "Details", new { id = item.Mid }) |
-                        @Html.ActionLink("刪除", "Delete", new { id = item.Mid })
+                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) 
+                @Html.ActionLink("刪除", "Delete", new { id = item.Mid })
             </td>
         </tr>
 }}
