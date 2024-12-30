@@ -29,11 +29,35 @@ namespace Project.ViewModel
 
         public int TotalPrice_Year { get; set; }
 
-        public int TotalSales_Today { get; set; }
+		public int TotalPrice_Yesterday { get; set; }
+
+		public int TotalPrice_LastMonth { get; set; }
+
+		public int TotalPrice_LastYear { get; set; }
+
+		public int TotalSales_Today { get; set; }
 
         public int TotalSales_Month { get; set; }
 
         public int TotalSales_Year { get; set; }
+
+		public int TotalSales_Yesterday { get; set; }
+
+		public int TotalSales_LastMonth { get; set; }
+
+		public int TotalSales_LastYear { get; set; }
+
+		public int CustService_today { get; set; }
+
+		public int CustService_month { get; set; }
+
+		public int CustService_year { get; set; }
+
+		public int CustService_yesterday { get; set; }
+
+		public int CustService_lastmonth { get; set; }
+
+		public int CustService_lastyear { get; set; }
 
 	}
 }
