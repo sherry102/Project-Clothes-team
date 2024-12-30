@@ -37,8 +37,7 @@
 								</div>
 								<div class="ps-3">
 									<h6 id="Sales"></h6>
-									<span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
+									<span class="text-success small pt-1 fw-bold" id="Sales_Percentage"></span> <span class="text-muted small pt-2 ps-1" id="Sales_Compare"></span>
 								</div>
 							</div>
 						</div>
@@ -71,7 +70,7 @@
 								</div>
 								<div class="ps-3">
 									<h6 id="Revenue"></h6>
-									<span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+									<span class="text-success small pt-1 fw-bold" id="Revenue_Percentage"></span> <span class="text-muted small pt-2 ps-1" id="Revenue_Compare"></span>
 
 								</div>
 							</div>
@@ -79,34 +78,34 @@
 
 					</div>
 				</div><!-- End 收入 -->
-				<!-- Customers Card -->
+				<!-- 客服 -->
 				<div class="col-xxl-4 col-xl-12">
 
 					<div class="card info-card customers-card">
 
 						<div class="filter">
 							<a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+							<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="service_filter">
 								<li class="dropdown-header text-start">
-									<h6>Filter</h6>
+									<h6>篩選</h6>
 								</li>
 
-								<li><a class="dropdown-item" href="#">Today</a></li>
-								<li><a class="dropdown-item" href="#">This Month</a></li>
-								<li><a class="dropdown-item" href="#">This Year</a></li>
+								<li><a class="dropdown-item" href="#">今天</a></li>
+								<li><a class="dropdown-item" href="#">這個月</a></li>
+								<li><a class="dropdown-item" href="#">今年</a></li>
 							</ul>
 						</div>
 
 						<div class="card-body">
-							<h5 class="card-title">Customers <span>| This Year</span></h5>
+							<h5 class="card-title fs-5 fw-bold">客服 <span id="service_date">| 今天</span></h5>
 
 							<div class="d-flex align-items-center">
 								<div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
 									<i class="bi bi-people"></i>
 								</div>
 								<div class="ps-3">
-									<h6>1244</h6>
-									<span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
+									<h6 id="service"></h6>
+									<span class="text-danger small pt-1 fw-bold" id="Service_Percentage"></span> <span class="text-muted small pt-2 ps-1" id="Service_Compare"></span>
 
 								</div>
 							</div>
@@ -114,7 +113,7 @@
 						</div>
 					</div>
 
-				</div><!-- End Customers Card -->
+				</div><!-- End 客服 -->
 				<!-- 會員人數 -->
 				<div class="col-12">
 					<div class="card">
@@ -195,7 +194,7 @@
 						<h5 class="card-title fs-5 fw-bold py-0 mb-0">通知</h5>
 						<!--<a href="#" class="ms-auto " id="refresh"><i class="ri-refresh-line refresh" style="font-size:22px;"></i></a>-->
 					</div>
-					<div id="notification" style="max-height: 350px; overflow-y: auto;">
+					<div id="notification" style="max-height: 250px; overflow-y: auto;">
 					</div>
 				</div>
 			</div><!-- End 通知 -->
@@ -244,9 +243,37 @@
 		const TotalSales_Today = @Model.TotalSales_Today;
 		const TotalSales_Month = @Model.TotalSales_Month;
 		const TotalSales_Year = @Model.TotalSales_Year;
+		const TotalSales_Yesterday = @Model.TotalSales_Yesterday;
+		const TotalSales_LastMonth = @Model.TotalSales_LastMonth;
+		const TotalSales_LastYear = @Model.TotalSales_LastYear;
 
 		let Sales_List = document.getElementById("Sales_List");
 		let Sales = document.getElementById("Sales");
+		let Sales_Percentage = document.getElementById("Sales_Percentage");
+		let Sales_Compare = document.getElementById("Sales_Compare");
+		let Sales_Percentage_Today = Math.abs(((TotalSales_Today - TotalSales_Yesterday) / TotalSales_Yesterday) * 100).toFixed(1) + `%`;
+		let Sales_Percentage_Month = Math.abs(((TotalSales_Month - TotalSales_LastMonth) / TotalSales_LastMonth) * 100).toFixed(1) + `%`;
+		let Sales_Percentage_Year = Math.abs(((TotalSales_Year - TotalSales_LastYear) / TotalSales_LastYear) * 100) .toFixed(1) + `%`;
+
+		function setTotalSales(percntage, color, compare) {
+			Sales_Percentage.innerHTML = percntage;
+			Sales_Percentage.classList.remove("text-success", "text-secondary", "text-danger");
+			Sales_Percentage.classList.add(color);
+			Sales_Compare.innerHTML = compare;
+			Sales_Compare.classList.remove("text-success", "text-secondary", "text-danger");
+			Sales_Compare.classList.add(color);
+		};
+
+		if (TotalSales_Yesterday == 0) {
+			setTotalSales("100%", "text-secondary", "-");
+		} else if (TotalSales_Today == TotalSales_Yesterday) {
+			setTotalSales("0%", "text-secondary", "-");
+		} else if (TotalSales_Today > TotalSales_Yesterday) {
+			setTotalSales(Sales_Percentage_Today, "text-success", "increase");
+		} else {
+			setTotalSales(Sales_Percentage_Today, "text-danger", "decrease");
+		};
+
 		Sales.innerHTML = TotalSales_Today.toLocaleString();
 
 		Sales_List.addEventListener("click", (e) => {
@@ -260,12 +287,39 @@
 			switch (Sales_filter) {
 				case "今天":
 					Sales.innerHTML = TotalSales_Today.toLocaleString();
+					if (TotalSales_Yesterday == 0) {
+						setTotalSales("100%", "text-secondary", "-");
+					} else if (TotalSales_Today == TotalSales_Yesterday) {
+						setTotalSales("0%", "text-secondary", "-");
+					} else if (TotalSales_Today > TotalSales_Yesterday) {
+						setTotalSales(Sales_Percentage_Today, "text-success", "increase");
+					} else {
+						setTotalSales(Sales_Percentage_Today, "text-danger", "decrease");
+					};
 					break;
 				case "這個月":
 					Sales.innerHTML = TotalSales_Month.toLocaleString();
+					if (TotalSales_LastMonth == 0) {
+						setTotalSales("100%", "text-secondary", "-");
+					} else if (TotalSales_Month == TotalSales_LastMonth) {
+						setTotalSales("0%", "text-secondary", "-");
+					} else if (TotalSales_Month > TotalSales_LastMonth) {
+						setTotalSales(Sales_Percentage_Month, "text-success", "increase");
+					} else {
+						setTotalSales(Sales_Percentage_Month, "text-danger", "decrease");
+					};
 					break;
 				case "今年":
 					Sales.innerHTML = TotalSales_Year.toLocaleString();
+					if (TotalSales_LastYear == 0) {
+						setTotalSales("100%", "text-secondary", "-");
+					} else if (TotalSales_Year == TotalSales_LastYear) {
+						setTotalSales("0%", "text-secondary", "-");
+					} else if (TotalSales_Year > TotalSales_LastYear) {
+						setTotalSales(Sales_Percentage_Year, "text-success", "increase");
+					} else {
+						setTotalSales(Sales_Percentage_Year, "text-danger", "decrease");
+					};
 					break;
 			}
 		})
@@ -277,9 +331,37 @@
 		const TotalPrice_Today = @Model.TotalPrice_Today;
 		const TotalPrice_Month = @Model.TotalPrice_Month;
 		const TotalPrice_Year = @Model.TotalPrice_Year;
+		const TotalPrice_Yesterday = @Model.TotalPrice_Yesterday;
+		const TotalPrice_LastMonth = @Model.TotalPrice_LastMonth;
+		const TotalPrice_LastYear = @Model.TotalPrice_LastYear;
 
 		let Revenue_List = document.getElementById("Revenue_List");
 		let Revenue = document.getElementById("Revenue");
+		let Revenue_Percentage = document.getElementById("Revenue_Percentage");
+		let Revenue_Compare = document.getElementById("Revenue_Compare");
+		let Price_Percentage_Today = Math.abs(((TotalPrice_Today - TotalPrice_Yesterday) / TotalPrice_Yesterday) * 100).toFixed(1) + `%`;
+		let Price_Percentage_Month = Math.abs(((TotalPrice_Month - TotalPrice_LastMonth) / TotalPrice_LastMonth) * 100).toFixed(1) + `%`;
+		let Price_Percentage_Year = Math.abs(((TotalPrice_Year - TotalPrice_LastYear) / TotalPrice_LastYear) * 100).toFixed(1) + `%`;
+
+		function setTotalPrice(percntage,color,compare) {
+			Revenue_Percentage.innerHTML = percntage;
+			Revenue_Percentage.classList.remove("text-success", "text-secondary", "text-danger");
+			Revenue_Percentage.classList.add(color);
+			Revenue_Compare.innerHTML = compare;
+			Revenue_Compare.classList.remove("text-success", "text-secondary", "text-danger");
+			Revenue_Compare.classList.add(color);
+		};
+
+		if (TotalPrice_Yesterday == 0) {
+			setTotalPrice("100%", "text-secondary", "-");
+		} else if (TotalPrice_Today == TotalPrice_Yesterday) {
+			setTotalPrice("0%", "text-secondary", "-");
+		} else if (TotalPrice_Today > TotalPrice_Yesterday) {
+			setTotalPrice(Price_Percentage_Today, "text-success", "increase");
+		} else {
+			setTotalPrice(Price_Percentage_Today, "text-danger", "decrease");
+		};
+
 		Revenue.innerHTML = TotalPrice_Today.toLocaleString();
 
 		Revenue_List.addEventListener("click", (e) => {
@@ -294,14 +376,117 @@
 			switch (Revenue_filter) {
 				case "今天":
 					Revenue.innerHTML = TotalPrice_Today.toLocaleString();
+					if (TotalPrice_Yesterday == 0) {
+						setTotalPrice("100%", "text-secondary", "-");
+					} else if (TotalPrice_Today == TotalPrice_Yesterday) {
+						setTotalPrice("0%", "text-secondary", "-");
+					} else if (TotalPrice_Today > TotalPrice_Yesterday) {
+						setTotalPrice(Price_Percentage_Today, "text-success", "increase");
+					} else {
+						setTotalPrice(Price_Percentage_Today, "text-danger", "decrease");
+					};
 					break;
 				case "這個月":
 					Revenue.innerHTML = TotalPrice_Month.toLocaleString();
+					if (TotalPrice_LastMonth == 0) {
+						setTotalPrice("100%", "text-secondary", "-");
+					} else if (TotalPrice_Month == TotalPrice_LastMonth) {
+						setTotalPrice("0%", "text-secondary", "-");
+					} else if (TotalPrice_Month > TotalPrice_LastMonth) {
+						setTotalPrice(Price_Percentage_Month, "text-success", "increase");
+					} else {
+						setTotalPrice(Price_Percentage_Month, "text-danger", "decrease");
+					};
 					break;
 				case "今年":
 					Revenue.innerHTML = TotalPrice_Year.toLocaleString();
+					if (TotalPrice_LastYear == 0) {
+						setTotalPrice("100%", "text-secondary", "-");
+					} else if (TotalPrice_Year == TotalPrice_LastYear) {
+						setTotalPrice("0%", "text-secondary", "-");
+					} else if (TotalPrice_Year > TotalPrice_LastYear) {
+						setTotalPrice(Price_Percentage_Year, "text-success", "increase");
+					} else {
+						setTotalPrice(Price_Percentage_Year, "text-danger", "decrease");
+					};
 					break;
 			}
+		})
+
+	</script>
+
+	<!--客服計算-->
+	<script>
+		$(function () {
+			let Service_Percentage_Today = Math.abs(((@Model.CustService_today - @Model.CustService_yesterday) / @Model.CustService_yesterday) * 100).toFixed(1) + `%`;
+			let Service_Percentage_Month = Math.abs(((@Model.CustService_month - @Model.CustService_lastmonth) / @Model.CustService_lastmonth) * 100).toFixed(1) + `%`;
+			let Service_Percentage_Year = Math.abs(((@Model.CustService_year - @Model.CustService_lastyear) / @Model.CustService_lastyear) * 100).toFixed(1) + `%`;
+			function setCustService(percntage, color, compare) {
+				$("#Service_Percentage").text(percntage);
+				$("#Service_Percentage").removeClass("text-success", "text-secondary", "text-danger");
+				$("#Service_Percentage").addClass(color);
+				$("#Service_Compare").text(compare);
+				$("#Service_Compare").removeClass("text-success", "text-secondary", "text-danger");
+				$("#Service_Compare").addClass(color);
+			};
+
+			if (@Model.CustService_yesterday == 0) {
+				setCustService("100%", "text-secondary", "-");
+			} else if (@Model.CustService_today == @Model.CustService_yesterday) {
+				setCustService("0%", "text-secondary", "-");
+			} else if (@Model.CustService_today > @Model.CustService_yesterday) {
+				setCustService(Service_Percentage_Today, "text-success", "increase");
+			} else {
+				setCustService(Service_Percentage_Today, "text-danger", "decrease");
+			};
+
+			$("#service").text(@Model.CustService_today);
+
+			$("#service_filter").on("click", (e) => { 
+				e.preventDefault();
+				const Custservice_date = e.target.textContent.trim();
+				$("#service_date").text(`| ${Custservice_date}`);
+				
+				switch (Custservice_date) {
+					case "今天":
+							$("#service").text(@Model.CustService_today);
+							if (@Model.CustService_yesterday == 0) {
+								setCustService("100%", "text-secondary", "-");
+							} else if (@Model.CustService_today == @Model.CustService_yesterday) {
+								setCustService("0%", "text-secondary", "-");
+							} else if (@Model.CustService_today > @Model.CustService_yesterday) {
+								setCustService(Service_Percentage_Today, "text-success", "increase");
+							} else {
+								setCustService(Service_Percentage_Today, "text-danger", "decrease");
+							};
+						break;
+						case "這個月":
+							$("#service").text(@Model.CustService_month);
+							if (@Model.CustService_lastmonth == 0) {
+								setCustService("100%", "text-secondary", "-");
+							} else if (@Model.CustService_month == @Model.CustService_lastmonth) {
+								setCustService("0%", "text-secondary", "-");
+							} else if (@Model.CustService_month > @Model.CustService_lastmonth) {
+								setCustService(Service_Percentage_Month, "text-success", "increase");
+							} else {
+								setCustService(Service_Percentage_Month, "text-danger", "decrease");
+							};
+						break;
+					case "今年":
+						$("#service").text(@Model.CustService_year);
+						$("#service").text(@Model.CustService_month);
+							if (@Model.CustService_lastyear == 0) {
+								setCustService("100%", "text-secondary", "-");
+							} else if (@Model.CustService_year == @Model.CustService_lastyear) {
+								setCustService("0%", "text-secondary", "-");
+							} else if (@Model.CustService_year > @Model.CustService_lastyear) {
+								setCustService(Service_Percentage_Year, "text-success", "increase");
+							} else {
+								setCustService(Service_Percentage_Year, "text-danger", "decrease");
+							};
+						break;
+				}
+			})
 		})
 
 	</script>
@@ -567,7 +752,21 @@
 				},
 				xaxis: {
 					categories: productName,
+					max:50,
 				},
+				colors: [function ({ value, productInventory}) {
+					if (value <= 20) {
+						return '#dd0404'
+					} else {
+						return '#1130e5'
+					}
+				}, function ({ value, productInventory}) {
+					if (value <= 50) {
+						return '#1130e5'
+					} else {
+						return '#D9534F'
+					}
+				}]
 			}).render();
 		});
 	</script>
@@ -718,6 +917,8 @@
 			})
 		
 	</script>
+
+
 }
 
 
