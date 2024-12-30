@@ -56,7 +56,7 @@
             <div class="form-group">
                 <label asp-for="Ostatus" class="control-label">訂單狀態</label>
                 @Html.DropDownListFor(model => model.Ostatus,
-                         new SelectList(new[] { "已訂購", "待出貨", "運送中", "已完成", "退款" }, Model.Ostatus),
+                         new SelectList(new[] { "待出貨", "運送中", "已完成", "退貨" }, Model.Ostatus),
                          new { @class = "form-control" })
                 <span asp-validation-for="Ostatus" class="text-danger"></span>
             </div>

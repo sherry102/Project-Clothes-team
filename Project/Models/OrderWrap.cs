@@ -22,43 +22,43 @@ namespace Project.Models
             get { return _order.Oid; }
             set { _order.Oid = value; }
         }
-        [DisplayName("訂購人")]
+        [DisplayName("訂購人名稱")]
         public string Oname
         {
             get { return _order.Oname; }
             set { _order.Oname = value; }
         }
-        [DisplayName("折價金額")]
+        [DisplayName("訂單折扣價")]
         public int? Odiscountedprice
         {
             get { return _order.Odiscountedprice; }
             set { _order.Odiscountedprice = value; }
         }
-        [DisplayName("合計")]
+        [DisplayName("訂單總價")]
         public int OtotalPrice
         {
             get { return _order.OtotalPrice; }
             set { _order.OtotalPrice = value; }
         }
-        [DisplayName("訂購時間")]
+        [DisplayName("訂單日期")]
         public DateTime Odate
         {
             get { return _order.Odate; }
             set { _order.Odate = value; }
         }
-        [DisplayName("商品編號")]
+        [DisplayName("會員編號")]
         public int Mid
         {
             get { return _order.Mid; }
             set { _order.Mid = value; }
         }
-        [DisplayName("訂購人地址")]
+        [DisplayName("訂單地址")]
         public string Oaddress
         {
             get { return _order.Oaddress; }
             set { _order.Oaddress = value; }
         }
-        [DisplayName("訂購人電話")]
+        [DisplayName("訂單電話")]
         public string Ophone
         {
             get { return _order.Ophone; }

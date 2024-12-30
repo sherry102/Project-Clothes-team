@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
+using Project.ViewModels;
+using System.Collections.Generic;
 
 namespace Project.Controllers
 {
@@ -11,37 +13,47 @@ namespace Project.Controllers
         {
             return View();
         }
-        public IActionResult List()
-        { 
+        public IActionResult List(CKeywordViewModel vm, string status)
+        {
             var db = new DbuniPayContext(); 
-            var orders = db.Torders.ToList(); 
-             
-            if (orders == null || !orders.Any())
-            { 
-                return View(new List<OrderWrap>()); //沒有資料則返回錯誤頁面或空頁面
-            }  
+            string keyword = vm.txtKeyword; 
 
-            List<OrderWrap> orderWrapList = new List<OrderWrap>(); 
+            status = string.IsNullOrEmpty(status) ? "All" : status;
+             
+            IEnumerable<Torder> orders = db.Torders.AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                orders = orders.Where(p => p.Oname.Contains(keyword));
+            }
+
+            if (status != "All")
+            {
+                orders = orders.Where(p => p.Ostatus == status);
+            }
+             
+            List<OrderWrap> orderWrapList = new List<OrderWrap>();
             foreach (var order in orders)
-            { 
-                if (order == null) continue; 
-                OrderWrap wrap = new OrderWrap()
+            {
+                if (order != null)
                 {
-                    Oid = order.Oid,
-                    Oname = order.Oname,
-                    Odiscountedprice = order.Odiscountedprice,
-                    OtotalPrice = order.OtotalPrice,
-                    Odate = order.Odate,
-                    Mid = order.Mid,
-                    Oaddress = order.Oaddress,
-                    Ophone = order.Ophone,
-                    Ostatus = order.Ostatus,
-                    Opayment = order.Opayment
-                }; 
-                orderWrapList.Add(wrap);
+                    orderWrapList.Add(new OrderWrap
+                    {
+                        Oid = order.Oid,
+                        Oname = order.Oname,
+                        Odiscountedprice = order.Odiscountedprice,
+                        OtotalPrice = order.OtotalPrice,
+                        Odate = order.Odate,
+                        Mid = order.Mid,
+                        Oaddress = order.Oaddress,
+                        Ophone = order.Ophone,
+                        Ostatus = order.Ostatus,
+                        Opayment = order.Opayment
+                    });
+                }
             } 
             return View(orderWrapList);
-        }
+        }  
         public IActionResult Edit(int? id)
         {
             if (id == null)
