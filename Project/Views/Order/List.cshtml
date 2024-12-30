@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Project.Models.Torder>
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<h2>訂單列表</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Oid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Odiscountedprice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OtotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Odate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oaddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ophone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ostatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Opayment)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Odiscountedprice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OtotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Odate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oaddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ophone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ostatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Opayment)
+            </td>
+            <td>
+                @Html.ActionLink("訂單明細", "OrderDetail", new { id = item.Oid }, new { @class="btn btn-primary"})
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
