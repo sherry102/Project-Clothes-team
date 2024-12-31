@@ -63,7 +63,20 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mpermissions" class="control-label"></label>
-                <input asp-for="Mpermissions" class="form-control"  />
+                <select asp-for="Mpermissions" class="form-control"  />
+                <option value="0">一般訪客</option>
+                <option value="1">黑名單</option>
+                <option value="2">會員</option>
+                <option value="3">VIP會員</option>
+                <option value="4">一般員工</option>
+                <option value="5">副店長</option>
+                <option value="6">店長</option>
+                <option value="7">經理</option>
+                <option value="8">區經理</option>
+                <option value="9">執行長</option>
+                <option value="10">副總</option>
+                <option value="11">負責人</option>
+                </select>
                 <span asp-validation-for="Mpermissions" class="text-danger"></span>
             </div>
             <div class="form-group">
