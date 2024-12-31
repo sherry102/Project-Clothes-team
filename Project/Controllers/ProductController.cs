@@ -51,18 +51,43 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create(CProductWrap p)
         {
-            if (p.photoPath != null)
+            if (p.photoPath == null)
             {
-                string photoName = Guid.NewGuid().ToString() + ".jpg";
-                p.Pimage = photoName;
-                p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
+                // 返回視圖，並顯示錯誤訊息
+                ModelState.AddModelError("photoPath", "必須上傳照片。");
+                return View(p);
             }
+
+            string photoName = Guid.NewGuid().ToString() + ".jpg";
+            p.Pimage = photoName;
+            using (var fileStream = new FileStream(
+                    Path.Combine(_enviro.WebRootPath, "images", photoName),
+                    FileMode.Create))
+            {
+                p.photoPath.CopyTo(fileStream);
+            }
+
             DbuniPayContext db = new DbuniPayContext();
             p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
             db.Tproducts.Add(p.product);
             db.SaveChanges();
             return RedirectToAction("List");
         }
+
+        //public IActionResult Create(CProductWrap p)
+        //{
+        //    if (p.photoPath != null)
+        //    {
+        //        string photoName = Guid.NewGuid().ToString() + ".jpg";
+        //        p.Pimage = photoName;
+        //        p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
+        //    }
+        //    DbuniPayContext db = new DbuniPayContext();
+        //    p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+        //    db.Tproducts.Add(p.product);
+        //    db.SaveChanges();
+        //    return RedirectToAction("List");
+        //}
 
         public IActionResult Edit(int? id)
         {

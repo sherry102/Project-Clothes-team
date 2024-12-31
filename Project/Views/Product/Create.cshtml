@@ -41,7 +41,7 @@
                 <span asp-validation-for="Pcategory" class="text-danger"></span>
             </div>
 
-            @* 商品Size *@
+            @* 商品尺寸 *@
             <div class="form-group">
                 <label asp-for="Psize" class="control-label"></label>
                 <input asp-for="Psize" class="form-control mb-3" />
@@ -70,7 +70,8 @@
             </div>
 
             <div class="form-group">
-                <input type="file" name="photoPath" class="mb-3"/>
+                <input type="file" name="photoPath" class="mb-3"/><br>
+                <span asp-validation-for="photoPath" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="新增商品" class="btn btn-primary mb-3" />
