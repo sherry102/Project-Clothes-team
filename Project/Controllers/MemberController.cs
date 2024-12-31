@@ -63,10 +63,9 @@ namespace Project.Controllers
                 x.Mpermissions = p.Mpermissions;
 
                 db.SaveChanges();
-
-                return View(x);
+                return RedirectToAction("List");         
             }
-            return RedirectToAction("List");
+            return View(x);
         }
 
         public IActionResult Create()
@@ -78,6 +77,7 @@ namespace Project.Controllers
         {
 
             DbuniPayContext db = new DbuniPayContext();
+            p.McreatedDate = DateTime.Now;
             db.Tmembers.Add(p); 
             db.SaveChanges();
             return RedirectToAction("List");
