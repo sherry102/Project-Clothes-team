@@ -1,11 +1,30 @@
-﻿@model IEnumerable<Project.Models.Torder>
+﻿@model IEnumerable<Project.Models.OrderWrap>
 
 @{
     ViewData["Title"] = "List";
 }
 
-<h2>訂單列表</h2>
 
+<h1>訂單管理</h1>
+
+<div>
+    <a href="@Url.Action("List", "Order", new { status = "All" })" class="btn btn-light text-dark me-3">全部訂單</a>
+    <a href="@Url.Action("List", "Order", new { status = "待出貨" })" class="btn btn-light text-dark me-3">待出貨</a>
+    <a href="@Url.Action("List", "Order", new { status = "運送中" })" class="btn btn-light text-dark me-3">運送中</a>
+    <a href="@Url.Action("List", "Order", new { status = "已完成" })" class="btn btn-light text-dark me-3">已完成</a>
+    <a href="@Url.Action("List", "Order", new { status = "退貨" })" class="btn btn-light text-dark me-3">退貨</a>
+</div> 
+<br /> 
+
+@using (Html.BeginForm("List", "Order", FormMethod.Get))
+{
+    <div class="d-flex align-items-center">
+         
+        @Html.TextBox("txtKeyword", null, new { @class = "form-control", placeholder = "輸入訂購人名稱", style = "height: 35px; width: 94%;" })
+        <input type="submit" value="查詢" class="btn btn-primary ms-2" style="height: 35px;" />
+    </div>
+} 
+<br />
 
 <table class="table">
     <thead>
@@ -24,7 +43,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Odate)
-            </th>
+            </th> 
             <th>
                 @Html.DisplayNameFor(model => model.Mid)
             </th>
@@ -60,7 +79,7 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Odate)
-            </td>
+            </td> 
             <td>
                 @Html.DisplayFor(modelItem => item.Mid)
             </td>
@@ -77,7 +96,8 @@
                 @Html.DisplayFor(modelItem => item.Opayment)
             </td>
             <td>
-                @Html.ActionLink("訂單明細", "OrderDetail", new { id = item.Oid }, new { @class="btn btn-primary"})
+                    @Html.ActionLink("修改", "Edit", new { id = item.Oid }) |
+                @Html.ActionLink("訂單細節", "Details", new { /* id=item.PrimaryKey */ })  
             </td>
         </tr>
 }
