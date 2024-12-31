@@ -43,7 +43,7 @@ public partial class DbuniPayContext : DbContext
     {
         modelBuilder.Entity<Tcomment>(entity =>
         {
-            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F413297001F19");
+            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F41326690FACF");
 
             entity.ToTable("TComment");
 
@@ -63,7 +63,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcoupon>(entity =>
         {
-            entity.HasKey(e => e.CouponId).HasName("PK__TCoupon__384AF1DAB74E28C9");
+            entity.HasKey(e => e.CouponId).HasName("PK__TCoupon__384AF1DAADD0377B");
 
             entity.ToTable("TCoupon");
 
@@ -74,7 +74,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcservice>(entity =>
         {
-            entity.HasKey(e => e.Csid).HasName("PK__TCServic__F5F0195B17B01249");
+            entity.HasKey(e => e.Csid).HasName("PK__TCServic__F5F0195BE5B4BA9B");
 
             entity.ToTable("TCService");
 
@@ -94,7 +94,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcustomization>(entity =>
         {
-            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC59529D9B0F");
+            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC599AB66385");
 
             entity.ToTable("TCustomization");
 
@@ -127,7 +127,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tfavorite>(entity =>
         {
-            entity.HasKey(e => e.Fid).HasName("PK__TFavorit__C1BEA5A247590CD8");
+            entity.HasKey(e => e.Fid).HasName("PK__TFavorit__C1BEA5A247999282");
 
             entity.ToTable("TFavorite");
 
@@ -142,7 +142,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tmember>(entity =>
         {
-            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348A2A9692B8");
+            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348AFFD81E6A");
 
             entity.ToTable("TMember");
 
@@ -180,7 +180,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Torder>(entity =>
         {
-            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B39E6E87FDB");
+            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B39BE124209");
 
             entity.ToTable("TOrder");
 
@@ -211,7 +211,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TorderDetail>(entity =>
         {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C157C60F07A");
+            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C15DFE2EC66");
 
             entity.ToTable("TOrderDetail");
 
@@ -255,7 +255,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tpimage>(entity =>
         {
-            entity.HasKey(e => e.Piid).HasName("PK__TPImage__5F86BE604D1F53B5");
+            entity.HasKey(e => e.Piid).HasName("PK__TPImage__5F86BE607894F295");
 
             entity.ToTable("TPImage");
 
@@ -268,7 +268,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tproduct>(entity =>
         {
-            entity.HasKey(e => e.Pid).HasName("PK__TProduct__C5775520902823C9");
+            entity.HasKey(e => e.Pid).HasName("PK__TProduct__C57755207745AB9F");
 
             entity.ToTable("TProducts");
 
@@ -279,9 +279,15 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Pcolor)
                 .HasMaxLength(20)
                 .HasColumnName("PColor");
+            entity.Property(e => e.Pdate)
+                .HasMaxLength(50)
+                .HasColumnName("PDate");
             entity.Property(e => e.Pdepiction)
                 .HasMaxLength(500)
                 .HasColumnName("PDepiction");
+            entity.Property(e => e.Pimage)
+                .HasMaxLength(50)
+                .HasColumnName("PImage");
             entity.Property(e => e.Pinventory).HasColumnName("PInventory");
             entity.Property(e => e.Pname)
                 .HasMaxLength(50)

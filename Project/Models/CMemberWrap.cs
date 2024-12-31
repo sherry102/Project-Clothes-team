@@ -23,13 +23,13 @@ namespace Project.Models
         }
         [Required(ErrorMessage = "暱稱必須填寫")]
         [DisplayName("會員暱稱")]
-        public string? Mname
+        public string Mname
         {
             get { return _member.Mname; }
             set { _member.Mname = value; }
         }
         [DisplayName("性別")]
-        public int? Mgender
+        public int Mgender
         {
             get { return _member.Mgender; }
             set { _member.Mgender = value; }
@@ -81,13 +81,13 @@ namespace Project.Models
             set { _member.Mphone = value; }
         }
         [DisplayName("點數")]
-        public int? Mpoints
+        public int Mpoints
         {
             get { return _member.Mpoints; }
             set { _member.Mpoints = value; }
         }
         [DisplayName("權限")]
-        public int? Mpermissions
+        public int Mpermissions
         {
             get { return _member.Mpermissions; }
             set { _member.Mpermissions = value; }
