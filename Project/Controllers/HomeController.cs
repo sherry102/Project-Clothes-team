@@ -31,10 +31,10 @@ namespace Project.Controllers
             DbuniPayContext db = new DbuniPayContext();
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
 
-            if (T != null && T.Mpassword == m.Password) 
+            if (T != null && T.Mpassword == m.Password)
             {
-                string json = JsonSerializer.Serialize(T); 
-                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER,json);
+                string json = JsonSerializer.Serialize(T);
+                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
                 return RedirectToAction("Index");
             }
             return View();
