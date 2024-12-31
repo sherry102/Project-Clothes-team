@@ -1,11 +1,18 @@
-﻿@model IEnumerable<Project.Models.Tmember>
-
+﻿@model List<Project.Models.CMemberWrap>
+@* model IEnumerable<Project.Models.CMemberWrap> *@
 @{
     ViewData["Title"] = "List";
 }
+@using (Html.BeginForm())
+{
+    @:關鍵字 @Html.TextBox("txtKeyword")
+    <input type="submit" value="查詢" />
+}
 
 <h2>會員資料</h2>
-
+<p>
+    <a asp-action="Create">新增會員</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -13,13 +20,40 @@
                序
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mname)
+               姓名
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Maccount)
+                @Html.DisplayNameFor(model => model[0].Mgender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mphoto)
+                @Html.DisplayNameFor(model => model[0].Maccount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mpassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Memail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Maddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mbirthdays)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mphone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mpoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mpermissions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].McreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mphoto)
             </th>
             <th></th>
         </tr>
@@ -37,16 +71,53 @@
                 @Html.DisplayFor(modelItem => item.Mname)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.GenderText)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Maccount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mpassword)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Memail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Maddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mbirthdays)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mphone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mpoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mpermissions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.McreatedDate)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Mphoto)
             </td>
+           
             <td>
-                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) 
-                @Html.ActionLink("刪除", "Delete", new { id = item.Mid })
+                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) |
+                        @Html.ActionLink("刪除", "Delete", "Customer", new { id = item.Mid },
+                            new { onclick = "return confirm('確定要刪除嗎?')"})
             </td>
         </tr>
 }}
     </tbody>
 </table>
+
+<div class="text-end mt-3">
+    <a href="@Url.Action("List")" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> 返回列表
+    </a>
+</div>
+
+          
