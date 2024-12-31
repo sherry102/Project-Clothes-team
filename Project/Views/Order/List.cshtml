@@ -13,17 +13,17 @@
     <a href="@Url.Action("List", "Order", new { status = "運送中" })" class="btn btn-light text-dark me-3">運送中</a>
     <a href="@Url.Action("List", "Order", new { status = "已完成" })" class="btn btn-light text-dark me-3">已完成</a>
     <a href="@Url.Action("List", "Order", new { status = "退貨" })" class="btn btn-light text-dark me-3">退貨</a>
-</div> 
-<br /> 
+</div>
+<br />
 
 @using (Html.BeginForm("List", "Order", FormMethod.Get))
 {
     <div class="d-flex align-items-center">
-         
+
         @Html.TextBox("txtKeyword", null, new { @class = "form-control", placeholder = "輸入訂購人名稱", style = "height: 35px; width: 94%;" })
         <input type="submit" value="查詢" class="btn btn-primary ms-2" style="height: 35px;" />
     </div>
-} 
+}
 <br />
 
 <table class="table">
@@ -43,15 +43,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Odate)
-            </th> 
-            <th>
-                @Html.DisplayNameFor(model => model.Mid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Oaddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ophone)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Ostatus)
@@ -63,43 +54,35 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Oid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Oname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odiscountedprice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OtotalPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odate)
-            </td> 
-            <td>
-                @Html.DisplayFor(modelItem => item.Mid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Oaddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ophone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ostatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opayment)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Oid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Oname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Odiscountedprice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OtotalPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Odate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ostatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Opayment)
+                </td>
+                <td>
                     @Html.ActionLink("修改", "Edit", new { id = item.Oid }) |
-                @Html.ActionLink("訂單細節", "Details", new { /* id=item.PrimaryKey */ })  
-            </td>
-        </tr>
-}
+                    @Html.ActionLink("訂單細節", "Details", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
