@@ -69,26 +69,28 @@ namespace Project.Controllers
             return View(new OrderWrap() { order = x });
         }
         [HttpPost]
-        public IActionResult Edit(OrderWrap p)
+        public IActionResult Edit(OrderWrap p) {
+			DbuniPayContext db = new DbuniPayContext();
+			Torder x = db.Torders.FirstOrDefault(c => c.Oid == p.Oid);
+			if (x != null)
+			{
+				x.Oname = p.Oname;
+				x.Odiscountedprice = p.Odiscountedprice;
+				x.OtotalPrice = p.OtotalPrice;
+				x.Odate = p.Odate;
+				x.Mid = p.Mid;
+				x.Oaddress = p.Oaddress;
+				x.Ophone = p.Ophone;
+				x.Ostatus = p.Ostatus;
+				x.Opayment = p.Opayment;
+				db.SaveChanges();
+			}
+			return RedirectToAction("List");
+		}
         public IActionResult OrderDetail(int id)
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Torder x = db.Torders.FirstOrDefault(c => c.Oid == p.Oid);
-            if (x != null)
-            { 
-                x.Oname = p.Oname;
-                x.Odiscountedprice = p.Odiscountedprice;
-                x.OtotalPrice = p.OtotalPrice;
-                x.Odate = p.Odate;
-                x.Mid = p.Mid;
-                x.Oaddress = p.Oaddress;
-                x.Ophone = p.Ophone;
-                x.Ostatus = p.Ostatus;
-                x.Opayment = p.Opayment;
-                db.SaveChanges();
-            }
-            return RedirectToAction("List");
-            var OrderDetails = db.TorderDetails 
+			DbuniPayContext db = new DbuniPayContext();
+			var OrderDetails = db.TorderDetails 
                                .Where (t=>t.Oid == id )
                                .ToList();
             List<COrderDetailWarp> list = new List<COrderDetailWarp>();
