@@ -46,9 +46,19 @@
                 <input asp-for="Maddress" class="form-control" />
                 <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
+            @* <div class="form-group"> *@
+            @* <label asp-for="Mbirthdays" class="control-label"></label> *@
+            @* <input asp-for="Mbirthdays" class="form-control" id="datepicker" /> *@
+            @* <span asp-validation-for="Mbirthdays" class="text-danger"></span> *@
+            @* </div> *@
             <div class="form-group">
                 <label asp-for="Mbirthdays" class="control-label"></label>
-                <input asp-for="Mbirthdays" class="form-control" />
+                <div class="input-group date" id="datetimepicker1">
+                    <input asp-for="Mbirthdays" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
                 <span asp-validation-for="Mbirthdays" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -58,7 +68,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mpoints" class="control-label"></label>
-                <input asp-for="Mpoints" class="form-control" />
+                <input asp-for="Mpoints" class="form-control" readonly value="0" />
                 <span asp-validation-for="Mpoints" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -68,21 +78,16 @@
                 <option value="1">黑名單</option>
                 <option value="2">會員</option>
                 <option value="3">VIP會員</option>
-                <option value="4">一般員工</option>
-                <option value="5">副店長</option>
-                <option value="6">店長</option>
-                <option value="7">經理</option>
-                <option value="8">區經理</option>
-                <option value="9">執行長</option>
-                <option value="10">副總</option>
-                <option value="11">負責人</option>
+                <option value="11">一般員工</option>
+                <option value="21">副店長</option>
+                <option value="31">店長</option>
+                <option value="51">經理</option>
+                <option value="61">區經理</option>
+                <option value="71">執行長</option>
+                <option value="81">副總</option>
+                <option value="91">負責人</option>
                 </select>
                 <span asp-validation-for="Mpermissions" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="McreatedDate" class="control-label"></label>
-                <input asp-for="McreatedDate" class="form-control" />
-                <span asp-validation-for="McreatedDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Mphoto" class="control-label"></label>
@@ -111,4 +116,12 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                   format:"YYYY/MM/DD"
+            });
+        });
+    </script>
 }

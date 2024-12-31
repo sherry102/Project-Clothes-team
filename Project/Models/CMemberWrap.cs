@@ -15,6 +15,7 @@ namespace Project.Models
         public CMemberWrap()
         {
             _member = new Tmember();
+            _member.Mpoints = 0; // 設定初始點數為 0
         }
         public int Mid
         {
@@ -86,6 +87,7 @@ namespace Project.Models
             get { return _member.Mpoints; }
             set { _member.Mpoints = value; }
         }
+     
         [DisplayName("權限")]
         public int Mpermissions
         {
@@ -103,14 +105,14 @@ namespace Project.Models
                         1 => "黑名單",
                         2 => "會員",
                         3 => "VIP會員",
-                        4 => "一般員工",
-                        5 => "副店長",
-                        6 => "店長",
-                        7 => "經理",
-                        8 => "區經理",
-                        9 => "執行長",
-                        10 => "副總",
-                        11 => "負責人",
+                        11 => "一般員工",
+                        21 => "副店長",
+                        31 => "店長",
+                        51 => "經理",
+                        61=> "區經理",
+                        71=> "執行長",
+                        81 => "副總",
+                        91 => "負責人",
                      };
                 }
              }
@@ -118,7 +120,7 @@ namespace Project.Models
         [DisplayName("創建日期")]
         public string? McreatedDate
         {
-            get { return _member.McreatedDate.ToString("yyyy-MM-dd"); }
+            get { return _member.McreatedDate.ToString("yyyy-MM-dd HH:mm:ss"); }
             set { _member.McreatedDate = DateTime.Parse(value); }
         }
         [DisplayName("會員照片")]
