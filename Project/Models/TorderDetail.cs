@@ -31,11 +31,12 @@ public partial class TorderDetail
 
     public double CfontSize { get; set; }
 
-    public string? Cimage { get; set; }
+    public string Cimage { get; set; } = null!;
 
     public int OtotalPrice { get; set; }
 
     public int Odcounts { get; set; }
 
     public bool OpickMyself { get; set; }
+
 }
