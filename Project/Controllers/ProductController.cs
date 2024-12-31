@@ -89,8 +89,14 @@ namespace Project.Controllers
                 x.Psize = p.Psize;
                 x.Pcolor = p.Pcolor;
                 x.Pdepiction = p.Pdepiction;
-                x.Pcategory = p.Pcategory; //數量string要轉 int
-                //圖片還不能修改
+                x.Pcategory = p.Pcategory; 
+                x.Pinventory = p.Pinventory;
+                if (p.photoPath != null)
+                {
+                    string photoName = Guid.NewGuid().ToString() + ".jpg";
+                    x.Pimage = photoName;
+                    p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
+                }
                 db.SaveChanges();
             }
             return RedirectToAction("List");
