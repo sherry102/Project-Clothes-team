@@ -28,7 +28,7 @@
 
     <!-- Template Main CSS File -->
     <link href="~/assets/css/style.css" rel="stylesheet">
-
+    @RenderSection("styles", required: false)
     <style>
         body {
             padding-top: 90px; 
@@ -340,7 +340,7 @@
             </li><!-- End Icons Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="~/Home/Index">
+                <a class="nav-link collapsed" href="~/CustomerService/ChatList">
                     <i class="bi bi-grid"></i>
                     <span>客服</span>
                 </a>
