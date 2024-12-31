@@ -79,7 +79,12 @@
         </div>
     </div>
 </div>
-
+@if (ViewBag.Error=="true")
+{
+    <script>
+        alert("帳號密碼有誤");
+    </script>
+}
 
 
 
