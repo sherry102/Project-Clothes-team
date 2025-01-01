@@ -115,10 +115,55 @@ namespace Project.Controllers
                 x.Pcolor = p.Pcolor;
                 x.Pdepiction = p.Pdepiction;
                 x.Pcategory = p.Pcategory; //數量string要轉 int
+                x.Pinventory = p.Pinventory;      
+                x.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
                 //圖片還不能修改
                 db.SaveChanges();
             }
             return RedirectToAction("List");
         }
+
+        // 重新上架頁面
+        public IActionResult Renew(ProductViewModel vm)
+        { 
+            DbuniPayContext db = new DbuniPayContext();
+            string keyword = vm.txtKeyword;
+            IEnumerable<Tproduct> datas = null;
+            if (string.IsNullOrEmpty(keyword))
+                datas = db.Tproducts
+                        .Where(t => t.IsHided);  // 已刪除的記錄
+            else
+                datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
+            List<CProductWrap> list = new List<CProductWrap>();
+            foreach (var t in datas)
+                list.Add(new CProductWrap() { product = t });
+            return View(list);
+        }
+
+       
+
+        // 重新上架
+        public IActionResult Recovery(int id)
+        {
+            if (id != null)
+            {
+                DbuniPayContext db = new DbuniPayContext();
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x != null)
+                {
+                    x.IsHided = false;
+                    db.SaveChanges();
+                }
+
+            }
+            return RedirectToAction("List");
+        }
+
+
+
+
+
+
+
     }
 }
