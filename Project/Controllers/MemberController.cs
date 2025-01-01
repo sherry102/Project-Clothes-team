@@ -5,11 +5,17 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Project.Models;
 using Project.ViewModel;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Project.Controllers
 {
     public class MemberController : Controller
     {
+        IWebHostEnvironment _enviro = null;
+        public MemberController(IWebHostEnvironment p)
+        {
+            _enviro = p;
+        }
 
         public IActionResult List(CKeywordViewModel vm)
         {
@@ -83,6 +89,60 @@ namespace Project.Controllers
             return RedirectToAction("List");
                         
         }
+
+        public IActionResult Profile()
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == member.Mid);
+            CMemberWrap C = new CMemberWrap() { member = T };
+            return View(C);
+        }
+
+        [HttpPost]
+        public IActionResult Profile(CMemberWrap t)
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == t.Mid);
+            if (T!=null) 
+            {
+                T.Mname = t.Mname;
+                T.Mgender = t.Mgender;
+                T.Memail = t.Memail;
+                T.Maddress = t.Maddress;
+                T.Mbirthday =DateOnly.Parse(t.Mbirthdays);
+                T.Mphone = t.Mphone;
+                if (t.photoPath != null)
+                {
+                    string photoName = Guid.NewGuid().ToString() + ".jpg";
+                    T.Mphoto = photoName;
+                    t.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/assets/img/" + photoName, FileMode.Create));
+                }
+                db.SaveChanges();
+            }
+
+            string json = JsonSerializer.Serialize(T); // 序列化模型数据
+            HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json); // 更新 Session
+            return RedirectToAction("Profile"); // 重定向到 Profile 页面
+        }
+
+        [HttpPost]
+        public IActionResult ChangePassword(ChangePassword C)
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            var json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            Tmember member = JsonSerializer.Deserialize<Tmember>(json);
+            Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == member.Mid);
+            if (T!=null) {
+               
+                    T.Mpassword = C.Mpassword;
+                    db.SaveChanges();
+            }
+
+            return RedirectToAction("Profile");
+        }
+
     }
 }
                  

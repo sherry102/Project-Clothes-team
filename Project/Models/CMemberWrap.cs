@@ -127,6 +127,8 @@ namespace Project.Models
             get { return _member.Mphoto; }
             set { _member.Mphoto = value; }
         }
+
+        public IFormFile photoPath { get; set; }
     }
 }
     

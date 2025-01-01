@@ -213,24 +213,23 @@ namespace Project.Controllers
 		[HttpPost]
 		public IActionResult Login(MemberViewModel m)
 		{
-			//DbuniPayContext db = new DbuniPayContext();
-			//Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
-			//string Error = "false";
-			//if (T != null && T.Mpassword == m.Password)
-			//{
-			//	string json = JsonSerializer.Serialize(T);
-			//	HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-			//	return RedirectToAction("Index");
-			//	Error = "false";
-			//}
-			//else {
-			//	Error = "true";
-			//	ViewBag.Error = Error;
-   //             return View();
-   //         }
-			
+			DbuniPayContext db = new DbuniPayContext();
+			Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
+			string Error = "false";
+			if (T != null && T.Mpassword == m.Password)
+			{
+				string json = JsonSerializer.Serialize(T);
+				HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
+				return RedirectToAction("Index");
+				Error = "false";
+			}
+			else
+			{
+				Error = "true";
+				ViewBag.Error = Error;
+				return View();
+			}
 
-			return RedirectToAction("Index");
 		}
 
 		public IActionResult Privacy()
@@ -243,5 +242,13 @@ namespace Project.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-	}
+
+		[HttpPost]
+        public IActionResult SingOut()
+        {
+            HttpContext.Session.Clear();
+            bool isSessionCleared = HttpContext.Session.Keys.Count() == 0;
+            return Json(new { success = isSessionCleared });
+        }
+    }
 }
