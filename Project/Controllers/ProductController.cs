@@ -159,8 +159,22 @@ namespace Project.Controllers
             return RedirectToAction("List");
         }
 
+        // 刪除商品
+        public IActionResult Delete(int? id)
+        {
+            if (id != null)
+            {
+                DbuniPayContext db = new DbuniPayContext();
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x != null)
+                {
+                    db.Tproducts.Remove(x);
+                    db.SaveChanges();
+                }
 
-
+            }
+            return RedirectToAction("Renew");
+        }
 
 
 
