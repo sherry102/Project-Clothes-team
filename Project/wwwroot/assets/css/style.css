@@ -644,7 +644,7 @@ h6 {
 
 @media (max-width: 1199px) {
   .toggle-sidebar .sidebar {
-    left: 0;
+    left: -300px;
   }
 }
 
@@ -1288,4 +1288,9 @@ h6 {
 
 .border-top {
     border-top: 1px solid #dee2e6 !important;
+}
+
+.chat_user a:hover {
+    color: #4154f1;
+    background: #f6f9ff;
 }
