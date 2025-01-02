@@ -51,7 +51,7 @@ namespace Project.Controllers
             return View(member);
         }
         [HttpPost]
-        public IActionResult Edit(Tmember p)
+        public IActionResult Edit(Tmember p, IFormFile photo)
         {
             DbuniPayContext db = new DbuniPayContext();
             Tmember x = db.Tmembers.FirstOrDefault(c => c.Mid == p.Mid);
@@ -68,8 +68,66 @@ namespace Project.Controllers
                 x.Mpoints = p.Mpoints;
                 x.Mpermissions = p.Mpermissions;
 
-                db.SaveChanges();
-                return RedirectToAction("List");         
+                // 處理照片上傳
+                if (photo != null && photo.Length > 0)
+                {
+                    // 檢查檔案格式
+                    string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+                    string extension = Path.GetExtension(photo.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        ModelState.AddModelError("photo", "僅允許上傳 jpg, jpeg, png, gif 格式的圖片");
+                        return View(x);
+                    }
+
+                    // 檢查檔案大小 (5MB)
+                    if (photo.Length > 1 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("photo", "圖片大小不能超過 1MB");
+                        return View(x);
+                    }
+
+                    try
+                    {
+                        // 刪除舊圖片
+                        if (!string.IsNullOrEmpty(x.Mphoto))
+                        {
+                            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", x.Mphoto);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        // 上傳新圖片
+                        string fileName = Guid.NewGuid().ToString() + extension;  // 使用 GUID 避免檔名重複
+                        string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            photo.CopyTo(stream);
+                        }
+
+                        x.Mphoto = fileName;
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", $"圖片上傳失敗: {ex.Message}");
+                        return View(x);
+                    }
+                }
+
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("List");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"儲存失敗: {ex.Message}");
+                    return View(x);
+                }
             }
             return View(x);
         }

@@ -1,6 +1,6 @@
 ﻿@model Project.Models.CMemberWrap
 
-@{
+{
     ViewData["Title"] = "Create";
 }
 
@@ -20,9 +20,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mgender" class="control-label">性別</label>
-                <select asp-for="Mgender" class="form-control" />
-                <option value="0">男性</option>
-                <option value="1">女性</option>
+                <select asp-for="Mgender" class="form-control">
+                    <option value="0">男性</option>
+                    <option value="1">女性</option>
                 </select>
                 <span asp-validation-for="Mgender" class="text-danger"></span>
             </div>
@@ -46,21 +46,12 @@
                 <input asp-for="Maddress" class="form-control" />
                 <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
-            @* <div class="form-group"> *@
-            @* <label asp-for="Mbirthdays" class="control-label"></label> *@
-            @* <input asp-for="Mbirthdays" class="form-control" id="datepicker" /> *@
-            @* <span asp-validation-for="Mbirthdays" class="text-danger"></span> *@
-            @* </div> *@
             <div class="form-group">
                 <label asp-for="Mbirthdays" class="control-label"></label>
-                <div class="input-group date" id="datetimepicker1">
-                    <input asp-for="Mbirthdays" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
+                <input asp-for="Mbirthdays" class="form-control datepicker" />
                 <span asp-validation-for="Mbirthdays" class="text-danger"></span>
             </div>
+           
             <div class="form-group">
                 <label asp-for="Mphone" class="control-label"></label>
                 <input asp-for="Mphone" class="form-control" />
@@ -73,7 +64,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mpermissions" class="control-label"></label>
-                <select asp-for="Mpermissions" class="form-control"  />
+                <select asp-for="Mpermissions" class="form-control">
                 <option value="0">一般訪客</option>
                 <option value="1">黑名單</option>
                 <option value="2">會員</option>
@@ -91,20 +82,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mphoto" class="control-label"></label>
-                <input asp-for="Mphoto" class="form-control" />
+                <input asp-for="Mphoto" class="form-control" type="file" 
+                id="Mphoto" accept="image/*" onchange="previewImage(event)" />           
                 <span asp-validation-for="Mphoto" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <!-- 圖片預覽區 -->
+                <img id="photoPreview" src="#" alt="會員照片預覽" style="max-width: 200px; display: none; margin-top: 10px;" />
+            </div>
+            <div class="form-group">
                 <input type="submit" value="新增完成" class="btn btn-primary" />
-                <input type="button" value="送出"
-                       class="btn btn-success"
-                       style="margin-left: 10px;"
-                       onclick="if(confirm('確定要送出嗎?'))
-                       { window.location.href='@Url.Action("List", "Member")'; }" />
-                <input type="button" value="返回"
-                       class="btn btn-secondary"
-                       style="margin-left: 10px;"
-                       onclick="location.href='@Url.Action("List", "Member")'" />
             </div>
         </form>
     </div>
@@ -117,11 +104,47 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script type="text/javascript">
-        $(function () {
-            $('#datetimepicker1').datetimepicker({
-                   format:"YYYY/MM/DD"
+    <script>
+        $(function() {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                language: 'zh-TW',
+                todayHighlight: true,
+                clearBtn: true,
+                orientation: "bottom auto", 
+                startYear: 1990,
+                endYear: 2100,
+                startDate: '1990-01-01',
+                endDate: '2100-12-31'
             });
         });
+
+        function previewImage(event) {
+            const file = event.target.files[0]; // 取得上傳的檔案
+            const preview = document.getElementById('photoPreview'); // 預覽的 img 元素
+            const maxSize = 1 * 1024 * 1024; // 最大檔案大小設定為 2MB
+
+            if (file) {
+                if (file.size > maxSize) {
+                    alert('檔案大小超過限制，請選擇小於 1MB 的檔案');
+                    event.target.value = ''; // 清空已選檔案
+                    preview.src = "#"; // 清空圖片預覽
+                    preview.style.display = 'none'; // 隱藏圖片預覽
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result; // 設定預覽圖片的來源為上傳的圖片
+                    preview.style.display = 'block'; // 顯示圖片預覽
+                };
+                reader.readAsDataURL(file); // 將檔案讀取為 Base64 URL
+             }
+             else {
+                preview.src = "#"; // 清空圖片預覽
+                preview.style.display = 'none'; // 隱藏圖片預覽
+            }
+        }
     </script>
 }

@@ -52,6 +52,9 @@
             <th>
                 @Html.DisplayNameFor(model => model[0].Mphoto)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].MBlackList)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -95,7 +98,13 @@
                 @Html.DisplayFor(modelItem => item.McreatedDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mphoto)
+                @if (!string.IsNullOrEmpty(item.Mphoto))
+                    {
+                        <img src="~/images/@item.Mphoto" height="80" width="90" />
+                    }
+            </td>
+            <td>
+                 @Html.DisplayFor(modelItem => item.MBlackList)
             </td>
            
             <td>
