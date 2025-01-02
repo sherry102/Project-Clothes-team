@@ -81,7 +81,7 @@ namespace Project.Models
             get { return _product.Pimage; }
             set { _product.Pimage = value; }
         }
-
+        [DisplayName("照片路徑")]
         public IFormFile photoPath { get; set; }
 
     }

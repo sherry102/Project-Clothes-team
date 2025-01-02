@@ -51,18 +51,43 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult Create(CProductWrap p)
         {
-            if (p.photoPath != null)
+            if (p.photoPath == null)
             {
-                string photoName = Guid.NewGuid().ToString() + ".jpg";
-                p.Pimage = photoName;
-                p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
+                // 返回視圖，並顯示錯誤訊息
+                ModelState.AddModelError("photoPath", "必須上傳照片。");
+                return View(p);
             }
+
+            string photoName = Guid.NewGuid().ToString() + ".jpg";
+            p.Pimage = photoName;
+            using (var fileStream = new FileStream(
+                    Path.Combine(_enviro.WebRootPath, "images", photoName),
+                    FileMode.Create))
+            {
+                p.photoPath.CopyTo(fileStream);
+            }
+
             DbuniPayContext db = new DbuniPayContext();
             p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
             db.Tproducts.Add(p.product);
             db.SaveChanges();
             return RedirectToAction("List");
         }
+
+        //public IActionResult Create(CProductWrap p)
+        //{
+        //    if (p.photoPath != null)
+        //    {
+        //        string photoName = Guid.NewGuid().ToString() + ".jpg";
+        //        p.Pimage = photoName;
+        //        p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
+        //    }
+        //    DbuniPayContext db = new DbuniPayContext();
+        //    p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+        //    db.Tproducts.Add(p.product);
+        //    db.SaveChanges();
+        //    return RedirectToAction("List");
+        //}
 
         public IActionResult Edit(int? id)
         {
@@ -89,17 +114,70 @@ namespace Project.Controllers
                 x.Psize = p.Psize;
                 x.Pcolor = p.Pcolor;
                 x.Pdepiction = p.Pdepiction;
-                x.Pcategory = p.Pcategory; 
-                x.Pinventory = p.Pinventory;
-                if (p.photoPath != null)
-                {
-                    string photoName = Guid.NewGuid().ToString() + ".jpg";
-                    x.Pimage = photoName;
-                    p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
-                }
+                x.Pcategory = p.Pcategory; //數量string要轉 int
+                x.Pinventory = p.Pinventory;      
+                x.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+                //圖片還不能修改
                 db.SaveChanges();
             }
             return RedirectToAction("List");
         }
+
+        // 重新上架頁面
+        public IActionResult Renew(ProductViewModel vm)
+        { 
+            DbuniPayContext db = new DbuniPayContext();
+            string keyword = vm.txtKeyword;
+            IEnumerable<Tproduct> datas = null;
+            if (string.IsNullOrEmpty(keyword))
+                datas = db.Tproducts
+                        .Where(t => t.IsHided);  // 已刪除的記錄
+            else
+                datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
+            List<CProductWrap> list = new List<CProductWrap>();
+            foreach (var t in datas)
+                list.Add(new CProductWrap() { product = t });
+            return View(list);
+        }
+
+       
+
+        // 重新上架
+        public IActionResult Recovery(int id)
+        {
+            if (id != null)
+            {
+                DbuniPayContext db = new DbuniPayContext();
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x != null)
+                {
+                    x.IsHided = false;
+                    db.SaveChanges();
+                }
+
+            }
+            return RedirectToAction("List");
+        }
+
+        // 刪除商品
+        public IActionResult Delete(int? id)
+        {
+            if (id != null)
+            {
+                DbuniPayContext db = new DbuniPayContext();
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x != null)
+                {
+                    db.Tproducts.Remove(x);
+                    db.SaveChanges();
+                }
+
+            }
+            return RedirectToAction("Renew");
+        }
+
+
+
+
     }
 }
