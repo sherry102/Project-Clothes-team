@@ -26,7 +26,8 @@
     <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="~/assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
-   
+    <!-- 在這裡加入 Bootstrap Datepicker 的 CSS 1/2-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="~/assets/css/style.css" rel="stylesheet">
@@ -291,6 +292,11 @@
 
     <!-- <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- 加入 Moment.js 和 Bootstrap Datepicker 的 JS 1/2-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
  
     @await RenderSectionAsync("Scripts", required: false)
 

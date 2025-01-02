@@ -129,6 +129,12 @@ namespace Project.Models
             get { return _member.Mphoto; }
             set { _member.Mphoto = value; }
         }
+        [DisplayName("黑名單")]
+        public int MBlackList
+        {
+            get { return _member.MBlackList; }
+            set { _member.MBlackList = value; }
+        }
     }
 }
     
