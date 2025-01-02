@@ -23,9 +23,9 @@ public partial class Tproduct
 
     public int Pinventory { get; set; }
 
-    public string Pdate { get; set; } = null!;
+    public DateTime PcreatedDate { get; set; }
 
-    public string Pimage { get; set; } = null!;
+    public string? Pphoto { get; set; }
 
-    public bool IsHided { get; set; }
+    public bool PisHided { get; set; }
 }

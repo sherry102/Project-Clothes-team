@@ -70,19 +70,25 @@ namespace Project.Models
         }
 
         [DisplayName("上傳日期")]
-        public string Pdate
+        public DateTime PcreatedDate
         {
-            get { return _product.Pdate; }
-            set { _product.Pdate = value; }
+            get { return _product.PcreatedDate; }
+            set { _product.PcreatedDate = value; }
         }
         [DisplayName("照片")]
-        public string Pimage
+        public string Pphoto
         {
-            get { return _product.Pimage; }
-            set { _product.Pimage = value; }
+            get { return _product.Pphoto; }
+            set { _product.Pphoto = value; }
         }
 
         public IFormFile photoPath { get; set; }
 
+        [DisplayName("是否隱藏")]
+        public bool PisHided
+        {
+            get { return _product.PisHided; }
+            set { _product.PisHided = value; }
+        }
     }
 }

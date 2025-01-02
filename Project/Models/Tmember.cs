@@ -30,4 +30,6 @@ public partial class Tmember
     public DateTime McreatedDate { get; set; }
 
     public string? Mphoto { get; set; }
+
+    public bool MisHided { get; set; }
 }

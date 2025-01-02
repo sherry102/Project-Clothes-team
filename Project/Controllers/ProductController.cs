@@ -19,7 +19,7 @@ namespace Project.Controllers
             IEnumerable<Tproduct> datas = null;
             if (string.IsNullOrEmpty(keyword))
                 datas = db.Tproducts
-                        .Where(t => !t.IsHided);  // 過濾已刪除的記錄
+                        .Where(t => !t.PisHided);  // 過濾已刪除的記錄
             else
                 datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
             List<CProductWrap> list = new List<CProductWrap>();
@@ -37,7 +37,7 @@ namespace Project.Controllers
                 Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
                 if (x != null)
                 {
-                    x.IsHided = true;
+                    x.PisHided = true;
                     db.SaveChanges();
                 }
             }
@@ -54,11 +54,11 @@ namespace Project.Controllers
             if (p.photoPath != null)
             {
                 string photoName = Guid.NewGuid().ToString() + ".jpg";
-                p.Pimage = photoName;
+                p.Pphoto = photoName;
                 p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
             }
             DbuniPayContext db = new DbuniPayContext();
-            p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            p.PcreatedDate = DateTime.Now;
             db.Tproducts.Add(p.product);
             db.SaveChanges();
             return RedirectToAction("List");
