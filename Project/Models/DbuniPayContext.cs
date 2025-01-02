@@ -154,6 +154,7 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("MAddress");
             entity.Property(e => e.Mbirthday).HasColumnName("MBirthday");
+            entity.Property(e => e.MblackList).HasColumnName("MBlackList");
             entity.Property(e => e.McreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")

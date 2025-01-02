@@ -130,10 +130,10 @@ namespace Project.Models
             set { _member.Mphoto = value; }
         }
         [DisplayName("黑名單")]
-        public int MBlackList
+        public bool MBlackList
         {
-            get { return _member.MBlackList; }
-            set { _member.MBlackList = value; }
+            get { return _member.MblackList; }
+            set { _member.MblackList = value; }
         }
 
         public IFormFile photoPath { get; set; }
