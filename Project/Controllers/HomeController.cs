@@ -32,8 +32,8 @@ namespace Project.Controllers
 			List<Tproduct> product_none = db.Tproducts.Where(t => t.Pinventory == 0).ToList();
 			List<Torder> order_none = db.Torders.Where(t => t.Ostatus == "«Ý¼f®Ö" && t.Odate <= today.AddDays(-3)).ToList();
 			List<int> month_Days = new List<int>();
-			List<int> members_count_Month = new List<int>();
-			List<int> members_count_Year = new List<int>();
+			List<int?> members_count_Month = new List<int?>();
+			List<int?> members_count_Year = new List<int?>();
 			List<int> product_inventory = new List<int>();
 			List<string> product_name = new List<string>();
 			List<int> type_sales_count = (from tod in db.TorderDetails
@@ -48,16 +48,30 @@ namespace Project.Controllers
 
 			for (int day = 1; day <= lastDayOfMonth; day++)
 			{
-				sumday += db.Tmembers.Count(t => t.McreatedDate.Month == currentMonth && t.McreatedDate.Year == currentYear && t.McreatedDate.Day == day);
+				if (day <= today.Day)
+				{
+					sumday += db.Tmembers.Count(t => t.McreatedDate.Month == currentMonth && t.McreatedDate.Year == currentYear && t.McreatedDate.Day == day);
+					members_count_Month.Add(sumday);
+				}
+				else {
+                    members_count_Month.Add(null);
+                }
+                
+                month_Days.Add(day);
 
-				members_count_Month.Add(sumday);
-				month_Days.Add(day);
-			}
+            }
 
-			for (int month = 1; month <= 12; month++)
+            for (int month = 1; month <= 12; month++)
 			{
-				summonth += db.Tmembers.Count(t => t.McreatedDate.Month == month && t.McreatedDate.Year == currentYear);
-				members_count_Year.Add(summonth);
+				if (month <= currentMonth)
+				{
+					summonth += db.Tmembers.Count(t => t.McreatedDate.Month == month && t.McreatedDate.Year == currentYear);
+                    members_count_Year.Add(summonth);
+                }
+				else {
+                    members_count_Year.Add(0);
+                }
+				
 			}
 
 			product_inventory.AddRange(db.Tproducts.Where(t => t.Pinventory <= 50).Select(t => t.Pinventory).ToList());
@@ -188,7 +202,7 @@ namespace Project.Controllers
 				TotalSales_Year = totalsales_year,
 				TotalSales_Yesterday=totalsales_yesterday,
 				TotalSales_LastMonth=totalsales_lastmonth,
-				TotalSales_LastYear=totalprice_lastyear,
+				TotalSales_LastYear= totalsales_lastyear,
 				Torder_none = order_none,
 				Tproduct_none = product_none,
 				members_count_Month = members_count_Month,

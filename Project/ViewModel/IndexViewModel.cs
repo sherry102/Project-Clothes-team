@@ -12,9 +12,9 @@ namespace Project.ViewModel
 
 		public List<Torder> Torder_none { get; set; }
 
-        public List<int> members_count_Month { get; set; }
+        public List<int?> members_count_Month { get; set; }
 
-		public List<int> members_count_Year { get; set; }
+		public List<int?> members_count_Year { get; set; }
 
 		public List<int> month_Days { get; set; }
 
