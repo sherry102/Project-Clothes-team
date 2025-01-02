@@ -30,7 +30,7 @@ namespace Project.Controllers
 			List<Torder> order = db.Torders.ToList();
 			List<TorderDetail> orderDetail = db.TorderDetails.ToList();
 			List<Tproduct> product_none = db.Tproducts.Where(t => t.Pinventory == 0).ToList();
-			List<Torder> order_none = db.Torders.Where(t => t.Ostatus == "«Ý¼f®Ö" && t.Odate <= today.AddDays(-3)).ToList();
+			List<Torder> order_none = db.Torders.Where(t => t.Ostatus == "«Ý¥X³f" && t.Odate <= today.AddDays(-3)).ToList();
 			List<int> month_Days = new List<int>();
 			List<int?> members_count_Month = new List<int?>();
 			List<int?> members_count_Year = new List<int?>();
