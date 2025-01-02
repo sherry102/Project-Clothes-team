@@ -32,5 +32,5 @@ public partial class Tmember
     public DateTime McreatedDate { get; set; }
     [Display(Name = "會員照片")]
     public string? Mphoto { get; set; }
-    public int MBlackList { get; set; }
+    public bool Mishided { get; set; }
 }

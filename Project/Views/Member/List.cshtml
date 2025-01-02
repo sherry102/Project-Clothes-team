@@ -12,6 +12,7 @@
 <h2>會員資料</h2>
 <p>
     <a asp-action="Create">新增會員</a>
+    <a href="@Url.Action("BlacklistIndex", "Member")" class="btn btn-warning">黑名單</a>
 </p>
 <table class="table">
     <thead>
@@ -23,37 +24,34 @@
                姓名
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mgender)
+                @Html.DisplayNameFor(model => model[0].member.Mgender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Maccount)
+                @Html.DisplayNameFor(model => model[0].member.Maccount)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Memail)
+                @Html.DisplayNameFor(model => model[0].member.Memail)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Maddress)
+                @Html.DisplayNameFor(model => model[0].member.Maddress)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mbirthdays)
+                @Html.DisplayNameFor(model => model[0].member.Mbirthday)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mphone)
+                @Html.DisplayNameFor(model => model[0].member.Mphone)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mpoints)
+                @Html.DisplayNameFor(model => model[0].member.Mpoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mpermissions)
+                @Html.DisplayNameFor(model => model[0].member.Mpermissions)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].McreatedDate)
+                @Html.DisplayNameFor(model => model[0].member.McreatedDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Mphoto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].MBlackList)
+                @Html.DisplayNameFor(model => model[0].member.Mphoto)
             </th>
             <th></th>
         </tr>
@@ -68,51 +66,49 @@
                 @count
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mname)
+                @Html.DisplayFor(modelItem => item.member.Mname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GenderText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Maccount)
+                @Html.DisplayFor(modelItem => item.member.Maccount)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Memail)
+                @Html.DisplayFor(modelItem => item.member.Memail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Maddress)
+                @Html.DisplayFor(modelItem => item.member.Maddress)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mbirthdays)
+                @Html.DisplayFor(modelItem => item.member.Mbirthday)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mphone)
+                @Html.DisplayFor(modelItem => item.member.Mphone)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mpoints)
+                @Html.DisplayFor(modelItem => item.member.Mpoints)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mpermissions)
+                @Html.DisplayFor(modelItem => item.member.Mpermissions)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.McreatedDate)
+                @Html.DisplayFor(modelItem => item.member.McreatedDate)
             </td>
             <td>
-                @if (!string.IsNullOrEmpty(item.Mphoto))
-                    {
-                        <img src="~/images/@item.Mphoto" height="80" width="90" />
-                    }
-            </td>
+                 @if (!string.IsNullOrEmpty(item.member.Mphoto))
+
+                 {
+                    <img src="~/images/@item.member.Mphoto" height="80" width="90" />
+                 }
+               
+            </td>         
             <td>
-                 @Html.DisplayFor(modelItem => item.MBlackList)
+                @Html.ActionLink("修改", "Edit", new { id = item.member.Mid }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("黑名單", "Blacklist", new { id = item.member.Mid }, 
+                new { @class = "btn btn-danger", onclick = "return confirm('確定要將此會員加入黑名單嗎?');" })
             </td>
-           
-            <td>
-                @Html.ActionLink("修改", "Edit", new { id=item.Mid }) |
-                        @Html.ActionLink("刪除", "Delete", "Customer", new { id = item.Mid },
-                            new { onclick = "return confirm('確定要刪除嗎?')"})
-            </td>
-        </tr>
+            </tr>
 }}
     </tbody>
 </table>
