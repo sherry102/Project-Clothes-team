@@ -4,6 +4,11 @@
     ViewData["Title"] = "新增會員";
 }
 
+@section Styles {
+<!-- Bootstrap Datepicker CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+}
+
 <h1>新增會員</h1>
 
 <h4>填寫會員資訊</h4>
@@ -105,23 +110,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(function() {
-            $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                autoclose: true,
-                language: 'zh-TW',
-                todayHighlight: true,
-                clearBtn: true,
-                orientation: "bottom auto", 
-                startYear: 1990,
-                endYear: 2100,
-                startDate: '1990-01-01',
-                endDate: '2100-12-31'
-            });
-        });
-
-            
+    <script>           
         function handleFileSelect(input) {
             const file = input.files[0];
             const preview = document.getElementById('photoPreview');
