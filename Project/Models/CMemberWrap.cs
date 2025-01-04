@@ -132,8 +132,8 @@ namespace Project.Models
         [DisplayName("黑名單")]
         public bool MBlackList
         {
-            get { return _member.MblackList; }
-            set { _member.MblackList = value; }
+            get { return _member.MisHided; }
+            set { _member.MisHided = value; }
         }
 
         public IFormFile photoPath { get; set; }

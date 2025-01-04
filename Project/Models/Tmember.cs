@@ -31,5 +31,5 @@ public partial class Tmember
 
     public string? Mphoto { get; set; }
 
-    public bool MblackList { get; set; }
+    public bool MisHided { get; set; }
 }
