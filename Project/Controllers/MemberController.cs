@@ -24,10 +24,10 @@ namespace Project.Controllers
             IEnumerable<Tmember> datas = null;
 
             if (string.IsNullOrEmpty(keyword))
-                datas = db.Tmembers.Where(m => m.Mishided == false); // 只顯示未加入黑名單的會員
+                datas = db.Tmembers.Where(m => m.MisHided == false); // 只顯示未加入黑名單的會員
             else
                 datas = db.Tmembers.Where
-                    (p => p.Mishided == false &&
+                    (p => p.MisHided == false &&
                     (p.Mname.Contains(keyword)
                 || (keyword == "男" && p.Mgender == 0)
                 || (keyword == "女" && p.Mgender == 1)
@@ -47,7 +47,7 @@ namespace Project.Controllers
             using (DbuniPayContext db = new DbuniPayContext())
             {
                 // 獲取已加入黑名單的會員
-                var blacklistedMembers = db.Tmembers.Where(m => m.Mishided == true).ToList();
+                var blacklistedMembers = db.Tmembers.Where(m => m.MisHided == true).ToList();
                 List<CMemberWrap> list = blacklistedMembers.Select(t => new CMemberWrap { member = t }).ToList();
                 return View("Blacklist", list); // 返回 Blacklist 視圖
             }
@@ -60,7 +60,7 @@ namespace Project.Controllers
 
             if (member != null)
             {
-                member.Mishided = true; // 設定MIsHided為true，將會員加入黑名單
+                member.MisHided = true; // 設定MIsHided為true，將會員加入黑名單
                 try
                 {
                     db.SaveChanges(); // 保存變更
@@ -81,7 +81,7 @@ namespace Project.Controllers
 
             if (member != null)
             {
-                member.Mishided = false; // 移除黑名單
+                member.MisHided = false; // 移除黑名單
                 try
                 {
                     db.SaveChanges(); // 保存變更

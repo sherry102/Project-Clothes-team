@@ -146,8 +146,8 @@ namespace Project.Models
         [DisplayName("黑名單")]
         public bool Mishided
         {
-            get { return _member.Mishided; }
-            set { _member.Mishided = value; }
+            get { return _member.MisHided; }
+            set { _member.MisHided = value; }
         }
 
         public IFormFile photoPath { get; set; }
