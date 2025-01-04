@@ -13,6 +13,8 @@
     <a href="@Url.Action("List", "Order", new { status = "運送中" })" class="btn btn-light text-dark me-3">運送中</a>
     <a href="@Url.Action("List", "Order", new { status = "已完成" })" class="btn btn-light text-dark me-3">已完成</a>
     <a href="@Url.Action("List", "Order", new { status = "退貨" })" class="btn btn-light text-dark me-3">退貨</a>
+    <a href="@Url.Action("List", "Order", new { status = "付款完成" })" class="btn btn-light text-dark me-3">付款完成</a>
+    <a href="@Url.Action("List", "Order", new { status = "尚未付款" })" class="btn btn-light text-dark me-3">尚未付款</a>
 </div> 
 <br /> 
 
@@ -63,10 +65,10 @@
                 @Html.DisplayFor(modelItem => item.Oname)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Odiscountedprice)
+                @(item.Odiscountedprice.HasValue ? item.Odiscountedprice.Value.ToString("#,0") : "0")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OtotalPrice)
+                @item.OtotalPrice.ToString("#,0")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Odate)

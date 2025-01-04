@@ -29,9 +29,20 @@ namespace Project.Controllers
 
             if (status != "All")
             {
-                orders = orders.Where(p => p.Ostatus == status);
+                if (status == "付款完成")
+                {
+                    orders = orders.Where(p => p.Opayment == true); // 已付款
+                }
+                else if (status == "尚未付款")
+                {
+                    orders = orders.Where(p => p.Opayment == false); // 未付款
+                }
+                else
+                {
+                    orders = orders.Where(p => p.Ostatus == status); // 其他状态
+                }
             }
-             
+
             List<OrderWrap> orderWrapList = new List<OrderWrap>();
             foreach (var order in orders)
             {
