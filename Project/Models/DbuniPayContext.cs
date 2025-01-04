@@ -142,7 +142,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tmember>(entity =>
         {
-            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348AFFD81E6A");
+            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348A492E392E");
 
             entity.ToTable("TMember");
 
@@ -154,7 +154,6 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("MAddress");
             entity.Property(e => e.Mbirthday).HasColumnName("MBirthday");
-            entity.Property(e => e.MblackList).HasColumnName("MBlackList");
             entity.Property(e => e.McreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -163,6 +162,7 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("MEmail");
             entity.Property(e => e.Mgender).HasColumnName("MGender");
+            entity.Property(e => e.MisHided).HasColumnName("MIsHided");
             entity.Property(e => e.Mname)
                 .HasMaxLength(50)
                 .HasColumnName("MName");
