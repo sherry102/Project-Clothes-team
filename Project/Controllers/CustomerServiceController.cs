@@ -8,5 +8,10 @@ namespace Project.Controllers
         {
             return View();
         }
-    }
+
+		public IActionResult test()
+		{
+			return View();
+		}
+	}
 }
