@@ -19,7 +19,7 @@ namespace Project.Controllers
             IEnumerable<Tproduct> datas = null;
             if (string.IsNullOrEmpty(keyword))
                 datas = db.Tproducts
-                        .Where(t => !t.IsHided);  // 過濾已刪除的記錄
+                        .Where(t => !t.PisHided);  // 過濾已刪除的記錄
             else
                 datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
             List<CProductWrap> list = new List<CProductWrap>();
@@ -37,7 +37,7 @@ namespace Project.Controllers
                 Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
                 if (x != null)
                 {
-                    x.IsHided = true;
+                    x.PisHided = true;
                     db.SaveChanges();
                 }
             }
@@ -68,7 +68,7 @@ namespace Project.Controllers
             }
 
             DbuniPayContext db = new DbuniPayContext();
-            p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            p.PcreatedDate = DateTime.Now;
             db.Tproducts.Add(p.product);
             db.SaveChanges();
             return RedirectToAction("List");
