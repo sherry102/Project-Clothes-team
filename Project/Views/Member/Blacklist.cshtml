@@ -1,0 +1,105 @@
+﻿@model List<Project.Models.CMemberWrap>
+
+@{
+    ViewData["Title"] = "Blacklist";
+}
+<h1>黑名單會員列表</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                序
+            </th>
+            <th>
+                姓名
+            </th>
+            <th>
+                性別
+            </th>
+            <th>
+                帳號
+            </th>
+            <th>
+                電子郵件
+            </th>
+            <th>
+                地址
+            </th>
+            <th>
+                生日
+            </th>
+            <th>
+                電話
+            </th>
+            <th>
+                點數
+            </th>
+            <th>
+                權限
+            </th>
+            <th>
+                創立日期
+            </th>
+            <th>
+                照片
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@{
+    int count = 0;
+    foreach (var item in Model)
+    {
+        count++;
+        <tr>
+            <td>
+                @count
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Mname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenderText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Maccount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Memail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Maddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Mbirthday)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Mphone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Mpoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.Mpermissions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.member.McreatedDate)
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.member.Mphoto))
+                    {
+                        <img src="~/images/@item.member.Mphoto" height="80" width="90" />
+                    }            
+            </td>
+            <td>
+                @Html.ActionLink("解除黑名單", "RemoveFromBlacklist", new { id = item.member.Mid },
+                    new { @class = "btn btn-warning", onclick = "return confirm('確定要將此會員解除黑名單嗎?');" })
+            </td>
+        </tr>
+}}
+    </tbody>
+</table>
+<div class="text-end mt-3">
+    <a href="@Url.Action("List")" class="btn btn-secondary">返回會員列表</a>
+</div>

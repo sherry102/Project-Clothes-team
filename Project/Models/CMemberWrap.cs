@@ -44,15 +44,16 @@ namespace Project.Models
                 return _member.Mgender == 0 ? "男性" : "女性";
             }
         }
-
+        [Required(ErrorMessage = "帳號必須填寫")]
         [DisplayName("帳號")]
-        public string? Maccount
+        public string Maccount
         {
             get { return _member.Maccount; }
             set { _member.Maccount = value; }
         }
+        [Required(ErrorMessage = "密碼必須填寫")]
         [DisplayName("密碼")]
-        public string? Mpassword
+        public string Mpassword
         {
             get { return _member.Mpassword; }
             set { _member.Mpassword = value; }
@@ -70,10 +71,16 @@ namespace Project.Models
             set { _member.Maddress = value; }
         }
         [DisplayName("生日")]
-        public string? Mbirthdays
+        public string? Mbirthday
         {
             get { return _member.Mbirthday.ToString("yyyy-MM-dd"); }
-            set { _member.Mbirthday = DateOnly.Parse(value); }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _member.Mbirthday = DateOnly.Parse(value);
+                }
+            }
         }
         [DisplayName("電話")]
         public string? Mphone
@@ -113,7 +120,8 @@ namespace Project.Models
                         71=> "執行長",
                         81 => "副總",
                         91 => "負責人",
-                     };
+                        _ => "未定義權限"  // 加入預設值
+                    };
                 }
              }
         
@@ -121,7 +129,13 @@ namespace Project.Models
         public string? McreatedDate
         {
             get { return _member.McreatedDate.ToString("yyyy-MM-dd HH:mm:ss"); }
-            set { _member.McreatedDate = DateTime.Parse(value); }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _member.McreatedDate = DateTime.Parse(value);
+                }
+            }
         }
         [DisplayName("會員照片")]
         public string? Mphoto
@@ -130,10 +144,10 @@ namespace Project.Models
             set { _member.Mphoto = value; }
         }
         [DisplayName("黑名單")]
-        public bool MBlackList
+        public bool Mishided
         {
-            get { return _member.MblackList; }
-            set { _member.MblackList = value; }
+            get { return _member.Mishided; }
+            set { _member.Mishided = value; }
         }
 
         public IFormFile photoPath { get; set; }
