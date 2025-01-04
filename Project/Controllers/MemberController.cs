@@ -275,7 +275,7 @@ namespace Project.Controllers
                 T.Mgender = t.Mgender;
                 T.Memail = t.Memail;
                 T.Maddress = t.Maddress;
-                T.Mbirthday =DateOnly.Parse(t.Mbirthdays);
+                T.Mbirthday =DateOnly.Parse(t.Mbirthday);
                 T.Mphone = t.Mphone;
                 if (t.photoPath != null)
                 {
