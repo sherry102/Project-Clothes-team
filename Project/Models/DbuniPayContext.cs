@@ -212,7 +212,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TorderDetail>(entity =>
         {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C159D5852D8");
+            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C155D137235");
 
             entity.ToTable("TOrderDetail");
 

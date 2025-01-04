@@ -28,9 +28,6 @@
                 @Html.DisplayNameFor(model => model[0].Pcolor)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].PCounts * model[0].Pprice)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model[0].PCounts)
             </th>
         </tr>
@@ -56,9 +53,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Pcolor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CCounts)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CCounts)
@@ -93,10 +87,7 @@
                 @Html.DisplayNameFor(model => model[0].CfontSize)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].OtotalPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Odcounts)
+                @Html.DisplayNameFor(model => model[0].CCounts)
             </th>
         </tr>
     </thead>
@@ -124,10 +115,7 @@
                         @Html.DisplayFor(modelItem => item.CfontSize)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.OtotalPrice)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Odcounts)
+                        @Html.DisplayFor(modelItem => item.CCounts)
                     </td>
 
                 </tr>
