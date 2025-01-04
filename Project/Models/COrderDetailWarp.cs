@@ -30,12 +30,7 @@ namespace Project.Models
             set { _orderdetail.Oid = value; }
         }
 
-        [DisplayName("會員編號")]
-        public int Mid
-        {
-            get { return _orderdetail.Mid; }
-            set { _orderdetail.Mid = value; }
-        }
+        
 
         [DisplayName("商品編號")]
         public int Pid
@@ -49,12 +44,7 @@ namespace Project.Models
             get { return _orderdetail.Cid; }
             set { _orderdetail.Cid = value; }
         }
-        [DisplayName("訂購人名稱")]
-        public string Oname
-        {
-            get { return _orderdetail.Oname; }
-            set { _orderdetail.Oname = value; }
-        }
+       
         [DisplayName("商品名稱")]
         public string Pname
         {
@@ -104,24 +94,20 @@ namespace Project.Models
             get { return _orderdetail.Cimage; }
             set { _orderdetail.Cimage = value; }
         }
-        [DisplayName("訂單總價")]
-        public int OtotalPrice
-        {
-            get { return _orderdetail.OtotalPrice; }
-            set { _orderdetail.OtotalPrice = value; }
-        }
+        
         [DisplayName("訂單明細數量")]
-        public int Odcounts
-        {
-            get { return _orderdetail.Odcounts; }
-            set { _orderdetail.Odcounts = value; }
-        }
-        [DisplayName("商品自取")]
-        public bool OpickMyself
-        {
-            get { return _orderdetail.OpickMyself; }
-            set { _orderdetail.OpickMyself = value; }
+        public int PCounts
+		{
+            get { return _orderdetail.Pcounts; }
+            set { _orderdetail.Pcounts = value; }
         }
 
-    }
+		[DisplayName("客製化產品數量")]
+		public int CCounts
+		{
+			get { return _orderdetail.Ccounts; }
+			set { _orderdetail.Ccounts = value; }
+		}
+
+	}
 }

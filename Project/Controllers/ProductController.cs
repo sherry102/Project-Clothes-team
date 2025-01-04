@@ -21,7 +21,7 @@ namespace Project.Controllers
                 datas = db.Tproducts
                         .Where(t => !t.PisHided);  // 過濾已刪除的記錄
             else
-                datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
+                datas = db.Tproducts.Where(t => t.Pdescription.Contains(keyword));
             List<CProductWrap> list = new List<CProductWrap>();
             foreach (var t in datas)
                 list.Add(new CProductWrap() { product = t });
@@ -59,7 +59,7 @@ namespace Project.Controllers
             }
 
             string photoName = Guid.NewGuid().ToString() + ".jpg";
-            p.Pimage = photoName;
+            p.Pphoto = photoName;
             using (var fileStream = new FileStream(
                     Path.Combine(_enviro.WebRootPath, "images", photoName),
                     FileMode.Create))
@@ -113,10 +113,10 @@ namespace Project.Controllers
                 x.Ptype = p.Ptype;
                 x.Psize = p.Psize;
                 x.Pcolor = p.Pcolor;
-                x.Pdepiction = p.Pdepiction;
+                x.Pdescription = p.Pdescription;
                 x.Pcategory = p.Pcategory; //數量string要轉 int
                 x.Pinventory = p.Pinventory;      
-                x.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
+                x.PcreatedDate = DateTime.Now;
                 //圖片還不能修改
                 db.SaveChanges();
             }
@@ -131,9 +131,9 @@ namespace Project.Controllers
             IEnumerable<Tproduct> datas = null;
             if (string.IsNullOrEmpty(keyword))
                 datas = db.Tproducts
-                        .Where(t => t.IsHided);  // 已刪除的記錄
+                        .Where(t => t.PisHided);  // 已刪除的記錄
             else
-                datas = db.Tproducts.Where(t => t.Pdepiction.Contains(keyword));
+                datas = db.Tproducts.Where(t => t.Pdescription.Contains(keyword));
             List<CProductWrap> list = new List<CProductWrap>();
             foreach (var t in datas)
                 list.Add(new CProductWrap() { product = t });
@@ -151,7 +151,7 @@ namespace Project.Controllers
                 Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
                 if (x != null)
                 {
-                    x.IsHided = false;
+                    x.PisHided = false;
                     db.SaveChanges();
                 }
 

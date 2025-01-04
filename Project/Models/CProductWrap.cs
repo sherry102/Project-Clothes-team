@@ -57,10 +57,10 @@ namespace Project.Models
             set { _product.Pcolor = value; }
         }
         [DisplayName("照片描述")]
-        public string Pdepiction
-        {
-            get { return _product.Pdepiction; }
-            set { _product.Pdepiction = value; }
+        public string Pdescription
+		{
+            get { return _product.Pdescription; }
+            set { _product.Pdescription = value; }
         }
         [DisplayName("商品庫存")]
         public int Pinventory

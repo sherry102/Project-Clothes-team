@@ -19,7 +19,7 @@ public partial class Tproduct
 
     public string Pcolor { get; set; } = null!;
 
-    public string Pdepiction { get; set; } = null!;
+    public string Pdescription { get; set; } = null!;
 
     public int Pinventory { get; set; }
 
