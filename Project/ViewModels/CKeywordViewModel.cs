@@ -2,6 +2,6 @@
 {
     public class CKeywordViewModel
     {
-        public string txtKeyword { get; set; }
+        public string? txtKeyword { get; set; }
     }
 }
