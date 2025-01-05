@@ -281,7 +281,7 @@ namespace Project.Controllers
                 {
                     string photoName = Guid.NewGuid().ToString() + ".jpg";
                     T.Mphoto = photoName;
-                    t.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/assets/img/" + photoName, FileMode.Create));
+                    t.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/Images/" + photoName, FileMode.Create));
                 }
                 db.SaveChanges();
             }
