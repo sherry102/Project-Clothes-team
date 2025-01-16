@@ -1,0 +1,451 @@
+﻿@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        .clothes-box {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            width: 220px;
+            height: 310px;
+            white-space: pre;
+            overflow: hidden;
+        }
+
+        .clothes-container {
+            position: relative;
+        }
+
+        .btn-side {
+            position: absolute;
+            margin: 2px;
+            background-color: #8891a3c7 !important;
+            border: none !important;
+            color: white !important;
+            width: 60px;
+            height: 35px;
+            border-radius: 10px !important;
+        }
+
+            .btn-side:hover {
+                background-color: #8a8282c7 !important;
+                border: 1px solid #8891a3c7 !important;
+            }
+
+        .product-item {
+            text-align: center;
+        }
+
+        #tshirt:hover,
+        #longTshirt:hover,
+        #coat:hover,
+        #sweatshirt:hover,
+        #shortPolo:hover,
+        #shirt:hover {
+            transform: scale(1.1);
+        }
+
+        #white:hover,
+        #black:hover,
+        #blue:hover,
+        #red:hover,
+        #green:hover,
+        #gray:hover,
+        #deepblue:hover {
+            transform: scale(1.1);
+        }
+
+        .item-active {
+            box-shadow: 1px 1px 3px #000;
+            border-radius: 10%;
+            transform: scale(1.1);
+            padding: 2px;
+        }
+
+        .color-content h3 {
+            text-transform: uppercase;
+            font-size: 1.6rem;
+        }
+
+        .color {
+            width: 35px;
+            height: 35px;
+            background: none;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .color-black {
+            background-color: #242424;
+        }
+
+        .color-blue {
+            background-color: #085ea0;
+        }
+
+        .color-yellow {
+            background-color: #ecdf2a;
+        }
+
+        .color-red {
+            background-color: #8b0516;
+        }
+
+        .color-white {
+            background-color: #ededed;
+        }
+
+        .color-green {
+            background-color: #2b814c;
+        }
+
+        .color-deepblue {
+            background-color: #0e0d5e;
+        }
+
+        .color-gray {
+            background-color: #93939e;
+        }
+
+        .color-orange {
+            background-color: #d37c0a;
+        }
+
+        .color:hover {
+            box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        .active-color {
+            box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.7);
+        }
+
+        .color-groups {
+            padding: 1rem 0;
+            display: flex;
+        }
+
+        #img {
+            background-color: rgb(255, 255, 255);
+        }
+
+        .text-input {
+            border-radius: 10px;
+            border: 1px solid #92969ec7 !important;
+            height: 40px !important;
+            width: 600px !important;
+        }
+
+        .draggable-text {
+            cursor: move;
+        }
+    </style>
+}
+<div id="app">
+    <div class="container my-5">
+        <div class="row mt-5 d-flex">
+            <!-- 衣服 -->
+            <div class="col-12 col-lg-6 border px-0 clothes-container">
+                <button class="btn-side" v-on:click="ClothesBack">翻面</button>
+                <img v-bind:src="clothesPhoto" alt="" class="w-100" v-bind:style="{backgroundColor:backgroundColor}" id="img" />
+                <div class="clothes-box">
+                    <span id="textbox" class="draggable-text" v-bind:style="{color:wordColor,fontSize:fontsize+'px'}">{{text}}</span>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div>
+                    <!-- title -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active text-secondary"
+                                    id="home-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#home"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="home"
+                                    aria-selected="true">
+                                商品樣式
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link text-secondary"
+                                    id="profile-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#profile"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="profile"
+                                    aria-selected="false">
+                                新增文字
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link text-secondary"
+                                    id="contact-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#contact"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="contact"
+                                    aria-selected="false">
+                                新增圖片
+                            </button>
+                        </li>
+                        <li class="nav-item ms-auto" >
+                            <button class="nav-link text-secondary fw-bold">
+                                加入購物車
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content " id="myTabContent">
+                        <div class="tab-pane fade show active mt-3 mx-3"
+                             id="home"
+                             role="tabpanel"
+                             aria-labelledby="home-tab">
+                            <!-- 更換樣式 -->
+                            <div class="fs-5 fw-bold mt-3">更換樣式</div>
+                            <div class="row mt-4">
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/shortTshirt.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'tshirt' }"
+                                                 v-on:click.prevent="changeTshirt"
+                                                 id="tshirt" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/longTshirt.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'longtshirt' }"
+                                                 v-on:click.prevent="changeLongTshirt"
+                                                 id="longTshirt" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/shortPolo.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'shortPolo' }"
+                                                 v-on:click.prevent="changeShortPolo"
+                                                 id="shortPolo" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/sweatshirt.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'sweatshirt' }"
+                                                 v-on:click.prevent="changeSweatShirt"
+                                                 id="sweatshirt" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/shirt.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'shirt' }"
+                                                 v-on:click.prevent="changeShirt"
+                                                 id="shirt" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="product-item">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/coat.png"
+                                                 alt=""
+                                                 class="w-75"
+                                                 v-bind:class="{ 'item-active': itemActive === 'coat' }"
+                                                 v-on:click.prevent="changeCoat"
+                                                 id="coat" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 衣服顏色 -->
+                            <div class="color-content">
+                                <div class="fs-5 fw-bold mt-5">
+                                    衣服顏色
+                                    <div class="color-groups mt-2">
+                                        <div class="color color-white" v-bind:class="{'active-color': activeColor === 'white'}" v-on:click="changeColorWhite"></div>
+                                        <div class="color color-black" v-bind:class="{'active-color': activeColor === 'black'}" v-on:click="changeColorBlack"></div>
+                                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === 'yellow'}" v-on:click="changeColorYellow"></div>
+                                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColorBlue"></div>
+                                        <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColorRed"></div>
+                                        <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColorGreen"></div>
+                                        <div class="color color-deepblue" v-bind:class="{'active-color': activeColor === 'deepblue'}" v-on:click="changeColorDeepblue"></div>
+                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColorGray"></div>
+                                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColorOrange"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 衣服件數 -->
+                                <div class="fs-5 fw-bold mt-4">
+                                    衣服件數
+                                <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="0"/>
+                                </div>
+                        </div>
+                        <!-- 衣服文字 -->
+                        <div class="tab-pane fade mt-3 mx-3"
+                             id="profile"
+                             role="tabpanel"
+                             aria-labelledby="profile-tab">
+                            <div>
+                                <div class="d-flex align-items-center mt-3">
+                                    <div class="fs-5 fw-bold me-4">輸入文字</div>
+                                    <input type="color" v-model="wordColor"/> 
+                                </div>
+                                <input type="text"
+                                       class="mt-3 text-input px-2"
+                                       id="text"
+                                       autocomplete="off" 
+                                       v-model="keyWord"
+                                       v-on:keyup="textKeyUp"/>
+                                <div class="fs-5 fw-bold mt-4">文字大小</div>
+                                <input type="range" class="form-range mt-3" id="customRange1" v-model="fontsize" max="80" min="10">
+                                <div class="fs-5 fw-bold mt-4">文字字體</div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade mt-3 mx-3"
+                             id="contact"
+                             role="tabpanel"
+                             aria-labelledby="contact-tab">
+                            ...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var vueApp={
+            data() { 
+                return {
+                    clothesPhoto: "/Images/whiteTshirt1.png",
+                    itemActive:"tshirt",
+                    activeColor:"white",
+                    backgroundColor:"white",
+                    count:"1",
+                    wordColor:"black",
+                    text:"",
+                    keyWord:"",
+                    fontsize:"18",
+
+                };
+            },
+            methods:{
+                ClothesBack:function(){
+                    const switchClothes = {
+                        "/Images/whiteTshirt1.png": "/Images/whiteTshirt2.png",
+                        "/Images/whiteTshirt2.png": "/Images/whiteTshirt1.png",
+                        "/Images/whitelongTshirt1.png": "/Images/whitelongTshirt2.png",
+                        "/Images/whitelongTshirt2.png": "/Images/whitelongTshirt1.png",
+                    };
+                    if (switchClothes[this.clothesPhoto]) {
+                        this.clothesPhoto = switchClothes[this.clothesPhoto];
+                    }
+                },
+                changeTshirt: function () {
+                    this.clothesPhoto = "/Images/whiteTshirt1.png";
+                    this.itemActive = "tshirt";
+                },
+                changeLongTshirt: function () {
+                    this.clothesPhoto = "/Images/whitelongTshirt1.png";
+                    this.itemActive = "longtshirt";
+                },
+                changeShortPolo: function () {
+                    this.clothesPhoto = "/Images/whiteshortPolo1.png";
+                    this.itemActive = "shortPolo";
+                },
+                changeSweatShirt: function () {
+                    this.clothesPhoto = "/Images/whitesweatShirt1.png";
+                    this.itemActive = "sweatshirt";
+                },
+                changeShirt: function () {
+                    this.clothesPhoto = "/Images/whiteShirt1.png";
+                    this.itemActive = "shirt";
+                },
+                changeCoat: function () {
+                    this.clothesPhoto = "/Images/whiteCoat1.png";
+                    this.itemActive = "coat";
+                },
+                changeColorWhite: function () { 
+                    this.activeColor = "white";
+                    this.backgroundColor = "white";
+                },
+                changeColorBlack: function () {
+                    this.activeColor = "black";
+                    this.backgroundColor = "rgba(15, 15, 15, 0.845)";
+                },
+                changeColorYellow: function () {
+                    this.activeColor = "yellow";
+                    this.backgroundColor = "#ffee00";
+                },
+                changeColorBlue: function () {
+                    this.activeColor = "blue";
+                    this.backgroundColor = "#085ea0";
+                },
+                changeColorRed: function () {
+                    this.activeColor = "red";
+                    this.backgroundColor = "#8b0516";
+                },
+                changeColorGreen: function () {
+                    this.activeColor = "green";
+                    this.backgroundColor = "#2b814c";
+                },
+                changeColorDeepblue: function () {
+                    this.activeColor = "deepblue";
+                    this.backgroundColor = "#0e0d5e";
+                },
+                changeColorGray: function () {
+                    this.activeColor = "gray";
+                    this.backgroundColor = "#93939e";
+                },
+                changeColorOrange: function () {
+                    this.activeColor = "orange";
+                    this.backgroundColor = "#d37c0a";
+                },
+                textKeyUp: function () {
+                    this.text = this.keyWord;
+                },
+
+            },
+            // mounted: {
+                
+            // }
+        }
+        var app = Vue.createApp(vueApp).mount("#app");
+    </script>
+    <script>
+        $(function () {
+            $("#textbox").draggable({ containment: "parent" });
+        });
+    </script>
+}

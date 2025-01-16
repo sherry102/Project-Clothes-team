@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+          crossorigin="anonymous" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/nav.css" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <!-- 標題 -->
+        <div class="container mt-2">
+            <div class="row">
+                <div class="col-12 d-flex align-items-center">
+                    <a class="navbar-brand titleName" href="#">UniPay</a>
+                    <form class="d-flex me-5 form-search">
+                        <input class="form-control me-2 input-search"
+                               type="search"
+                               placeholder="Search"
+                               aria-label="Search" />
+                        <button class="btn btn-outline-success btn-search" type="submit">
+                            <div><i class="bi bi-search"></i></div>
+                        </button>
+                    </form>
+                    <div class="ms-auto">
+                        <a href=""> <i class="bi bi-heart"></i></a>
+                        <a href=""> <i class="bi bi-handbag"></i></a>
+                        <a href=""> <i class="bi bi-person"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="m-1" />
+        <!-- 導覽列 -->
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="navbar navbar-expand-lg navbar-light py-1">
+                        <div class="container-fluid">
+                            <button class="navbar-toggler"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#navbarSupportedContent"
+                                    aria-controls="navbarSupportedContent"
+                                    aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse"
+                                 id="navbarSupportedContent">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item dropdown mx-5">
+                                        <a class="nav-link dropdown-toggle menu-women"
+                                           href="#"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            Women
+                                        </a>
+                                    </li>
+                                    <li class="nav-item dropdown mx-5 menu-men">
+                                        <a class="nav-link dropdown-toggle"
+                                           href="#"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            Men
+                                        </a>
+                                    </li>
+                                    <li class="nav-item dropdown mx-5">
+                                        <a class="nav-link dropdown-toggle menu-kids"
+                                           href="#"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            Kids
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mx-5">
+                                        <a class="nav-link" href="#">Styles</a>
+                                    </li>
+                                    <li class="nav-item mx-5">
+                                        <a class="nav-link" href="#">Freestyle</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <hr class="m-1" />
+        <!-- women 選單 -->
+        <div class="row" id="menu-women">
+            <div class="menu">
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">洋裝</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+            </div>
+        </div>
+        <!-- men 選單 -->
+        <div class="row" id="menu-men">
+            <div class="menu">
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">洋裝</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+            </div>
+        </div>
+        <!-- kids 選單 -->
+        <div class="row" id="menu-kids">
+            <div class="menu">
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">洋裝</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2 fw-bold">上身</div>
+                    <div class="my-4">Home</div>
+                    <div class="my-4">About</div>
+                    <div class="my-4">Contact</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="~/js/nav.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
