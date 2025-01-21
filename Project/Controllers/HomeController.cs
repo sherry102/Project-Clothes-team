@@ -90,7 +90,8 @@ namespace Project.Controllers
 												 totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
 												 price = grouped.FirstOrDefault().Pprice
 											 })
-											 .Take(5)
+                                             .OrderByDescending(x => x.count)
+                                             .Take(5)
 											 .ToList();
 
 			ViewBag.SalesCount_TOP5_Month = (from tod in db.TorderDetails
@@ -106,7 +107,8 @@ namespace Project.Controllers
 												 totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
 												 price = grouped.FirstOrDefault().Pprice
 											 })
-											 .Take(5)
+                                             .OrderByDescending(x => x.count)
+                                             .Take(5)
 											 .ToList();
 
 			ViewBag.SalesCount_TOP5_Year = (from tod in db.TorderDetails
@@ -122,8 +124,9 @@ namespace Project.Controllers
 												totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
 												price = grouped.FirstOrDefault().Pprice
 											})
-											  .Take(5)
-											  .ToList();
+                                            .OrderByDescending(x => x.count)
+                                            .Take(5)
+											.ToList();
 
 			ViewBag.typesales_today = (from tod in db.TorderDetails
 									   join tp in db.Tproducts on tod.Pid equals tp.Pid
