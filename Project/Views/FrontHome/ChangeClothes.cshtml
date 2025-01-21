@@ -2,16 +2,18 @@
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section Styles{
+    <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+TC&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <style>
         .clothes-box {
             position: absolute;
             transform: translate(-50%, -50%);
             left: 50%;
             top: 50%;
-            width: 220px;
-            height: 310px;
+            width: 40%;
+            height: 70%;
             white-space: pre;
             overflow: hidden;
+            /* border:1px solid black */
         }
 
         .clothes-container {
@@ -43,6 +45,7 @@
         #coat:hover,
         #sweatshirt:hover,
         #shortPolo:hover,
+        .fontFamily:hover,
         #shirt:hover {
             transform: scale(1.1);
         }
@@ -70,13 +73,14 @@
         }
 
         .color {
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             background: none;
             border-radius: 50%;
             margin-right: 12px;
             cursor: pointer;
             transition: all 0.5s ease;
+            aspect-ratio: 1; /* 確保寬高比例為 1:1 */
         }
 
         .color-black {
@@ -129,7 +133,7 @@
             display: flex;
         }
 
-        #img {
+        .img {
             background-color: rgb(255, 255, 255);
         }
 
@@ -137,11 +141,17 @@
             border-radius: 10px;
             border: 1px solid #92969ec7 !important;
             height: 40px !important;
-            width: 600px !important;
+            width: 100% !important;
         }
-
-        .draggable-text {
+        .draggable-text{
             cursor: move;
+        }
+        .fwBolder:hover{
+            transform:scale(1.1);
+        }
+        .textChoose{
+            font-weight:bold;
+            text-shadow:3px 3px 5px lightgray;
         }
     </style>
 }
@@ -149,11 +159,22 @@
     <div class="container my-5">
         <div class="row mt-5 d-flex">
             <!-- 衣服 -->
-            <div class="col-12 col-lg-6 border px-0 clothes-container">
-                <button class="btn-side" v-on:click="ClothesBack">翻面</button>
-                <img v-bind:src="clothesPhoto" alt="" class="w-100" v-bind:style="{backgroundColor:backgroundColor}" id="img" />
+            <!-- 正面 -->
+            <div class="col-12 col-lg-6 border px-0 clothes-container"  v-show="clothesFront">
+                <button class="btn-side" v-on:click="ClothesBack">正面</button>
+                <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}"  />
                 <div class="clothes-box">
-                    <span id="textbox" class="draggable-text" v-bind:style="{color:wordColor,fontSize:fontsize+'px'}">{{text}}</span>
+                    <span class="draggable-text"  style="z-index:100" v-bind:style="{color:wordColor0,fontSize:fontsize0+'px',fontWeight:fontWeight0,fontFamily:fontFamily0}">{{text0}}</span>
+                    <img v-bind:src="uploadPhoto0" class="draggable-text" v-bind:style="{width:photoWidth0+'px'}" style="z-index:99" />
+                </div>
+            </div>
+            <!-- 背面 -->
+            <div class="col-12 col-lg-6 border px-0 clothes-container" v-show="!clothesFront">
+                <button class="btn-side" v-on:click="ClothesBack">背面</button>
+                <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
+                <div class="clothes-box">
+                    <span class="draggable-text" style="z-index:100" v-bind:style="{color:wordColor1,fontSize:fontsize1+'px',fontWeight:fontWeight1,fontFamily:fontFamily1}">{{text1}}</span>
+                    <img v-bind:src="uploadPhoto1" class="draggable-text" v-bind:style="{width:photoWidth1+'px'}" style="z-index:99" />
                 </div>
             </div>
             <div class="col-12 col-lg-6">
@@ -197,7 +218,7 @@
                             </button>
                         </li>
                         <li class="nav-item ms-auto" >
-                            <button class="nav-link text-secondary fw-bold">
+                            <button class="nav-link text-secondary fw-bold" style="font-size:1.1em;">
                                 加入購物車
                             </button>
                         </li>
@@ -210,74 +231,62 @@
                             <!-- 更換樣式 -->
                             <div class="fs-5 fw-bold mt-3">更換樣式</div>
                             <div class="row mt-4">
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
-                                        <a href="#" class="text-decoration-none text-dark">
+                                <div class="col-2">
+                                    <div class="product-item my-1">
+                                        <a href="#" class="text-decoration-none text-dark ">
                                             <img src="~/Images/shortTshirt.png"
                                                  alt=""
-                                                 class="w-75"
+                                                 class="w-100"
                                                  v-bind:class="{ 'item-active': itemActive === 'tshirt' }"
-                                                 v-on:click.prevent="changeTshirt"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteTshirt1.png','tshirt')"
                                                  id="tshirt" />
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
+                                <div class="col-2">
+                                    <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
                                             <img src="~/Images/longTshirt.png"
                                                  alt=""
-                                                 class="w-75"
+                                                 class="w-100"
                                                  v-bind:class="{ 'item-active': itemActive === 'longtshirt' }"
-                                                 v-on:click.prevent="changeLongTshirt"
+                                                 v-on:click.prevent="changeClothes('/Images/whitelongTshirt1.png','longtshirt')"
                                                  id="longTshirt" />
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
+                                <div class="col-2">
+                                    <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
                                             <img src="~/Images/shortPolo.png"
                                                  alt=""
-                                                 class="w-75"
+                                                 class="w-100"
                                                  v-bind:class="{ 'item-active': itemActive === 'shortPolo' }"
-                                                 v-on:click.prevent="changeShortPolo"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteshortPolo1.png','shortPolo')"
                                                  id="shortPolo" />
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
+                                <div class="col-2">
+                                    <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
                                             <img src="~/Images/sweatshirt.png"
                                                  alt=""
-                                                 class="w-75"
+                                                 class="w-100"
                                                  v-bind:class="{ 'item-active': itemActive === 'sweatshirt' }"
-                                                 v-on:click.prevent="changeSweatShirt"
+                                                 v-on:click.prevent="changeClothes('/Images/whitesweatShirt1.png','sweatshirt')"
                                                  id="sweatshirt" />
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
-                                        <a href="#" class="text-decoration-none text-dark">
-                                            <img src="~/Images/shirt.png"
-                                                 alt=""
-                                                 class="w-75"
-                                                 v-bind:class="{ 'item-active': itemActive === 'shirt' }"
-                                                 v-on:click.prevent="changeShirt"
-                                                 id="shirt" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-2">
-                                    <div class="product-item">
+                                <div class="col-2">
+                                    <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
                                             <img src="~/Images/coat.png"
                                                  alt=""
-                                                 class="w-75"
+                                                 class="w-100"
                                                  v-bind:class="{ 'item-active': itemActive === 'coat' }"
-                                                 v-on:click.prevent="changeCoat"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteCoat1.png','coat')"
                                                  id="coat" />
                                         </a>
                                     </div>
@@ -288,15 +297,15 @@
                                 <div class="fs-5 fw-bold mt-5">
                                     衣服顏色
                                     <div class="color-groups mt-2">
-                                        <div class="color color-white" v-bind:class="{'active-color': activeColor === 'white'}" v-on:click="changeColorWhite"></div>
-                                        <div class="color color-black" v-bind:class="{'active-color': activeColor === 'black'}" v-on:click="changeColorBlack"></div>
-                                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === 'yellow'}" v-on:click="changeColorYellow"></div>
-                                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColorBlue"></div>
-                                        <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColorRed"></div>
-                                        <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColorGreen"></div>
-                                        <div class="color color-deepblue" v-bind:class="{'active-color': activeColor === 'deepblue'}" v-on:click="changeColorDeepblue"></div>
-                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColorGray"></div>
-                                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColorOrange"></div>
+                                        <div class="color color-white" v-bind:class="{'active-color': activeColor === 'white'}" v-on:click="changeColor('white','white')"></div>
+                                        <div class="color color-black" v-bind:class="{'active-color': activeColor === 'black'}" v-on:click="changeColor('black','rgba(15, 15, 15,0.8)')"></div>
+                                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === 'yellow'}" v-on:click="changeColor('yellow','#ffee00')"></div>
+                                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColor('blue','#085ea0')"></div>
+                                        <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColor('red','#8b0516')"></div>
+                                        <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColor('green','#2b814c')"></div>
+                                        <div class="color color-deepblue" v-bind:class="{'active-color': activeColor === 'deepblue'}" v-on:click="changeColor('deepblue','#0e0d5e')"></div>
+                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColor('gray','#93939e')"></div>
+                                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColor('orange','#d37c0a')"></div>
                                     </div>
                                 </div>
                             </div>
@@ -307,31 +316,124 @@
                                 </div>
                         </div>
                         <!-- 衣服文字 -->
-                        <div class="tab-pane fade mt-3 mx-3"
+                        <div class="tab-pane fade mt-3 mx-3 "
                              id="profile"
                              role="tabpanel"
                              aria-labelledby="profile-tab">
                             <div>
                                 <div class="d-flex align-items-center mt-3">
                                     <div class="fs-5 fw-bold me-4">輸入文字</div>
-                                    <input type="color" v-model="wordColor"/> 
+                                    <input v-show="clothesFront" type="color" v-model="wordColor0" />
+                                    <input v-show="!clothesFront" type="color" v-model="wordColor1" />
+                                    <a v-show="clothesFront" href="#" class="ms-3 text-decoration-none fwBolder" style="color:gray;" v-bind:style="{fontWeight:fontWeight0}" v-on:click.prevent="fwBolder0">粗體</a>
+                                    <a v-show="!clothesFront" href="#" class="ms-3 text-decoration-none fwBolder" style="color:gray;" v-bind:style="{fontWeight:fontWeight1}" v-on:click.prevent="fwBolder1">粗體</a>
                                 </div>
-                                <input type="text"
+                                <input v-show="clothesFront" type="text"
                                        class="mt-3 text-input px-2"
-                                       id="text"
                                        autocomplete="off" 
-                                       v-model="keyWord"
-                                       v-on:keyup="textKeyUp"/>
+                                       v-model="keyWord0"
+                                       v-on:keyup="textKeyUp0"/>
+                                <input v-show="!clothesFront" type="text"
+                                       class="mt-3 text-input px-2"
+                                       autocomplete="off"
+                                       v-model="keyWord1"
+                                       v-on:keyup="textKeyUp1" />
                                 <div class="fs-5 fw-bold mt-4">文字大小</div>
-                                <input type="range" class="form-range mt-3" id="customRange1" v-model="fontsize" max="80" min="10">
-                                <div class="fs-5 fw-bold mt-4">文字字體</div>
+                                <input v-show="clothesFront" type="range" class="form-range mt-3" v-model="fontsize0" max="80" min="10">
+                                <input v-show="!clothesFront" type="range" class="form-range mt-3" v-model="fontsize1" max="80" min="10">
+                                <div class="fs-5 fw-bold mt-4 mb-3">文字字體</div>
+                                <div v-show="clothesFront" class="row d-flex text-center ">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily0('Times New Roman')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily0('Cactus Classical Serif')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily0('DFKai-SB')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily0('LXGW WenKai TC')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                </div>
+                                <br v-show="clothesFront" />
+                                <div v-show="clothesFront" class="row d-flex text-center">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily0('ZCOOL QingKe HuangYou')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily0('Liu Jian Mao Cao')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily0('Ma Shan Zheng')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Long Cang' }" v-on:click.prevent="changeFontFamily0('Long Cang')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                </div>
+                                <div v-show="!clothesFront" class="row d-flex text-center ">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily1('Times New Roman')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily1('Cactus Classical Serif')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily1('DFKai-SB')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily1('LXGW WenKai TC')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                </div>
+                                <br v-show="!clothesFront" />
+                                <div v-show="!clothesFront" class="row d-flex text-center">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily1('ZCOOL QingKe HuangYou')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily1('Liu Jian Mao Cao')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily1('Ma Shan Zheng')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Long Cang' }" v-on:click.prevent="changeFontFamily1('Long Cang')">
+                                        <div>中文</div>
+                                        <div>English</div>
+                                    </a>
+                                </div>
+
+
+                                
                             </div>
                         </div>
+
+                        <!-- 衣服上傳照片 -->
+                        <!-- 正面 -->
                         <div class="tab-pane fade mt-3 mx-3"
                              id="contact"
                              role="tabpanel"
                              aria-labelledby="contact-tab">
-                            ...
+                            <div class="fs-5 fw-bold mt-4">照片上傳</div>
+                            <input v-show="clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange0($event.target)" />
+                            <input v-show="!clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange1($event.target)" />
+                            <div class="fs-5 fw-bold mt-4">照片大小</div>
+                            <input v-show="clothesFront" type="range" class="form-range mt-3" v-model="photoWidth0" max="240" min="30">
+                            <input v-show="!clothesFront" type="range" class="form-range mt-3" v-model="photoWidth1" max="240" min="30">
                         </div>
                     </div>
                 </div>
@@ -353,99 +455,116 @@
                     activeColor:"white",
                     backgroundColor:"white",
                     count:"1",
-                    wordColor:"black",
-                    text:"",
-                    keyWord:"",
-                    fontsize:"18",
-
+                    wordColor0: "#000000",
+                    text0:"",
+                    keyWord0:"",
+                    fontsize0:"18",
+                    fontWeight0:"normal",
+                    fontFamily0: "Times New Roman",
+                    uploadPhoto0:"",
+                    photoWidth0:"100",
+                    wordColor1: "#000000",
+                    text1: "",
+                    keyWord1: "",
+                    fontsize1: "18",
+                    fontWeight1: "normal",
+                    fontFamily1: "Times New Roman",
+                    uploadPhoto1: "",
+                    photoWidth1: "100",
+                    wordColor1: "#000000",
+                    clothesFront:true,
                 };
             },
             methods:{
                 ClothesBack:function(){
+                    this.clothesFront = !this.clothesFront;
+                    this.$nextTick(() => {
+                        // 在 DOM 更新後初始化 draggable
+                        $(".draggable-text").draggable({ containment: "parent" });
+                    });
                     const switchClothes = {
                         "/Images/whiteTshirt1.png": "/Images/whiteTshirt2.png",
                         "/Images/whiteTshirt2.png": "/Images/whiteTshirt1.png",
                         "/Images/whitelongTshirt1.png": "/Images/whitelongTshirt2.png",
                         "/Images/whitelongTshirt2.png": "/Images/whitelongTshirt1.png",
+                        "/Images/whitesweatShirt1.png": "/Images/whitesweatShirt2.png",
+                        "/Images/whitesweatShirt2.png": "/Images/whitesweatShirt1.png",
+                        "/Images/whiteshortPolo1.png": "/Images/whiteshortPolo2.png",
+                        "/Images/whiteshortPolo2.png": "/Images/whiteshortPolo1.png",
+                        "/Images/whiteCoat1.png": "/Images/whiteCoat2.png",
+                        "/Images/whiteCoat2.png": "/Images/whiteCoat1.png",
+
                     };
                     if (switchClothes[this.clothesPhoto]) {
                         this.clothesPhoto = switchClothes[this.clothesPhoto];
                     }
                 },
-                changeTshirt: function () {
-                    this.clothesPhoto = "/Images/whiteTshirt1.png";
-                    this.itemActive = "tshirt";
+                changeClothes: function (photoPath,clothes) {
+                    this.clothesPhoto = photoPath;
+                    this.itemActive = clothes;
+                    this.clothesFront = true;
                 },
-                changeLongTshirt: function () {
-                    this.clothesPhoto = "/Images/whitelongTshirt1.png";
-                    this.itemActive = "longtshirt";
+                changeColor: function (activeColor, backgroundColor) {
+                    this.activeColor = activeColor;
+                    this.backgroundColor = backgroundColor;
                 },
-                changeShortPolo: function () {
-                    this.clothesPhoto = "/Images/whiteshortPolo1.png";
-                    this.itemActive = "shortPolo";
+                textKeyUp0: function () {
+                    this.text0 = this.keyWord0;
                 },
-                changeSweatShirt: function () {
-                    this.clothesPhoto = "/Images/whitesweatShirt1.png";
-                    this.itemActive = "sweatshirt";
+                textKeyUp1: function () {
+                    this.text1 = this.keyWord1;
                 },
-                changeShirt: function () {
-                    this.clothesPhoto = "/Images/whiteShirt1.png";
-                    this.itemActive = "shirt";
+                fwBolder0: function () { 
+                    this.fontWeight0= this.fontWeight0 == "normal" ? "bolder":"normal"
                 },
-                changeCoat: function () {
-                    this.clothesPhoto = "/Images/whiteCoat1.png";
-                    this.itemActive = "coat";
+                fwBolder1: function () {
+                    this.fontWeight1 = this.fontWeight1 == "normal" ? "bolder" : "normal"
                 },
-                changeColorWhite: function () { 
-                    this.activeColor = "white";
-                    this.backgroundColor = "white";
+                changeFontFamily0: function (fontFamily) {
+                    this.fontFamily0 = fontFamily;
                 },
-                changeColorBlack: function () {
-                    this.activeColor = "black";
-                    this.backgroundColor = "rgba(15, 15, 15, 0.845)";
+                changeFontFamily1: function (fontFamily) {
+                    this.fontFamily1 = fontFamily;
                 },
-                changeColorYellow: function () {
-                    this.activeColor = "yellow";
-                    this.backgroundColor = "#ffee00";
+                photoChange0: function (photo) { 
+                    if (photo.files[0]) { 
+                        let allowType = "image.*";
+                        let file = photo.files[0];
+                        if (file.type.match(allowType)) {
+                            let reader = new FileReader();
+                            reader.onload=(e)=>{
+                                this.uploadPhoto0=e.target.result;
+                            }
+                            reader.readAsDataURL(file);
+                        }else{
+                            alert("不允許的檔案上傳類型");
+                            photo.value = "";
+                        }
+                    }
                 },
-                changeColorBlue: function () {
-                    this.activeColor = "blue";
-                    this.backgroundColor = "#085ea0";
-                },
-                changeColorRed: function () {
-                    this.activeColor = "red";
-                    this.backgroundColor = "#8b0516";
-                },
-                changeColorGreen: function () {
-                    this.activeColor = "green";
-                    this.backgroundColor = "#2b814c";
-                },
-                changeColorDeepblue: function () {
-                    this.activeColor = "deepblue";
-                    this.backgroundColor = "#0e0d5e";
-                },
-                changeColorGray: function () {
-                    this.activeColor = "gray";
-                    this.backgroundColor = "#93939e";
-                },
-                changeColorOrange: function () {
-                    this.activeColor = "orange";
-                    this.backgroundColor = "#d37c0a";
-                },
-                textKeyUp: function () {
-                    this.text = this.keyWord;
-                },
-
+                photoChange1: function (photo) {
+                    if (photo.files[0]) {
+                        let allowType = "image.*";
+                        let file = photo.files[0];
+                        if (file.type.match(allowType)) {
+                            let reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.uploadPhoto1 = e.target.result;
+                            }
+                            reader.readAsDataURL(file);
+                        } else {
+                            alert("不允許的檔案上傳類型");
+                            photo.value = "";
+                        }
+                    }
+                }
             },
-            // mounted: {
-                
-            // }
+            mounted: function () {
+                this.$nextTick(() => {
+                    $(".draggable-text").draggable({ containment: "parent" });
+                });
+            }
         }
         var app = Vue.createApp(vueApp).mount("#app");
-    </script>
-    <script>
-        $(function () {
-            $("#textbox").draggable({ containment: "parent" });
-        });
     </script>
 }
