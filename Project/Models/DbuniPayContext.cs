@@ -15,6 +15,8 @@ public partial class DbuniPayContext : DbContext
     {
     }
 
+    public virtual DbSet<ChatMessage> ChatMessages { get; set; }
+
     public virtual DbSet<Tcomment> Tcomments { get; set; }
 
     public virtual DbSet<Tcoupon> Tcoupons { get; set; }
@@ -41,6 +43,20 @@ public partial class DbuniPayContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("ChatMessage");
+
+            entity.Property(e => e.ChatId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasDefaultValue("Unread")
+                .HasColumnName("status");
+            entity.Property(e => e.Time).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Tcomment>(entity =>
         {
             entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F41326690FACF");
