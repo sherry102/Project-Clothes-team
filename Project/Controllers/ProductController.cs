@@ -74,21 +74,6 @@ namespace Project.Controllers
             return RedirectToAction("List");
         }
 
-        //public IActionResult Create(CProductWrap p)
-        //{
-        //    if (p.photoPath != null)
-        //    {
-        //        string photoName = Guid.NewGuid().ToString() + ".jpg";
-        //        p.Pimage = photoName;
-        //        p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName,FileMode.Create));
-        //    }
-        //    DbuniPayContext db = new DbuniPayContext();
-        //    p.Pdate = DateTime.Now.ToString("yyyyMMddHHmmss");
-        //    db.Tproducts.Add(p.product);
-        //    db.SaveChanges();
-        //    return RedirectToAction("List");
-        //}
-
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -114,10 +99,16 @@ namespace Project.Controllers
                 x.Psize = p.Psize;
                 x.Pcolor = p.Pcolor;
                 x.Pdescription = p.Pdescription;
-                x.Pcategory = p.Pcategory; //數量string要轉 int
-                x.Pinventory = p.Pinventory;      
+                x.Pcategory = p.Pcategory;     
                 x.PcreatedDate = DateTime.Now;
-                //圖片還不能修改
+                x.Pinventory = p.Pinventory;
+
+                if (p.photoPath != null)
+                {
+                    string photoName = Guid.NewGuid().ToString() + ".jpg";
+                    x.Pphoto = photoName;
+                    p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
+                }
                 db.SaveChanges();
             }
             return RedirectToAction("List");
@@ -154,7 +145,6 @@ namespace Project.Controllers
                     x.PisHided = false;
                     db.SaveChanges();
                 }
-
             }
             return RedirectToAction("List");
         }
@@ -171,13 +161,8 @@ namespace Project.Controllers
                     db.Tproducts.Remove(x);
                     db.SaveChanges();
                 }
-
             }
             return RedirectToAction("Renew");
         }
-
-
-
-
     }
 }
