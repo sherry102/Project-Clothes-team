@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    bool isFullWidth = ViewBag.IsFullWidth ?? false; // 預設為 false
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -211,11 +214,20 @@
             </div>
         </div>
     </header>
-    <div class="container">
+    @if (isFullWidth)
+    {
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
+    }
+    else
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
     
 
     <script src="~/js/site.js" asp-append-version="true"></script>
