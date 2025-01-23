@@ -1,7 +1,12 @@
-﻿@model Project.Models.CMemberWrap
+@model Project.Models.CMemberWrap
 
 @{
     ViewData["Title"] = "新增會員";
+}
+
+@section Styles {
+<!-- Bootstrap Datepicker CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker3.min.css" rel="stylesheet">
 }
 
 <h1>新增會員</h1>
