@@ -30,8 +30,6 @@ namespace Project.Models
             set { _orderdetail.Oid = value; }
         }
 
-        
-
         [DisplayName("商品編號")]
         public int Pid
         {
@@ -44,7 +42,13 @@ namespace Project.Models
             get { return _orderdetail.Cid; }
             set { _orderdetail.Cid = value; }
         }
-       
+        [DisplayName("商品圖片")]
+        public string Pimage
+        {
+            get { return _orderdetail.Pimage; }
+            set { _orderdetail.Pimage = value; }
+        }
+
         [DisplayName("商品名稱")]
         public string Pname
         {
@@ -108,6 +112,5 @@ namespace Project.Models
 			get { return _orderdetail.Ccounts; }
 			set { _orderdetail.Ccounts = value; }
 		}
-
 	}
 }
