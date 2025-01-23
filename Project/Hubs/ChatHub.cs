@@ -7,39 +7,39 @@ namespace CoreMVC_SignalR_Chat.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly DbuniPayContext _dbContext;
+   //     private readonly DbuniPayContext _dbContext;
 
-        public ChatHub(DbuniPayContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+   //     public ChatHub(DbuniPayContext dbContext)
+   //     {
+   //         _dbContext = dbContext;
+   //     }
 
-        public async Task SendMessage(int PostId,int ReceivedId, string message)
-        {
-            if (PostId <= 0 || ReceivedId <= 0 ) {
-				throw new ArgumentException("Invalid input parameters.");
-			}
-            try
-            {
-                // 儲存訊息到資料庫
-                var ChatMessage = new ChatMessage
-                {
-                    MemberId = PostId,
-                    ReceivedMemberId = ReceivedId,
-                    Message = message,
-                };
+   //     public async Task SendMessage(int PostId,int ReceivedId, string message)
+   //     {
+   //         if (PostId <= 0 || ReceivedId <= 0 ) {
+			//	throw new ArgumentException("Invalid input parameters.");
+			//}
+   //         try
+   //         {
+   //             // 儲存訊息到資料庫
+   //             var ChatMessage = new ChatMessage
+   //             {
+   //                 MemberId = PostId,
+   //                 ReceivedMemberId = ReceivedId,
+   //                 Message = message,
+   //             };
 
-                _dbContext.ChatMessages.Add(ChatMessage);
-                await _dbContext.SaveChangesAsync();
+   //             _dbContext.ChatMessages.Add(ChatMessage);
+   //             await _dbContext.SaveChangesAsync();
 
-                // 推送訊息給其他用戶
-                await Clients.All.SendAsync("ReceiveMessage", PostId, ReceivedId, message);
-            }
-            catch (Exception ex) {
-				throw new InvalidOperationException("Failed to send message.", ex);
-			}
+   //             // 推送訊息給其他用戶
+   //             await Clients.All.SendAsync("ReceiveMessage", PostId, ReceivedId, message);
+   //         }
+   //         catch (Exception ex) {
+			//	throw new InvalidOperationException("Failed to send message.", ex);
+			//}
             
-        }
+   //     }
 
         // 用戶連線 ID 列表
         //        public static List<string> ConnIDList = new List<string>();
