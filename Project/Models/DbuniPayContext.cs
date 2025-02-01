@@ -138,6 +138,13 @@ public partial class DbuniPayContext : DbContext
                 .HasColumnName("FCreateDate");
             entity.Property(e => e.Mid).HasColumnName("MID");
             entity.Property(e => e.Pid).HasColumnName("PID");
+            entity.Property(e => e.Pname)
+                .HasMaxLength(50)
+                .HasColumnName("PName");
+            entity.Property(e => e.Pphoto)
+                .HasMaxLength(50)
+                .HasColumnName("PPhoto");
+            entity.Property(e => e.Pprice).HasColumnName("PPrice");
         });
 
         modelBuilder.Entity<Tmember>(entity =>
