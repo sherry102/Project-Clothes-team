@@ -26,30 +26,40 @@
     transform: translateX(-50%);
     position: absolute;
   }
-  .bi-handbag,
-  .bi-person,
-  .bi-heart {
+.bi-handbag,
+.bi-person,
+.bi-heart,
+.bi-heart-fill {
     font-size: 30px;
     color: #25458ac7 !important;
     margin: 0px 10px;
-  }
-  .bi-handbag:hover,
-  .bi-person:hover,
-  .bi-heart:hover {
-    color: #b85a5ac7 !important;
-  }
+}
+
+
+    .bi-handbag:hover,
+    .bi-person:hover,
+    .bi-heart:hover{
+        color: #b85a5ac7 !important;
+    }
   .navbar-nav {
     margin-left: auto;
   }
   hr {
     color: #92969ec7 !important;
   }
-  .menu {
+    #menu-women, #menu-men, #menu-kids {
+        position: absolute;
+        width: 100%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ³±¼v®ÄªG */
+        z-index: 999;
+        display:none;
+    }
+    .menu {
     width: 100%;
     background-color: white;
     display: flex;
     justify-content: space-evenly;
-  }
+    }
   .menu-column {
     text-align: center;
   }
@@ -147,4 +157,7 @@
     z-index: 1;
     color: rgba(0, 0, 0, 0.2);
     pointer-events: none;
+}
+.titleFont {
+    font-family: 'Lato', Helvetica, Arial, sans-serif;
 }

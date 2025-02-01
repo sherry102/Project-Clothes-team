@@ -1,6 +1,11 @@
 using CoreMVC_SignalR_Chat.Hubs;
+using Microsoft.EntityFrameworkCore;
+using Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+// Add services to the DI container.
+builder.Services.AddDbContext<DbuniPayContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -28,6 +33,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=FrontHome}/{action=FrontIndex}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();

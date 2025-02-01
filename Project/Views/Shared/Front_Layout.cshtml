@@ -18,7 +18,7 @@
     
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/nav.css" />
+    <link rel="stylesheet" href="~/css/nav.css?v=1.0" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -27,7 +27,7 @@
         <div class="container mt-2">
             <div class="row">
                 <div class="col-12 d-flex align-items-center">
-                    <a class="navbar-brand titleName" href="#">UniPay</a>
+                    <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
                     <form class="d-flex me-5 form-search">
                         <input class="form-control me-2 input-search"
                                type="search"
@@ -38,7 +38,7 @@
                         </button>
                     </form>
                     <div class="ms-auto">
-                        <a href=""> <i class="bi bi-heart"></i></a>
+                        <a href="~/FrontHome/Favorite"> <i class="bi bi-heart"></i></a>
                         <a href=""> <i class="bi bi-handbag"></i></a>
                         <a href=""> <i class="bi bi-person"></i></a>
                     </div>
@@ -98,7 +98,7 @@
                                         <a class="nav-link" href="#">Styles</a>
                                     </li>
                                     <li class="nav-item mx-5">
-                                        <a class="nav-link" href="#">Freestyle</a>
+                                        <a href="~/FrontHome/Customize" class="nav-link" href="#">Freestyle</a>
                                     </li>
                                 </ul>
                             </div>
@@ -113,7 +113,7 @@
             <div class="menu">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上身</div>
-                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">women</a></div>
                     <div class="my-4"><a href="" class="item">長袖上衣</a></div>
                     <div class="my-4"><a href="" class="item">洋裝</a></div>
                 </div>
@@ -148,7 +148,7 @@
             <div class="menu">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上身</div>
-                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">men</a></div>
                     <div class="my-4"><a href="" class="item">長袖上衣</a></div>
                     <div class="my-4"><a href="" class="item">洋裝</a></div>
                 </div>
@@ -183,7 +183,7 @@
             <div class="menu">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上身</div>
-                    <div class="my-4"><a href="" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="" class="item">kids</a></div>
                     <div class="my-4"><a href="" class="item">長袖上衣</a></div>
                     <div class="my-4"><a href="" class="item">洋裝</a></div>
                 </div>

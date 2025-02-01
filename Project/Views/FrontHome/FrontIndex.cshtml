@@ -21,6 +21,13 @@
             right:8px;
             color:gray !important;
         }
+
+        .bi-heart-fill{
+            color:indianred !important;
+        }
+        .photoRadius{
+            border-radius:8px;
+        }
    </style>
 } 
 <div id="app">
@@ -132,41 +139,72 @@
     </section>
     <!--人氣商品-->
     <div class="container">
-        <div class="mt-3">
+        <div class="mt-1">
             <h3 class="fw-bold">人氣商品</h3>
             <div class="row mt-3">
                 <div class="col-3" v-for="item in Top4Sales">
                     <div class="TopSales">
                         <a href="#" class="text-decoration-none">
-                            <i class="bi bi-heart favorite"></i>
-                            <img v-bind:src="'/Images/'+ item.image" class="w-100" />
-                            <div class="mt-2 fw-bold ps-2" style="color:dimgray">{{item.name}}</div>
-                            <div class="fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.price}}</div>
+                            <i v-bind:class="item.isFavorite? 'bi bi-heart-fill':'bi bi-heart'" class="favorite" v-on:click.prevent="Favorite(item)"></i>
+                            <img v-bind:src="'/Images/'+ item.pphoto" class="w-100" />
+                            <div class="mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+                            <div class="fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!--特價商品-->
+    <!--新品上市-->
     <div class="container">
         <div class="mt-5">
-            <h3 class="fw-bold">特價商品</h3>
+            <h3 class="fw-bold">新品上市</h3>
             <div class="row mt-3">
-                <div class="col-3" v-for="item in Top4Sales">
+                <div class="col-3" v-for="item in New4Sales">
                     <div class="TopSales">
                         <a href="#" class="text-decoration-none">
-                            <i class="bi bi-heart favorite"></i>
-                            <img v-bind:src="'/Images/'+ item.image" class="w-100" />
-                            <div class="mt-2 fw-bold ps-2" style="color:dimgray">{{item.name}}</div>
-                            <div class="fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.price}}</div>
+                            <i v-bind:class="item.isFavorite? 'bi bi-heart-fill':'bi bi-heart'" class="favorite" v-on:click.prevent="Favorite(item)"></i>
+                            <img v-bind:src="'/Images/'+ item.pphoto" class="w-100" />
+                            <div class="mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+                            <div class="fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
                         </a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--最新優惠-->
+    <div class="mt-5">
+        <div class="container ">
+            <h3 class="fw-bold mb-3">最新優惠</h3>
+            <div class="row">
+                <div class="col-6 d-flex justify-content-center">
+                    <a href="#">
+                        <img src="~/Images/Carousel1.jpg" class="photoRadius"/>
+                    </a>
+                </div>
+                <div class="col-6 d-flex justify-content-center">
+                    <a href="#">
+                        <img src="~/Images/Carousel2.jpg" class="photoRadius" />
+                    </a>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 d-flex justify-content-center">
+                    <a href="#">
+                        <img src="~/Images/Carousel3.jpg" class="photoRadius" />
+                    </a>
+                </div>
+                <div class="col-6 d-flex justify-content-center">
+                    <a href="#">
+                        <img src="~/Images/Carousel4.jpg" class="photoRadius" />
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+    
 
 
 @section Scripts{
@@ -181,14 +219,69 @@
         var vueApp = {
             data() {
                 return {
-                    Top4Sales: @Html.Raw(JsonSerializer.Serialize(ViewBag.SalesCount_TOP4_Year))
-                    
+                    baseAddress: "https://localhost:7279",
+                    Top4Sales:[],
+                    New4Sales: [],
+                    favoriteList: [],
                 }
             },
             methods: {
-               
+                Favorite: function (item) { 
+                    let _this = this;
+                    let request = {
+                        PId: item.pid,
+                        PName: item.pname,
+                        PPhoto: item.pphoto,
+                        PPrice: item.pprice
+                    };
+                    axios.post(`${_this.baseAddress}/Ajax/PostFavorite`, request).then(response => {
+                        if (response.data === "請先登入會員") {
+                            alert(response.data); 
+                            return; 
+                        }
+                        alert(response.data);
+                        _this.GetFavoriteID();
+                    }).catch(err => {
+                        alert(err.message);
+                    });
+                },
+                GetFavoriteID: function () { 
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Ajax/GetFavoriteID`).then(response => { 
+                        _this.favoriteList = response.data;
+                        _this.New4Sales.forEach(item => {
+                            item.isFavorite = _this.favoriteList.includes(item.pid);
+                        })
+                        _this.Top4Sales.forEach(item => {
+                            item.isFavorite = _this.favoriteList.includes(item.pid);
+                        })
+                    }).catch(err => { 
+                        alert(err.message);
+                    })
+                },
+                GetTop4Sales: function () {
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Ajax/Top4Sales`).then(response => {
+                        console.log(response.data);
+                        _this.Top4Sales = response.data;
+                        _this.GetFavoriteID();
+                    }).catch(err => {
+                        alert(err.message);
+                    })
+                },
+                GetNew4Sales: function () {
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Ajax/New4Sales`).then(response => {
+                        _this.New4Sales = response.data;
+                        _this.GetFavoriteID();
+                    }).catch(err => { 
+                        alert(err.message);
+                    })
+                }
             },
             mounted() {
+                this.GetNew4Sales();
+                this.GetTop4Sales();
                 this.$nextTick(() => {
                     try {
                         $('.slick-slider').slick({

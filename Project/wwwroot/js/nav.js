@@ -1,5 +1,4 @@
 $(function () {
-    $("#menu-women, #menu-men, #menu-kids").hide();
     $(".menu-women, #menu-women").on("mouseenter", function () {
       $("#menu-women").stop().slideDown();
       $(".menu-women").css({

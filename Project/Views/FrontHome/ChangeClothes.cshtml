@@ -107,12 +107,12 @@
             background-color: #2b814c;
         }
 
-        .color-deepblue {
-            background-color: #0e0d5e;
+        .color-lightgreen {
+            background-color: rgb(184, 239, 226);
         }
 
         .color-gray {
-            background-color: #93939e;
+            background-color: rgb(169, 167, 167);
         }
 
         .color-orange {
@@ -152,6 +152,9 @@
         .textChoose{
             font-weight:bold;
             text-shadow:3px 3px 5px lightgray;
+        }
+        .cancelPhoto:hover{
+            color:crimson !important;
         }
     </style>
 }
@@ -303,8 +306,8 @@
                                         <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColor('blue','#085ea0')"></div>
                                         <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColor('red','#8b0516')"></div>
                                         <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColor('green','#2b814c')"></div>
-                                        <div class="color color-deepblue" v-bind:class="{'active-color': activeColor === 'deepblue'}" v-on:click="changeColor('deepblue','#0e0d5e')"></div>
-                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColor('gray','#93939e')"></div>
+                                        <div class="color color-lightgreen" v-bind:class="{'active-color': activeColor === 'lightgreen'}" v-on:click="changeColor('lightgreen','rgb(184, 239, 226)')"></div>
+                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColor('gray','rgb(197, 196, 196)')"></div>
                                         <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColor('orange','#d37c0a')"></div>
                                     </div>
                                 </div>
@@ -312,7 +315,17 @@
                             <!-- 衣服件數 -->
                                 <div class="fs-5 fw-bold mt-4">
                                     衣服件數
-                                <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="0"/>
+                                    <div class="d-flex">
+                                        <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="0" />
+                                        <select class="form-control ms-3 mt-4 " style="width:130px; height:37.6px;">
+                                            <option disabled selected>請選擇尺寸</option>
+                                            <option>S</option>
+                                            <option>M</option>
+                                            <option>L</option>
+                                            <option>XL</option>
+                                        </select>
+                                    </div>
+                                
                                 </div>
                         </div>
                         <!-- 衣服文字 -->
@@ -343,75 +356,75 @@
                                 <input v-show="!clothesFront" type="range" class="form-range mt-3" v-model="fontsize1" max="80" min="10">
                                 <div class="fs-5 fw-bold mt-4 mb-3">文字字體</div>
                                 <div v-show="clothesFront" class="row d-flex text-center ">
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily0('Times New Roman')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily0('Times New Roman')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily0('Cactus Classical Serif')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily0('Cactus Classical Serif')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily0('DFKai-SB')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily0('DFKai-SB')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily0('LXGW WenKai TC')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily0('LXGW WenKai TC')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
                                 </div>
                                 <br v-show="clothesFront" />
                                 <div v-show="clothesFront" class="row d-flex text-center">
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily0('ZCOOL QingKe HuangYou')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily0('ZCOOL QingKe HuangYou')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily0('Liu Jian Mao Cao')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily0('Liu Jian Mao Cao')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily0('Ma Shan Zheng')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily0('Ma Shan Zheng')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Long Cang' }" v-on:click.prevent="changeFontFamily0('Long Cang')">
+                                    <a v-show="clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily0 === 'Long Cang' }" v-on:click.prevent="changeFontFamily0('Long Cang')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
                                 </div>
                                 <div v-show="!clothesFront" class="row d-flex text-center ">
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily1('Times New Roman')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Times New Roman;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Times New Roman' }" v-on:click.prevent="changeFontFamily1('Times New Roman')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily1('Cactus Classical Serif')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Cactus Classical Serif;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Cactus Classical Serif' }" v-on:click.prevent="changeFontFamily1('Cactus Classical Serif')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily1('DFKai-SB')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:DFKai-SB;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'DFKai-SB' }" v-on:click.prevent="changeFontFamily1('DFKai-SB')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily1('LXGW WenKai TC')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:LXGW WenKai TC;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'LXGW WenKai TC' }" v-on:click.prevent="changeFontFamily1('LXGW WenKai TC')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
                                 </div>
                                 <br v-show="!clothesFront" />
                                 <div v-show="!clothesFront" class="row d-flex text-center">
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily1('ZCOOL QingKe HuangYou')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:ZCOOL QingKe HuangYou;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'ZCOOL QingKe HuangYou' }" v-on:click.prevent="changeFontFamily1('ZCOOL QingKe HuangYou')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily1('Liu Jian Mao Cao')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Liu Jian Mao Cao;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Liu Jian Mao Cao' }" v-on:click.prevent="changeFontFamily1('Liu Jian Mao Cao')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily1('Ma Shan Zheng')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Ma Shan Zheng;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Ma Shan Zheng' }" v-on:click.prevent="changeFontFamily1('Ma Shan Zheng')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
-                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-4" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Long Cang' }" v-on:click.prevent="changeFontFamily1('Long Cang')">
+                                    <a v-show="!clothesFront" href="#" class="col-3 fontFamily text-decoration-none fs-5" style="font-family:Long Cang;color:black" v-bind:class="{ 'textChoose': fontFamily1 === 'Long Cang' }" v-on:click.prevent="changeFontFamily1('Long Cang')">
                                         <div>中文</div>
                                         <div>English</div>
                                     </a>
@@ -428,9 +441,13 @@
                              id="contact"
                              role="tabpanel"
                              aria-labelledby="contact-tab">
-                            <div class="fs-5 fw-bold mt-4">照片上傳</div>
-                            <input v-show="clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange0($event.target)" />
-                            <input v-show="!clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange1($event.target)" />
+                             <div class="d-flex mt-4">
+                                 <div class="fs-5 fw-bold ">照片上傳</div>
+                                 <a href="#" v-show="clothesFront" v-on:click.prevent="cancelPhoto0" class="ms-auto text-decoration-none cancelPhoto" style="color:cornflowerblue;"> 取消圖片 </a>
+                                 <a href="#" v-show="!clothesFront" v-on:click.prevent="cancelPhoto1" class="ms-auto text-decoration-none cancelPhoto" style="color:cornflowerblue;"> 取消圖片 </a>
+                             </div>
+                            <input id="Photo0" v-show="clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange0($event.target)" />
+                            <input id="Photo1" v-show="!clothesFront" type="file" accept="image/*" class="mt-4 form-control" v-on:change="photoChange1($event.target)" />
                             <div class="fs-5 fw-bold mt-4">照片大小</div>
                             <input v-show="clothesFront" type="range" class="form-range mt-3" v-model="photoWidth0" max="240" min="30">
                             <input v-show="!clothesFront" type="range" class="form-range mt-3" v-model="photoWidth1" max="240" min="30">
@@ -557,7 +574,15 @@
                             photo.value = "";
                         }
                     }
-                }
+                },
+                cancelPhoto0:function(){
+                    $("#Photo0").val("");
+                    this.uploadPhoto0="";
+                },
+                cancelPhoto1:function(){
+                    $("#Photo1").val("");
+                    this.uploadPhoto1="";
+                },
             },
             mounted: function () {
                 this.$nextTick(() => {
