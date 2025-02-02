@@ -13,8 +13,16 @@ namespace Project.Controllers
         {
             return View();
         }
+        public IActionResult Product()
+        {
+            return View();
+        }
 
-		public IActionResult FrontIndex()
+        public IActionResult Productdetail()
+        {
+            return View();
+        }
+        public IActionResult FrontIndex()
 		{
             DbuniPayContext db = new DbuniPayContext();
             ViewBag.SalesCount_TOP4_Year = (from tod in db.TorderDetails

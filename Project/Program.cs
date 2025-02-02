@@ -1,10 +1,18 @@
 using CoreMVC_SignalR_Chat.Hubs;
+using Microsoft.EntityFrameworkCore;
+using Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+
+// Add services to the DI container.
+builder.Services.AddDbContext<DbuniPayContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbuniPay"));
+});
+
 //¥[¤J SignalR
 builder.Services.AddSignalR();
 var app = builder.Build();
