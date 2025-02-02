@@ -30,6 +30,12 @@
             height: 35px;
             border-radius: 10px !important;
         }
+        .money{
+            position: absolute;
+            margin: 10px;
+            right:5%;
+            font-weight:bolder;
+        }
 
             .btn-side:hover {
                 background-color: #8a8282c7 !important;
@@ -159,12 +165,13 @@
     </style>
 }
 <div id="app">
-    <div class="container my-5">
+    <div class="container mt-5">
         <div class="row mt-5 d-flex">
             <!-- 衣服 -->
             <!-- 正面 -->
             <div class="col-12 col-lg-6 border px-0 clothes-container"  v-show="clothesFront">
                 <button class="btn-side" v-on:click="ClothesBack">正面</button>
+                <span class="money">NT$ {{money}} / 件</span>
                 <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}"  />
                 <div class="clothes-box">
                     <span class="draggable-text"  style="z-index:100" v-bind:style="{color:wordColor0,fontSize:fontsize0+'px',fontWeight:fontWeight0,fontFamily:fontFamily0}">{{text0}}</span>
@@ -174,6 +181,7 @@
             <!-- 背面 -->
             <div class="col-12 col-lg-6 border px-0 clothes-container" v-show="!clothesFront">
                 <button class="btn-side" v-on:click="ClothesBack">背面</button>
+                <span class="money">NT$ {{money}} / 件</span>
                 <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
                 <div class="clothes-box">
                     <span class="draggable-text" style="z-index:100" v-bind:style="{color:wordColor1,fontSize:fontsize1+'px',fontWeight:fontWeight1,fontFamily:fontFamily1}">{{text1}}</span>
@@ -249,18 +257,6 @@
                                 <div class="col-2">
                                     <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
-                                            <img src="~/Images/longTshirt.png"
-                                                 alt=""
-                                                 class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'longtshirt' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whitelongTshirt1.png','longtshirt')"
-                                                 id="longTshirt" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="product-item my-1">
-                                        <a href="#" class="text-decoration-none text-dark">
                                             <img src="~/Images/shortPolo.png"
                                                  alt=""
                                                  class="w-100"
@@ -270,6 +266,19 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="col-2">
+                                    <div class="product-item my-1">
+                                        <a href="#" class="text-decoration-none text-dark">
+                                            <img src="~/Images/longTshirt.png"
+                                                 alt=""
+                                                 class="w-100"
+                                                 v-bind:class="{ 'item-active': itemActive === 'longtshirt' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whitelongTshirt1.png','longtshirt')"
+                                                 id="longTshirt" />
+                                        </a>
+                                    </div>
+                                </div>
+                                
                                 <div class="col-2">
                                     <div class="product-item my-1">
                                         <a href="#" class="text-decoration-none text-dark">
@@ -490,6 +499,7 @@
                     photoWidth1: "100",
                     wordColor1: "#000000",
                     clothesFront:true,
+                    money: "300",
                 };
             },
             methods:{
@@ -520,6 +530,7 @@
                     this.clothesPhoto = photoPath;
                     this.itemActive = clothes;
                     this.clothesFront = true;
+                    this.moneyChange();
                 },
                 changeColor: function (activeColor, backgroundColor) {
                     this.activeColor = activeColor;
@@ -527,9 +538,11 @@
                 },
                 textKeyUp0: function () {
                     this.text0 = this.keyWord0;
+                    this.moneyChange();
                 },
                 textKeyUp1: function () {
                     this.text1 = this.keyWord1;
+                    this.moneyChange();
                 },
                 fwBolder0: function () { 
                     this.fontWeight0= this.fontWeight0 == "normal" ? "bolder":"normal"
@@ -553,6 +566,7 @@
                                 this.uploadPhoto0=e.target.result;
                             }
                             reader.readAsDataURL(file);
+                            this.moneyChange();
                         }else{
                             alert("不允許的檔案上傳類型");
                             photo.value = "";
@@ -569,6 +583,7 @@
                                 this.uploadPhoto1 = e.target.result;
                             }
                             reader.readAsDataURL(file);
+                            this.moneyChange();
                         } else {
                             alert("不允許的檔案上傳類型");
                             photo.value = "";
@@ -578,11 +593,39 @@
                 cancelPhoto0:function(){
                     $("#Photo0").val("");
                     this.uploadPhoto0="";
+                    this.moneyChange();
                 },
                 cancelPhoto1:function(){
                     $("#Photo1").val("");
                     this.uploadPhoto1="";
+                    this.moneyChange();
                 },
+                moneyChange: function () { 
+                    let moneyA , moneyB , moneyC;
+
+                    if (this.itemActive === "tshirt" || this.itemActive === "shortPolo") {
+                        moneyA = 300;
+                    } else {
+                        moneyA = 500;
+                    }
+
+                    if (this.keyWord0.trim() != "" && this.keyWord1.trim() != "") {
+                        moneyB = 100;
+                    } else if (this.keyWord0.trim() != "" || this.keyWord1.trim() != "") {
+                        moneyB = 50;
+                    } else { 
+                        moneyB = 0;
+                    }
+
+                    if ($("#Photo0").val() != "" && $("#Photo1").val() != "") {
+                        moneyC = 200;
+                    } else if ($("#Photo0").val() != "" || $("#Photo1").val() != "") {
+                        moneyC = 100;
+                    }else{
+                        moneyC = 0;
+                    }
+                    this.money = moneyA + moneyB + moneyC;
+                }
             },
             mounted: function () {
                 this.$nextTick(() => {
