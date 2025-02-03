@@ -26,6 +26,7 @@
     transform: translateX(-50%);
     position: absolute;
   }
+
 .bi-handbag,
 .bi-person,
 .bi-heart,
@@ -50,19 +51,32 @@
     #menu-women, #menu-men, #menu-kids {
         position: absolute;
         width: 100%;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ³±¼v®ÄªG */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         z-index: 999;
         display:none;
+        padding:0 0 0 0 !important;
+
     }
-    .menu {
+.menu {
     width: 100%;
     background-color: white;
     display: flex;
     justify-content: space-evenly;
+    padding: 0;
+}
+.navtitle {
+    margin: 0 48px !important;
+}
+@media (max-width:992px) {
+    .navtitle {
+        margin: 0 20px !important;
+        font-size:18px !important;
     }
-  .menu-column {
+
+}
+.menu-column {
     text-align: center;
-  }
+}
   .item {
     text-decoration: none;
     color: #000;
@@ -124,6 +138,25 @@
 @media (max-width: 992px) {
     .diy {
         font-size: 40px;
+    }
+}
+
+@media (max-width:992px) {   
+
+    .form-search {
+        width: 300px !important;
+    }
+}
+
+@media (max-width:768px) {
+    .titleName {
+        display: none !important;
+    }
+
+    .form-search {
+        width: 300px !important;
+        left: 10%;
+        transform: translateX(0%);
     }
 }
 

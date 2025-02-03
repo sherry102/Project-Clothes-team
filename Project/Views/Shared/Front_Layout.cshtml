@@ -26,10 +26,11 @@
         <!-- 標題 -->
         <div class="container mt-2">
             <div class="row">
-                <div class="col-12 d-flex align-items-center">
+                
+                <div class="col-8 d-flex align-items-center">
                     <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
-                    <form class="d-flex me-5 form-search">
-                        <input class="form-control me-2 input-search"
+                    <form class="d-flex me-5 form-search input-search">
+                        <input class="form-control me-2 index-search"
                                type="search"
                                placeholder="Search"
                                aria-label="Search" />
@@ -37,6 +38,9 @@
                             <div><i class="bi bi-search"></i></div>
                         </button>
                     </form>
+                    
+                </div>
+                <div class="col-4 d-flex align-items-center">
                     <div class="ms-auto">
                         <a href="~/FrontHome/Favorite"> <i class="bi bi-heart"></i></a>
                         <a href=""> <i class="bi bi-handbag"></i></a>
@@ -50,22 +54,11 @@
         <div class="container fs-5">
             <div class="row">
                 <div class="col-12">
-                    <nav class="navbar navbar-expand-lg navbar-light py-1 ">
+                    <nav class="navbar navbar-light py-1 ">
                         <div class="container-fluid">
-                            <button class="navbar-toggler"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#navbarSupportedContent"
-                                    aria-controls="navbarSupportedContent"
-                                    aria-expanded="false"
-                                    aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse"
-                                 id="navbarSupportedContent">
-                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                    <li class="nav-item dropdown mx-5">
-                                        <a class="nav-link dropdown-toggle menu-women"
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
+                                    <li class="nav-item dropdown ">
+                                        <a class="nav-link dropdown-toggle menu-women navtitle"
                                            href="~/FrontHome/Product"
                                            id="navbarDropdown"
                                            role="button"
@@ -74,8 +67,8 @@
                                             Women
                                         </a>
                                     </li>
-                                    <li class="nav-item dropdown mx-5 menu-men">
-                                        <a class="nav-link dropdown-toggle"
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle menu-men navtitle "
                                            href="~/FrontHome/Product"
                                            id="navbarDropdown"
                                            role="button"
@@ -84,8 +77,8 @@
                                             Men
                                         </a>
                                     </li>
-                                    <li class="nav-item dropdown mx-5">
-                                        <a class="nav-link dropdown-toggle menu-kids"
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle menu-kids navtitle"
                                            href="~/FrontHome/Product"
                                            id="navbarDropdown"
                                            role="button"
@@ -94,14 +87,13 @@
                                             Kids
                                         </a>
                                     </li>
-                                    <li class="nav-item mx-5">
-                                        <a class="nav-link" href="#">Styles</a>
+                                    <li class="nav-item">
+                                        <a class="nav-link  navtitle" href="#">Styles</a>
                                     </li>
-                                    <li class="nav-item mx-5">
-                                        <a href="~/FrontHome/Customize" class="nav-link" href="#">Freestyle</a>
+                                    <li class="nav-item ">
+                                        <a href="~/FrontHome/Customize" class="nav-link navtitle" href="#">Freestyle</a>
                                     </li>
                                 </ul>
-                            </div>
                         </div>
                     </nav>
                 </div>
@@ -109,8 +101,8 @@
         </div>
         <hr class="m-1" />
         <!-- women 選單 -->
-        <div class="row fs-6" id="menu-women">
-            <div class="menu">
+        <div class="fs-6" id="menu-women">
+            <div class="menu ">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上衣</div>
                     <div class="my-4"><a href="~/FrontHome/Product" class="item">短袖上衣</a></div>
@@ -137,7 +129,7 @@
             </div>
         </div>
         <!-- men 選單 -->
-        <div class="row fs-6" id="menu-men">
+        <div class="fs-6" id="menu-men">
             <div class="menu">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上衣</div>
@@ -164,7 +156,7 @@
             </div>
         </div>
         <!-- kids 選單 -->
-        <div class="row fs-6" id="menu-kids">
+        <div class="fs-6" id="menu-kids">
             <div class="menu">
                 <div class="menu-column">
                     <div class="my-2 fw-bold">上衣</div>

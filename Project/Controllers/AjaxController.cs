@@ -51,7 +51,11 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<List<Tfavorite>> GetFavorite() {
 			string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-			var member = JsonSerializer.Deserialize<Tmember>(json);
+            if (string.IsNullOrEmpty(json))
+            {
+                return new List<Tfavorite>();
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
 
             var favorite = await _context.Tfavorites.Where(c => c.Mid == member.Mid)
                                                     .OrderByDescending(c=>c.FcreateDate)
