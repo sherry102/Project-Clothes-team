@@ -1,0 +1,214 @@
+﻿@using System.Text.Json
+@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+@section Styles {
+    <style>
+
+    </style>
+}
+<!-- 麵包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-3">
+        <li class="breadcrumb-item"><a href="~/FrontHome/FrontIndex" class="text-decoration-none">首頁</a></li>
+        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+    </ol>
+</nav>
+<!-- 產品列表 -->
+
+<div id="app" class="container mb-5 text-center">
+    <div class="row">
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/images/product/pc-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">鋪棉毛絨翻領寬版外套</p>
+                    <p class="h4 mb-3">1590元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/images/product/pc-02-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">仿毛呢長大衣</p>
+                    <p class="h4 mb-3">1590元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/images/product/pc-03-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">鋪棉輕薄型外套</p>
+                    <p class="h4 mb-3">590元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pv-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">粗針混紡寬版開襟背心</p>
+                    <p class="h4 mb-3">490元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pts-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">羅紋立領長袖T恤</p>
+                    <p class="h4 mb-3">300元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pts-02-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">透膚木耳邊高領T恤</p>
+                    <p class="h4 mb-3">250元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pts-03-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">寬鬆短版格紋開襟衫</p>
+                    <p class="h4 mb-3">490元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pts-04-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">法蘭絨格紋襯衫</p>
+                    <p class="h4 mb-3">400元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pp-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">彈性針織直筒寬褲</p>
+                    <p class="h4 mb-3">450元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pp-02-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">高腰牛仔寬褲</p>
+                    <p class="h4 mb-3">400元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/psk-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">毛絨窄裙</p>
+                    <p class="h4 mb-3">490元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/psk-02-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">燈芯絨長裙</p>
+                    <p class="h4 mb-3">650元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card mb-3">
+                <a href="~/FrontHome/Productdetail">
+                    <img src="~/Images/product/pca-01-01.jpg" alt="" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">羅紋針織帽</p>
+                    <p class="h4 mb-3">250元</p>
+                    <button class="btn btn-outline-secondary">加入購物車</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var vueApp={
+            data() {
+                return {
+                     products: [
+                     
+                  };
+            },
+            methods:{
+                
+            },
+            mounted:
+            {
+        
+            },
+        };
+        var app=Vue.createApp(vueApp).mount("#app");
+    </script>
+}

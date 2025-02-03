@@ -17,8 +17,16 @@ namespace Project.Controllers
         {
             return View();
         }
+        public IActionResult Product()
+        {
+            return View();
+        }
 
-		public IActionResult FrontIndex()
+        public IActionResult Productdetail()
+        {
+            return View();
+        }
+        public IActionResult FrontIndex()
 		{
             return View();
 		}

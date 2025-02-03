@@ -10,6 +10,12 @@ builder.Services.AddDbContext<DbuniPayContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+
+// Add services to the DI container.
+builder.Services.AddDbContext<DbuniPayContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbuniPay"));
+});
+
 //¥[¤J SignalR
 builder.Services.AddSignalR();
 var app = builder.Build();
