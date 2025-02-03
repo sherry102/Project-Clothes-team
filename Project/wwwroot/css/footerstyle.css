@@ -19,7 +19,7 @@ a {
     border-top: 1px solid #efefef;
     background-color: #FBFBFB;
     font-family: "Poppins", sans-serif;
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 !important;
 }
   .footer-59391 .site-logo {
     color: #fff; }

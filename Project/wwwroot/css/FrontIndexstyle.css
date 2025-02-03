@@ -162,11 +162,6 @@ form {
 * ==================================================
 */
 body {
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 1.71429;
-	color: #9b9b9c;
-	background-color: #ffffff;
 	-webkit-text-size-adjust: none;
 	-webkit-font-smoothing: subpixel-antialiased;
 }
@@ -7050,6 +7045,9 @@ html:not(.tablet):not(.mobile) .thumb-alice:hover .thumb-alice__inner {
 	html:not(.lt-ie10) .text-xs-justify {
 		text-align: justify;
 	}
+	html:not(.lt-ie10) .text-md-right {
+		text-align: center;
+	}
 }
 
 @media (min-width: 768px) {
@@ -7065,6 +7063,10 @@ html:not(.tablet):not(.mobile) .thumb-alice:hover .thumb-alice__inner {
 	html:not(.lt-ie10) .text-sm-justify {
 		text-align: justify;
 	}
+	html:not(.lt-ie10) .text-md-right {
+		text-align: right;
+	}
+
 }
 
 @media (min-width: 992px) {
@@ -7074,9 +7076,7 @@ html:not(.tablet):not(.mobile) .thumb-alice:hover .thumb-alice__inner {
 	html:not(.lt-ie10) .text-md-center {
 		text-align: center;
 	}
-	html:not(.lt-ie10) .text-md-right {
-		text-align: right;
-	}
+
 	html:not(.lt-ie10) .text-md-justify {
 		text-align: justify;
 	}
@@ -7095,6 +7095,7 @@ html:not(.tablet):not(.mobile) .thumb-alice:hover .thumb-alice__inner {
 	html:not(.lt-ie10) .text-lg-justify {
 		text-align: justify;
 	}
+
 }
 
 /*
