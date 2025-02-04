@@ -34,6 +34,11 @@
     color: #25458ac7 !important;
     margin: 0px 10px;
 }
+.bi-heart-fill {
+    font-size: 30px;
+    color: #25458ac7 !important;
+    margin: 0px 10px;
+}
 
 @media (max-width:768px) {
     .bi-handbag,
