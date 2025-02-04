@@ -15,6 +15,8 @@ public partial class DbuniPayContext : DbContext
     {
     }
 
+    public virtual DbSet<Tcart> Tcarts { get; set; }
+
     public virtual DbSet<Tcomment> Tcomments { get; set; }
 
     public virtual DbSet<Tcoupon> Tcoupons { get; set; }
@@ -38,6 +40,38 @@ public partial class DbuniPayContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Tcart>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("TCart");
+
+            entity.Property(e => e.CustomPhoto0).HasMaxLength(300);
+            entity.Property(e => e.CustomPhoto1).HasMaxLength(300);
+            entity.Property(e => e.CustomText).HasMaxLength(50);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("ID");
+            entity.Property(e => e.Mid).HasColumnName("MID");
+            entity.Property(e => e.Pcategory)
+                .HasMaxLength(50)
+                .HasColumnName("PCategory");
+            entity.Property(e => e.Pcolor)
+                .HasMaxLength(50)
+                .HasColumnName("PColor");
+            entity.Property(e => e.Pcount).HasColumnName("PCount");
+            entity.Property(e => e.Pid).HasColumnName("PID");
+            entity.Property(e => e.Pname)
+                .HasMaxLength(50)
+                .HasColumnName("PName");
+            entity.Property(e => e.Psize)
+                .HasMaxLength(50)
+                .HasColumnName("PSize");
+            entity.Property(e => e.Ptype)
+                .HasMaxLength(50)
+                .HasColumnName("PType");
+        });
+
         modelBuilder.Entity<Tcomment>(entity =>
         {
             entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F41326690FACF");

@@ -170,22 +170,26 @@
             <!-- 衣服 -->
             <!-- 正面 -->
             <div class="col-12 col-lg-6 border px-0 clothes-container"  v-show="clothesFront">
-                <button class="btn-side" v-on:click="ClothesBack">正面</button>
-                <span class="money">NT$ {{money}} / 件</span>
-                <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}"  />
-                <div class="clothes-box">
-                    <span class="draggable-text"  style="z-index:100" v-bind:style="{color:wordColor0,fontSize:fontsize0+'px',fontWeight:fontWeight0,fontFamily:fontFamily0}">{{text0}}</span>
-                    <img v-bind:src="uploadPhoto0" class="draggable-text" v-bind:style="{width:photoWidth0+'px'}" style="z-index:99" />
+                <button class="btn-side" style="z-index:1000;" v-on:click="ClothesBack">正面</button>
+                <span class="money" style="z-index:1000;">NT$ {{money}} / 件</span>
+                <div class="clothes-container" id="designArea0">
+                    <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
+                    <div class="clothes-box">
+                        <span class="draggable-text" style="z-index:100" v-bind:style="{color:wordColor0,fontSize:fontsize0+'px',fontWeight:fontWeight0,fontFamily:fontFamily0}">{{text0}}</span>
+                        <img v-bind:src="uploadPhoto0" class="draggable-text" v-bind:style="{width:photoWidth0+'px'}" style="z-index:99" />
+                    </div>
                 </div>
             </div>
             <!-- 背面 -->
             <div class="col-12 col-lg-6 border px-0 clothes-container" v-show="!clothesFront">
-                <button class="btn-side" v-on:click="ClothesBack">背面</button>
-                <span class="money">NT$ {{money}} / 件</span>
-                <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
-                <div class="clothes-box">
-                    <span class="draggable-text" style="z-index:100" v-bind:style="{color:wordColor1,fontSize:fontsize1+'px',fontWeight:fontWeight1,fontFamily:fontFamily1}">{{text1}}</span>
-                    <img v-bind:src="uploadPhoto1" class="draggable-text" v-bind:style="{width:photoWidth1+'px'}" style="z-index:99" />
+                <button class="btn-side" style="z-index:1000;" v-on:click="ClothesBack">背面</button>
+                <span class="money" style="z-index:1000;">NT$ {{money}} / 件</span>
+                <div class="clothes-container" id="designArea1">
+                    <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
+                    <div class="clothes-box">
+                        <span class="draggable-text" style="z-index:100" v-bind:style="{color:wordColor1,fontSize:fontsize1+'px',fontWeight:fontWeight1,fontFamily:fontFamily1}">{{text1}}</span>
+                        <img v-bind:src="uploadPhoto1" class="draggable-text" v-bind:style="{width:photoWidth1+'px'}" style="z-index:99" />
+                    </div>
                 </div>
             </div>
             <div class="col-12 col-lg-6">
@@ -229,7 +233,7 @@
                             </button>
                         </li>
                         <li class="nav-item ms-auto" >
-                            <button class="nav-link text-secondary fw-bold" style="font-size:1.1em;">
+                            <button class="nav-link text-secondary fw-bold" style="font-size:1.1em;" v-on:click="SaveToCart">
                                 加入購物車
                             </button>
                         </li>
@@ -625,7 +629,13 @@
                         moneyC = 0;
                     }
                     this.money = moneyA + moneyB + moneyC;
-                }
+                },
+                SaveToCart: function () {
+                    let _this = this;
+                    let request = {
+                        PId
+                    };
+                },
             },
             mounted: function () {
                 this.$nextTick(() => {

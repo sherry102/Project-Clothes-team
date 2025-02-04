@@ -108,5 +108,21 @@ namespace Project.Controllers
             var Newest4 = await  _context.Tproducts.OrderByDescending(x => x.PcreatedDate).Take(4).ToListAsync();
             return Json(Newest4);
         }
+
+        //[HttpPost]
+        //public async Task<string> SaveToCart([FromBody] CustomCartDTO cart)
+        //{
+        //    string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+        //    if (string.IsNullOrEmpty(json))
+        //    {
+        //        return "請先登入會員";
+        //    }
+        //    var member = JsonSerializer.Deserialize<Tmember>(json);
+        //    var cart = new Tfavorite
+        //    {
+
+        //    };
+        //    return "已加入購物車";
+        //}
     }
 }
