@@ -109,20 +109,40 @@ namespace Project.Controllers
             return Json(Newest4);
         }
 
-        //[HttpPost]
-        //public async Task<string> SaveToCart([FromBody] CustomCartDTO cart)
-        //{
-        //    string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-        //    if (string.IsNullOrEmpty(json))
-        //    {
-        //        return "請先登入會員";
-        //    }
-        //    var member = JsonSerializer.Deserialize<Tmember>(json);
-        //    var cart = new Tfavorite
-        //    {
-
-        //    };
-        //    return "已加入購物車";
-        //}
+        [HttpPost]
+        public async Task<string> SaveToCart([FromBody] CustomCartDTO cart)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return "請先登入會員";
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var Cart = new Tcart
+            {
+                Mid=member.Mid,
+                Pid=0,
+                Pname=cart.PName,
+                Ptype=cart.PType,
+                Pcategory=cart.PCategory,
+                Pcount=cart.PCount,
+                Psize=cart.PSize,
+                Pcolor=cart.PColor,
+                CustomText0=cart.CustomText0,
+                CustomText1 = cart.CustomText1,
+                CustomPhoto0 =cart.CustomPhoto0,
+                CustomPhoto1=cart.CustomPhoto1,
+                Photo0= cart.Photo0,
+                Photo1 = cart.Photo1,
+            };
+            if (Cart.Photo0 == "") {
+                return "請儲存正面圖案";
+            } else if (Cart.Photo1 == "") {
+                return "請儲存背面圖案";
+            }
+            _context.Tcarts.Add(Cart);
+            await _context.SaveChangesAsync();
+            return "已加入購物車";
+        }
     }
 }

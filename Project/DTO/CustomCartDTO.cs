@@ -1,8 +1,9 @@
-﻿namespace Project.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project.DTO
 {
     public class CustomCartDTO
     {
-        public int PId { get; set; }
 
         public string PName { get; set; }
 
@@ -16,10 +17,16 @@
 
         public string PColor { get; set; }
 
-        public string? CustomText { get; set; }
+        public string? CustomText0 { get; set; }
+
+        public string? CustomText1 { get; set; }
 
         public string? CustomPhoto0 { get; set; }
 
         public string? CustomPhoto1 { get; set; }
+
+        public string? Photo0 { get; set; }
+
+        public string? Photo1 { get; set; }
     }
 }

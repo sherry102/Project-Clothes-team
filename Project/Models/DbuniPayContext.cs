@@ -37,21 +37,15 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tproduct> Tproducts { get; set; }
 
-    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Tcart>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("TCart");
+            entity.ToTable("TCart");
 
-            entity.Property(e => e.CustomPhoto0).HasMaxLength(300);
-            entity.Property(e => e.CustomPhoto1).HasMaxLength(300);
-            entity.Property(e => e.CustomText).HasMaxLength(50);
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("ID");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CustomText0).HasMaxLength(50);
+            entity.Property(e => e.CustomText1).HasMaxLength(50);
             entity.Property(e => e.Mid).HasColumnName("MID");
             entity.Property(e => e.Pcategory)
                 .HasMaxLength(50)

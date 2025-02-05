@@ -12,8 +12,6 @@
             width: 40%;
             height: 70%;
             white-space: pre;
-            overflow: hidden;
-            /* border:1px solid black */
         }
 
         .clothes-container {
@@ -29,6 +27,18 @@
             width: 60px;
             height: 35px;
             border-radius: 10px !important;
+            z-index:300;
+        }
+        .btn-side-save{
+            position: absolute;
+            margin: 2px 2px 2px 70px;
+            background-color: #8891a3c7 !important;
+            border: none !important;
+            color: white !important;
+            width: 100px;
+            height: 35px;
+            border-radius: 10px !important;
+            z-index: 300;
         }
         .money{
             position: absolute;
@@ -37,10 +47,10 @@
             font-weight:bolder;
         }
 
-            .btn-side:hover {
-                background-color: #8a8282c7 !important;
-                border: 1px solid #8891a3c7 !important;
-            }
+        .btn-side:hover {
+            background-color: #8a8282c7 !important;
+            border: 1px solid #8891a3c7 !important;
+        }
 
         .product-item {
             text-align: center;
@@ -169,9 +179,10 @@
         <div class="row mt-5 d-flex">
             <!-- 衣服 -->
             <!-- 正面 -->
-            <div class="col-12 col-lg-6 border px-0 clothes-container"  v-show="clothesFront">
-                <button class="btn-side" style="z-index:1000;" v-on:click="ClothesBack">正面</button>
-                <span class="money" style="z-index:1000;">NT$ {{money}} / 件</span>
+            <div class="col-12 col-lg-6 border px-0 clothes-container"  v-show="clothesFront" >
+                <button class="btn-side"  v-on:click="ClothesBack">正面</button>
+                <button class="btn-side-save" v-on:click="Save0">儲存(正面)</button>
+                <span class="money" style="z-index:300;">NT$ {{money}} / 件</span>
                 <div class="clothes-container" id="designArea0">
                     <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
                     <div class="clothes-box">
@@ -182,8 +193,9 @@
             </div>
             <!-- 背面 -->
             <div class="col-12 col-lg-6 border px-0 clothes-container" v-show="!clothesFront">
-                <button class="btn-side" style="z-index:1000;" v-on:click="ClothesBack">背面</button>
-                <span class="money" style="z-index:1000;">NT$ {{money}} / 件</span>
+                <button class="btn-side" v-on:click="ClothesBack">背面</button>
+                <button class="btn-side-save" v-on:click="Save1">儲存(背面)</button>
+                <span class="money" style="z-index:300;">NT$ {{money}} / 件</span>
                 <div class="clothes-container" id="designArea1">
                     <img v-bind:src="clothesPhoto" alt="" class="w-100 img" v-bind:style="{backgroundColor:backgroundColor}" />
                     <div class="clothes-box">
@@ -252,8 +264,8 @@
                                             <img src="~/Images/shortTshirt.png"
                                                  alt=""
                                                  class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'tshirt' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whiteTshirt1.png','tshirt')"
+                                                 v-bind:class="{ 'item-active': itemActive === '短袖T恤' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteTshirt1.png','短袖T恤')"
                                                  id="tshirt" />
                                         </a>
                                     </div>
@@ -264,8 +276,8 @@
                                             <img src="~/Images/shortPolo.png"
                                                  alt=""
                                                  class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'shortPolo' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whiteshortPolo1.png','shortPolo')"
+                                                 v-bind:class="{ 'item-active': itemActive === '短袖Polo衫' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteshortPolo1.png','短袖Polo衫')"
                                                  id="shortPolo" />
                                         </a>
                                     </div>
@@ -276,8 +288,8 @@
                                             <img src="~/Images/longTshirt.png"
                                                  alt=""
                                                  class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'longtshirt' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whitelongTshirt1.png','longtshirt')"
+                                                 v-bind:class="{ 'item-active': itemActive === '長袖T恤' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whitelongTshirt1.png','長袖T恤')"
                                                  id="longTshirt" />
                                         </a>
                                     </div>
@@ -289,8 +301,8 @@
                                             <img src="~/Images/sweatshirt.png"
                                                  alt=""
                                                  class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'sweatshirt' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whitesweatShirt1.png','sweatshirt')"
+                                                 v-bind:class="{ 'item-active': itemActive === '連帽上衣' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whitesweatShirt1.png','連帽上衣')"
                                                  id="sweatshirt" />
                                         </a>
                                     </div>
@@ -301,8 +313,8 @@
                                             <img src="~/Images/coat.png"
                                                  alt=""
                                                  class="w-100"
-                                                 v-bind:class="{ 'item-active': itemActive === 'coat' }"
-                                                 v-on:click.prevent="changeClothes('/Images/whiteCoat1.png','coat')"
+                                                 v-bind:class="{ 'item-active': itemActive === '外套' }"
+                                                 v-on:click.prevent="changeClothes('/Images/whiteCoat1.png','外套')"
                                                  id="coat" />
                                         </a>
                                     </div>
@@ -313,15 +325,15 @@
                                 <div class="fs-5 fw-bold mt-5">
                                     衣服顏色
                                     <div class="color-groups mt-2">
-                                        <div class="color color-white" v-bind:class="{'active-color': activeColor === 'white'}" v-on:click="changeColor('white','white')"></div>
-                                        <div class="color color-black" v-bind:class="{'active-color': activeColor === 'black'}" v-on:click="changeColor('black','rgba(15, 15, 15,0.8)')"></div>
-                                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === 'yellow'}" v-on:click="changeColor('yellow','#ffee00')"></div>
-                                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColor('blue','#085ea0')"></div>
-                                        <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColor('red','#8b0516')"></div>
-                                        <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColor('green','#2b814c')"></div>
-                                        <div class="color color-lightgreen" v-bind:class="{'active-color': activeColor === 'lightgreen'}" v-on:click="changeColor('lightgreen','rgb(184, 239, 226)')"></div>
-                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColor('gray','rgb(197, 196, 196)')"></div>
-                                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColor('orange','#d37c0a')"></div>
+                                        <div class="color color-white" v-bind:class="{'active-color': activeColor === '白色'}" v-on:click="changeColor('白色','white')"></div>
+                                        <div class="color color-black" v-bind:class="{'active-color': activeColor === '黑色'}" v-on:click="changeColor('黑色','rgba(15, 15, 15,0.8)')"></div>
+                                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === '黃色'}" v-on:click="changeColor('黃色','#ffee00')"></div>
+                                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === '藍色'}" v-on:click="changeColor('藍色','#085ea0')"></div>
+                                        <div class="color color-red" v-bind:class="{'active-color': activeColor === '紅色'}" v-on:click="changeColor('紅色','#8b0516')"></div>
+                                        <div class="color color-green" v-bind:class="{'active-color': activeColor === '綠色'}" v-on:click="changeColor('綠色','#2b814c')"></div>
+                                        <div class="color color-lightgreen" v-bind:class="{'active-color': activeColor === '青綠色'}" v-on:click="changeColor('青綠色','rgb(184, 239, 226)')"></div>
+                                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === '灰色'}" v-on:click="changeColor('灰色','rgb(197, 196, 196)')"></div>
+                                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === '橘色'}" v-on:click="changeColor('橘色','#d37c0a')"></div>
                                     </div>
                                 </div>
                             </div>
@@ -329,10 +341,9 @@
                                 <div class="fs-5 fw-bold mt-4">
                                     衣服件數
                                     <div class="d-flex">
-                                        <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="0" />
-                                        <select class="form-control ms-3 mt-4 " style="width:130px; height:37.6px;">
-                                            <option disabled selected>請選擇尺寸</option>
-                                            <option>S</option>
+                                        <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="1" />
+                                        <select class="form-control ms-3 mt-4 text-center" style="width:50px; height:37.6px;" id="Size">
+                                            <option selected>S</option>
                                             <option>M</option>
                                             <option>L</option>
                                             <option>XL</option>
@@ -470,19 +481,29 @@
             </div>
         </div>
     </div>
+    <div>
+        <img v-bind:src="mergedImage0" />
+        <img v-bind:src="mergedImage1" />
+    </div>
 </div>
+
+
 @section Scripts{
     <script type="text/javascript"
             src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
         var vueApp={
             data() { 
                 return {
+                    baseAddress: "https://localhost:7279",
                     clothesPhoto: "/Images/whiteTshirt1.png",
-                    itemActive:"tshirt",
-                    activeColor:"white",
+                    itemActive: "短袖T恤",
+                    activeColor:"白色",
                     backgroundColor:"white",
                     count:"1",
                     wordColor0: "#000000",
@@ -504,9 +525,26 @@
                     wordColor1: "#000000",
                     clothesFront:true,
                     money: "300",
+                    mergedImage0:"",
+                    mergedImage1:"",
                 };
             },
             methods:{
+                Save0: function () {
+                    let _this = this;
+                    html2canvas(document.getElementById("designArea0"), { backgroundColor: null }).then(canvas0 => {
+                        _this.mergedImage0 = canvas0.toDataURL("image/png");
+                    })
+                    console.log(_this.mergedImage0);
+                    alert("儲存成功");
+                },
+                Save1: function () {
+                    let _this = this;
+                    html2canvas(document.getElementById("designArea1"), { backgroundColor: null }).then(canvas1 => {
+                        _this.mergedImage1 = canvas1.toDataURL("image/png");
+                    })
+                    alert("儲存成功");
+                },
                 ClothesBack:function(){
                     this.clothesFront = !this.clothesFront;
                     this.$nextTick(() => {
@@ -607,7 +645,7 @@
                 moneyChange: function () { 
                     let moneyA , moneyB , moneyC;
 
-                    if (this.itemActive === "tshirt" || this.itemActive === "shortPolo") {
+                    if (this.itemActive === "短袖T恤" || this.itemActive === "短袖Polo衫") {
                         moneyA = 300;
                     } else {
                         moneyA = 500;
@@ -633,8 +671,25 @@
                 SaveToCart: function () {
                     let _this = this;
                     let request = {
-                        PId
+                        PName: _this.itemActive,    
+                        PType: "客製化衣服",
+                        PCategory: _this.itemActive,
+                        PCount: parseInt(_this.count, 10),
+                        PSize: $("#Size").val(),
+                        PColor: _this.activeColor,
+                        CustomText0: _this.text0,
+                        CustomText1: _this.text1,
+                        CustomPhoto0: _this.uploadPhoto0,
+                        CustomPhoto1: _this.uploadPhoto1,
+                        Photo0: _this.mergedImage0,
+                        Photo1: _this.mergedImage1,
                     };
+                    console.log(request);
+                    axios.post(`${_this.baseAddress}/Ajax/SaveToCart`, request).then(response => {
+                        alert(response.data);
+                    }).catch(err => {
+                        alert(err.message);
+                    })
                 },
             },
             mounted: function () {

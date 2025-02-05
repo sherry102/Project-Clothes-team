@@ -23,9 +23,15 @@ public partial class Tcart
 
     public string Pcolor { get; set; } = null!;
 
-    public string? CustomText { get; set; }
+    public string? CustomText0 { get; set; }
+
+    public string? CustomText1 { get; set; }
 
     public string? CustomPhoto0 { get; set; }
 
     public string? CustomPhoto1 { get; set; }
+
+    public string? Photo0 { get; set; }
+
+    public string? Photo1 { get; set; }
 }
