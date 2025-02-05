@@ -15,6 +15,13 @@ namespace Project.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        public async Task<List<Tproduct>> Getproduct()
+        {
+            var product = await _context.Tproducts.ToListAsync();
+            return product;
+        }
+
         [HttpPost]
         public async Task<string> PostFavorite([FromBody] FavoriteDTO favoriteDTO)
         {

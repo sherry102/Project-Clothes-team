@@ -6,6 +6,7 @@ namespace Project.Controllers
 {
     public class ProductController : Controller
     {
+
         IWebHostEnvironment _enviro = null;
         public ProductController(IWebHostEnvironment p)
         {
