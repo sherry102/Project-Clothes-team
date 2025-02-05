@@ -48,7 +48,7 @@
             methods:{
                 List: function () {
                     let _this = this;
-                    axios.get(`${_this.baseAddress}/Ajax/Getproduct`).then(response => {
+                    axios.get(`${_this.baseAddress}/Product/Getproduct`).then(response => {
                         _this.product = response.data;
                     }).catch(err => {
                         alert(err.message)

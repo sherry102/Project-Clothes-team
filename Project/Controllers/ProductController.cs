@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project.Models;
 using Project.ViewModel;
 
@@ -6,11 +7,20 @@ namespace Project.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly DbuniPayContext _context;
 
         IWebHostEnvironment _enviro = null;
-        public ProductController(IWebHostEnvironment p)
+        public ProductController(IWebHostEnvironment p, DbuniPayContext context)
         {
             _enviro = p;
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<List<Tproduct>> Getproduct()
+        {
+            var product = await _context.Tproducts.ToListAsync();
+            return product;
         }
 
         public IActionResult List(ProductViewModel vm, int id)
