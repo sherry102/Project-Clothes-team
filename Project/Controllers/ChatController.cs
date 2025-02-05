@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project.Models;
-using Project.ViewModel;
 
 namespace Project.Controllers
 {
-    public class CustomerServiceController : Controller
+    public class ChatController : Controller
     {
-        public IActionResult ChatList()
+        public IActionResult ChatRoom()
         {
             return View();
         }

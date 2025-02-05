@@ -182,12 +182,12 @@ namespace Project.Controllers
 			int totalsales_lastyear = db.Torders.Where(t => t.Odate.Year == currentYear-1).Count();
 
 
-			int CustService_today = db.Tcservices.Where(t => t.Csmtimes.Date == today).Count();
-			int CustSercive_month = db.Tcservices.Where(t => t.Csmtimes.Month == currentMonth && t.Csmtimes.Year == currentYear).Count();
-			int CustSercive_year = db.Tcservices.Where(t => t.Csmtimes.Year == currentYear).Count();
-			int CustService_yesterday = db.Tcservices.Where(t => t.Csmtimes.Date == today.AddDays(-1)).Count();
-			int CustSercive_lastmonth = db.Tcservices.Where(t => t.Csmtimes.Month == currentMonth-1 && t.Csmtimes.Year == currentYear).Count();
-			int CustSercive_lastyear = db.Tcservices.Where(t => t.Csmtimes.Year == currentYear-1).Count();
+			int CustService_today = db.Tchats.Where(t => t.ChatCreateTime.Date == today).Count();
+			int CustSercive_month = db.Tchats.Where(t => t.ChatCreateTime.Month == currentMonth && t.ChatCreateTime.Year == currentYear).Count();
+			int CustSercive_year = db.Tchats.Where(t => t.ChatCreateTime.Year == currentYear).Count();
+			int CustService_yesterday = db.Tchats.Where(t => t.ChatCreateTime.Date == today.AddDays(-1)).Count();
+			int CustSercive_lastmonth = db.Tchats.Where(t => t.ChatCreateTime.Month == currentMonth-1 && t.ChatCreateTime.Year == currentYear).Count();
+			int CustSercive_lastyear = db.Tchats.Where(t => t.ChatCreateTime.Year == currentYear-1).Count();
 
 
 			var viewModel = new IndexViewModel

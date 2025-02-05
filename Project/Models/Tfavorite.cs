@@ -11,11 +11,11 @@ public partial class Tfavorite
 
     public int Pid { get; set; }
 
-    public DateTime FcreateDate { get; set; }
-
     public string Pname { get; set; } = null!;
 
-    public string Pphoto { get; set; } = null!;
+    public string? Pphoto { get; set; }
 
     public int Pprice { get; set; }
+
+    public DateTime FcreateDate { get; set; }
 }
