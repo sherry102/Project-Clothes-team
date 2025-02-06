@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Project.DTO;
 using Project.Models;
 using Project.ViewModel;
 
@@ -6,12 +8,39 @@ namespace Project.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly DbuniPayContext _context;
+
         IWebHostEnvironment _enviro = null;
-        public ProductController(IWebHostEnvironment p)
+        public ProductController(IWebHostEnvironment p, DbuniPayContext context)
         {
             _enviro = p;
+            _context = context;
         }
 
+        [HttpGet]
+        public async Task<List<Tproduct>> Getproduct()
+        {
+            var product = await _context.Tproducts.ToListAsync();
+            return product;
+        }
+
+        [HttpPost]
+        public async Task<IEnumerable<ProductDTO>> FilterProduct([FromBody] ProductDTO ProductDTO)
+        {
+            return _context.Tproducts.Where(p => p.Pid == ProductDTO.Pid ||
+            p.Pname.Contains(ProductDTO.Pname) || p.Ptype.Contains(ProductDTO.Ptype) ||
+            p.Pcategory.Contains(ProductDTO.Pcategory))
+            .Select(p => new ProductDTO
+            {
+                Pid = p.Pid,
+                Pname = p.Pname,
+                Pprice = p.Pprice,
+                Pphoto = p.Pphoto,
+                Ptype = p.Ptype,
+                Pcategory = p.Pcategory
+            });
+        }
+        
         public IActionResult List(ProductViewModel vm, int id)
         {
             DbuniPayContext db = new DbuniPayContext();

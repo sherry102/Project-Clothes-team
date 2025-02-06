@@ -2,9 +2,9 @@
 @{
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
-@section Styles {
+@section styles {
     <style>
-
+       
     </style>
 }
 <!-- 麵包屑 -->
@@ -16,174 +16,24 @@
 </nav>
 <!-- 產品列表 -->
 
-<div id="app" class="container mb-5 text-center">
-    <div class="row">
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/images/product/pc-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">鋪棉毛絨翻領寬版外套</p>
-                    <p class="h4 mb-3">1590元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
+<div id="app">
+    <div class="container mb-5 text-center">
+        <input type="text" class="form-control col-lg-8 w-50 mb-3" v-model="filter" v-on:keyup="Filterproduct()" placeholder="請輸入篩選關鍵字" />
+        <div class="row">
+            <div class="col-12 col-md-6 col-xl-3" v-for="item in product" v-if="product.length > 0" v-on:key="item.pid">
+                <div class="card mb-3">
+                    <a v-bind:href="'/FrontHome/productdetail/' + item.pid">
+                        <img v-bind:src="'/Images/'+ item.pphoto" alt="" class="card-img-top" />
+                    </a>
+                    <div class="card-body ">
+                        <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+                        <div class="card-text fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
+                        <button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button>
+                        </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/images/product/pc-02-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">仿毛呢長大衣</p>
-                    <p class="h4 mb-3">1590元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/images/product/pc-03-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">鋪棉輕薄型外套</p>
-                    <p class="h4 mb-3">590元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pv-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">粗針混紡寬版開襟背心</p>
-                    <p class="h4 mb-3">490元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pts-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">羅紋立領長袖T恤</p>
-                    <p class="h4 mb-3">300元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pts-02-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">透膚木耳邊高領T恤</p>
-                    <p class="h4 mb-3">250元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pts-03-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">寬鬆短版格紋開襟衫</p>
-                    <p class="h4 mb-3">490元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pts-04-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">法蘭絨格紋襯衫</p>
-                    <p class="h4 mb-3">400元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pp-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">彈性針織直筒寬褲</p>
-                    <p class="h4 mb-3">450元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pp-02-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">高腰牛仔寬褲</p>
-                    <p class="h4 mb-3">400元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/psk-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">毛絨窄裙</p>
-                    <p class="h4 mb-3">490元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/psk-02-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">燈芯絨長裙</p>
-                    <p class="h4 mb-3">650元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card mb-3">
-                <a href="~/FrontHome/Productdetail">
-                    <img src="~/Images/product/pca-01-01.jpg" alt="" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">羅紋針織帽</p>
-                    <p class="h4 mb-3">250元</p>
-                    <button class="btn btn-outline-secondary">加入購物車</button>
-                </div>
+            <div v-else="product.length == 0" class="text-center mt-5">
+                <p>找不到符合條件的商品。</p>
             </div>
         </div>
     </div>
@@ -197,17 +47,37 @@
         var vueApp={
             data() {
                 return {
-                     products: [
-                     
-                  };
+                    baseAddress: "https://localhost:7279",
+                    filter:"",
+                    product: [],
+                }
             },
             methods:{
-                
+                List: function () {
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Product/Getproduct`).then(response => {
+                        _this.product = response.data;
+                    }).catch(err => {
+                        alert(err.message)
+                    })
+                },
+               Filterproduct:function(){
+                    let _this=this;
+                    var request={};
+                    request.pname=_this.filter;
+                    request.ptype=_this.filter;
+                    request.pcategory=_this.filter;
+                    axios.post(`${_this.baseAddress}/Product/Filterproduct`, request).then(response=>{
+                        _this.product = response.data;
+                    });
+                },
             },
-            mounted:
-            {
-        
-            },
+            mounted:function () {
+                let _this = this;
+                //_this.List();
+                _this.Filterproduct();
+               
+            }
         };
         var app=Vue.createApp(vueApp).mount("#app");
     </script>

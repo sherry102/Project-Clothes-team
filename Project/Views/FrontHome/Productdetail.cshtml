@@ -2,8 +2,145 @@
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+TC&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <style>
+        .clothes-box {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            width: 40%;
+            height: 70%;
+            white-space: pre;
+            overflow: hidden;
+            /* border:1px solid black */
+        }
 
+        .clothes-container {
+            position: relative;
+        }
+
+        .btn-side {
+            position: absolute;
+            margin: 2px;
+            background-color: #8891a3c7 !important;
+            border: none !important;
+            color: white !important;
+            width: 60px;
+            height: 35px;
+            border-radius: 10px !important;
+        }
+
+        .money {
+            position: absolute;
+            margin: 10px;
+            right: 5%;
+            font-weight: bolder;
+        }
+
+        .btn-side:hover {
+            background-color: #8a8282c7 !important;
+            border: 1px solid #8891a3c7 !important;
+        }
+
+        .product-item {
+            text-align: center;
+        }
+
+        #tshirt:hover,
+        #longTshirt:hover,
+        #coat:hover,
+        #sweatshirt:hover,
+        #shortPolo:hover,
+        .fontFamily:hover,
+        #shirt:hover {
+            transform: scale(1.1);
+        }
+
+        #white:hover,
+        #black:hover,
+        #blue:hover,
+        #red:hover,
+        #green:hover,
+        #gray:hover,
+        #deepblue:hover {
+            transform: scale(1.1);
+        }
+
+        .item-active {
+            box-shadow: 1px 1px 3px #000;
+            border-radius: 10%;
+            transform: scale(1.1);
+            padding: 2px;
+        }
+
+        .color-content h3 {
+            text-transform: uppercase;
+            font-size: 1.6rem;
+        }
+
+        .color {
+            width: 30px;
+            height: 30px;
+            background: none;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            aspect-ratio: 1; /* 確保寬高比例為 1:1 */
+        }
+
+        .color-black {
+            background-color: #242424;
+        }
+
+        .color-blue {
+            background-color: #085ea0;
+        }
+
+        .color-yellow {
+            background-color: #ecdf2a;
+        }
+
+        .color-red {
+            background-color: #8b0516;
+        }
+
+        .color-white {
+            background-color: #ededed;
+        }
+
+        .color-green {
+            background-color: #2b814c;
+        }
+
+        .color-lightgreen {
+            background-color: rgb(184, 239, 226);
+        }
+
+        .color-gray {
+            background-color: rgb(169, 167, 167);
+        }
+
+        .color-orange {
+            background-color: #d37c0a;
+        }
+
+        .color:hover {
+            box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        .active-color {
+            box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.7);
+        }
+
+        .color-groups {
+            padding: 1rem 0;
+            display: flex;
+        }
+
+      
     </style>
 }
 <!-- breadcrumb 麵包屑 -->
@@ -44,11 +181,45 @@
         <div class="col-12 col-md-6 p-5">
             <p class="fs-3 ms-4">鋪棉毛絨翻領寬版外套 </p>
             <p class="fs-1 mt-5 ms-4"> NT$ 1590元 </p>
-            <div class="container">
-                <div class="row">
-                    <div class="col-6"><button class="btn btn-outline-primary rounded w-100" type="button">加入購物車</button></div>    
+            <!-- 衣服顏色 -->
+            <div class="color-content">
+                <div class="fs-5 fw-bold mt-5">
+                    衣服顏色
+                    <div class="color-groups mt-2">
+                        <div class="color color-white" v-bind:class="{'active-color': activeColor === 'white'}" v-on:click="changeColor('white','white')"></div>
+                        <div class="color color-black" v-bind:class="{'active-color': activeColor === 'black'}" v-on:click="changeColor('black','rgba(15, 15, 15,0.8)')"></div>
+                        <div class="color color-yellow" v-bind:class="{'active-color': activeColor === 'yellow'}" v-on:click="changeColor('yellow','#ffee00')"></div>
+                        <div class="color color-blue" v-bind:class="{'active-color': activeColor === 'blue'}" v-on:click="changeColor('blue','#085ea0')"></div>
+                        <div class="color color-red" v-bind:class="{'active-color': activeColor === 'red'}" v-on:click="changeColor('red','#8b0516')"></div>
+                        <div class="color color-green" v-bind:class="{'active-color': activeColor === 'green'}" v-on:click="changeColor('green','#2b814c')"></div>
+                        <div class="color color-lightgreen" v-bind:class="{'active-color': activeColor === 'lightgreen'}" v-on:click="changeColor('lightgreen','rgb(184, 239, 226)')"></div>
+                        <div class="color color-gray" v-bind:class="{'active-color': activeColor === 'gray'}" v-on:click="changeColor('gray','rgb(197, 196, 196)')"></div>
+                        <div class="color color-orange" v-bind:class="{'active-color': activeColor === 'orange'}" v-on:click="changeColor('orange','#d37c0a')"></div>
+                    </div>
                 </div>
             </div>
+            <!-- 衣服件數 -->
+            <div class="fs-5 fw-bold mt-4">
+                衣服件數
+                <div class="d-flex">
+                    <input type="number" class="form-control mt-4 text-center" style="width:80px;" v-model="count" min="0" />
+                    <select class="form-control ms-3 mt-4 " style="width:130px; height:37.6px;">
+                        <option disabled selected>請選擇尺寸</option>
+                        <option>S</option>
+                        <option>M</option>
+                        <option>L</option>
+                        <option>XL</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+                    <div class="input-group">
+                        <button class="btn btn-outline-secondary" type="button" >-</button>
+                        <input type="text" class="form-control" v-model="quantity" readonly>
+                        <button class="btn btn-outline-secondary" type="button">+</button>
+                    </div>
+                
         </div>
     </div>
 </div>
@@ -91,17 +262,35 @@
         var vueApp={
             data() {
                 return {
-                     products: [
-
-                  };
+                    baseAddress: "https://localhost:7279",
+                    filter:"",
+                    product: [],
+                }
             },
             methods:{
-
+                List: function () {
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Product/Getproduct`).then(response => {
+                        _this.product = response.data;
+                    }).catch(err => {
+                        alert(err.message)
+                    })
+                },
+                Filterproduct:function(){
+                    let _this=this;
+                    var request={};
+                    request.pname=_this.filter;
+                    axios.post(`${_this.baseAddress}/Product/Filterproduct`, request).then(response=>{
+                        _this.product = response.data;
+                    });
+                },
             },
-            mounted:
-            {
+            mounted:function () {
+                let _this = this;
+                _this.List();
+                _this.Filterproduct();
 
-            },
+            }
         };
         var app=Vue.createApp(vueApp).mount("#app");
     </script>
