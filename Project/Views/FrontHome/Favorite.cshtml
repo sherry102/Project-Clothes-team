@@ -10,6 +10,7 @@
 
 		.TopSales {
 			position: relative;
+			border: 1px solid #F2F2F2;
 		}
 
 		.favorite {
@@ -29,7 +30,7 @@
 <div id="app">
 	<div class="container">
 		<div class="row">
-			<div class="col-3 mt-5" v-for="item in favorite">
+			<div class="col-3 mt-3 mb-5" v-for="item in favorite">
 				<div class="TopSales">
 					<a href="#" class="text-decoration-none">
 						<i v-bind:class="item.isFavorite? 'bi bi-heart-fill':'bi bi-heart'" class="favorite" v-on:click.prevent="Favorite(item)"></i>

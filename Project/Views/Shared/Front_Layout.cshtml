@@ -21,6 +21,12 @@
     <link rel="stylesheet" href="~/css/nav.css?v=1.0" />
     <link rel="stylesheet" href="~/css/footerstyle.css?v=1.0" />
     <link rel="stylesheet" href="~/css/FrontIndexstyle.css" />
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <style>
+        body{
+            background-color:white !important;
+        }
+    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="mb-0 h-100 d-flex flex-column">
@@ -31,11 +37,13 @@
                 
                 <div class="col-8 d-flex align-items-center">
                     <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
-                    <form class="d-flex me-5 form-search input-search">
+                    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("Search","FrontHome")">
                         <input class="form-control me-2 index-search"
                                type="search"
                                placeholder="Search"
-                               aria-label="Search" />
+                               aria-label="Search"
+                               name="KeyWord"
+                               autocomplete="off"/>
                         <button class="btn btn-outline-success btn-search" type="submit">
                             <div><i class="bi bi-search"></i></div>
                         </button>
@@ -244,6 +252,7 @@
 
         </div>
     </footer>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/popper.min.js"></script>
@@ -253,6 +262,7 @@
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="~/js/nav.js"></script>
+    <script src="~/assets/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
