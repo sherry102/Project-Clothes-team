@@ -28,5 +28,7 @@ namespace Project.DTO
         public string? Photo0 { get; set; }
 
         public string? Photo1 { get; set; }
+
+        public int PPrice { get; set; }
     }
 }

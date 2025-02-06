@@ -58,6 +58,7 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Pname)
                 .HasMaxLength(50)
                 .HasColumnName("PName");
+            entity.Property(e => e.Pprice).HasColumnName("PPrice");
             entity.Property(e => e.Psize)
                 .HasMaxLength(50)
                 .HasColumnName("PSize");

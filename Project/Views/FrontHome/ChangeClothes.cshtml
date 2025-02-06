@@ -681,6 +681,7 @@
                         CustomPhoto1: _this.uploadPhoto1,
                         Photo0: _this.mergedImage0,
                         Photo1: _this.mergedImage1,
+                        PPrice:_this.money,
                     };
                     console.log(request);
                     axios.post(`${_this.baseAddress}/Ajax/SaveToCart`, request).then(response => {

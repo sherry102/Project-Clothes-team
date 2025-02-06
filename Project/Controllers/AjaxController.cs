@@ -134,6 +134,7 @@ namespace Project.Controllers
                 CustomPhoto1=cart.CustomPhoto1,
                 Photo0= cart.Photo0,
                 Photo1 = cart.Photo1,
+                Pprice=cart.PPrice,
             };
             if (Cart.Photo0 == "") {
                 return "請儲存正面圖案";
