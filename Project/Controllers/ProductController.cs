@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project.DTO;
 using Project.Models;
 using Project.ViewModel;
 
@@ -23,6 +24,23 @@ namespace Project.Controllers
             return product;
         }
 
+        [HttpPost]
+        public async Task<IEnumerable<ProductDTO>> FilterProduct([FromBody] ProductDTO ProductDTO)
+        {
+            return _context.Tproducts.Where(p => p.Pid == ProductDTO.Pid ||
+            p.Pname.Contains(ProductDTO.Pname) || p.Ptype.Contains(ProductDTO.Ptype) ||
+            p.Pcategory.Contains(ProductDTO.Pcategory))
+            .Select(p => new ProductDTO
+            {
+                Pid = p.Pid,
+                Pname = p.Pname,
+                Pprice = p.Pprice,
+                Pphoto = p.Pphoto,
+                Ptype = p.Ptype,
+                Pcategory = p.Pcategory
+            });
+        }
+        
         public IActionResult List(ProductViewModel vm, int id)
         {
             DbuniPayContext db = new DbuniPayContext();
