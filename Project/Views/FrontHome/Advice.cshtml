@@ -1,0 +1,203 @@
+﻿@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+@section styles{
+    <style>
+        .btn-send{
+            border:1px solid gray;
+            border-radius:15px;
+        }
+
+        .btn-send:hover {
+                background: #ECF5FF;
+        }
+    </style>
+    
+}
+<div id="app">
+
+    @* <div class="container mb-5">
+        <div class="row">
+            <div class="col-9 mx-auto">
+                <div class="d-flex">
+                    <div class="mt-4">訂單編號：{{OId}}</div>
+                    <div class="mt-4 ms-5">訂單日期：{{OrderDate}}</div>
+                </div>
+                <form class="mt-4">
+                    <div class="mb-3">
+                        <label for="question" class="form-label mb-2">主要問題</label>
+                        <select class="form-control" v-model="Question">
+                            <option>訂單問題</option>
+                            <option>運送問題</option>
+                            <option>其他問題</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label mb-2" >主旨</label>
+                        <input type="text" class="form-control" id="title" v-model="Title" required >
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label  mb-2">簡述 <span style="font-size:14px; color:darkred">(150字以內)</span></label>
+                        <textarea class="form-control" style="height:100px;overflow-y: scroll; resize: none;" maxlength="150" v-model="Description" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-send" v-on:click="send">送出</button>
+                </form>
+            </div>
+        </div>
+    </div> *@
+
+    <div class="container my-3">
+        <div class="row">
+			<div class="col-lg-7 col-12" style="background-color:#FCFCFC; border:1px solid #E0E0E0; border-radius:10px">
+                <div class="d-flex text-center">
+
+                </div>
+                <div class=" d-flex mt-3">
+                    <div class="col-6 ms-3">
+                        <b>訂購人資訊：</b>
+                        <div class="mt-2">訂購人名稱：{{MName}}</div>
+                        <div class="mt-2">訂購人電話：{{MPhone}}</div>
+                        <div class="mt-2">E-mail：{{MEmail}}</div>
+                        <div class="mt-2">運送地址：{{OAddress}}</div>
+                    </div>
+                    <div class="col-6 ms-3">
+                        <b>訂單細節：</b>
+                        <div class="mt-2">訂單編號：{{OId}}</div>
+                        <div class="mt-2">訂單日期：{{OrderDate}}</div>
+                        <div class="mt-2">運送狀態：{{OStatus}}</div>
+                        <div class="mt-2">付款狀態：{{OPayment}}</div>
+                    </div>
+                </div>
+                <div class="col-11 mt-3 ms-3">
+                    <b>訂單內容：</b>
+                    <table class="table mt-2">
+                        <tbody>
+                            <tr v-for="item in products">
+                                <td>{{item.PName}}</td>
+                                <td>{{item.PSize}}</td>
+                                <td>{{item.PColor}}</td>
+                                <td>{{item.PCount}}件</td>
+                                <td>NT${{item.PPrice}}</td>
+                            </tr>
+                            <tr >
+                                <td colspan="4" class="text-end"><strong style="color:darkred">總金額</strong></td>
+                                <td><strong style="color:darkred">NT${{ TotalPrice }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="col-lg-5 col-12">
+                <form class="mt-2">
+                    <div class="mb-3">
+                        <label for="question" class="form-label mb-2">主要問題</label>
+                        <select class="form-control" v-model="Question">
+                            <option>訂單問題</option>
+                            <option>運送問題</option>
+                            <option>其他問題</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label mb-2">主旨</label>
+                        <input type="text" class="form-control" id="title" v-model="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label  mb-2">簡述 <span style="font-size:14px; color:darkred">(150字以內)</span></label>
+                        <textarea class="form-control" style="height:150px;overflow-y: scroll; resize: none;" maxlength="150" v-model="Description" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-send" v-on:click="send">送出</button>
+                </form>
+            </div>
+        </div>
+    </div>
+            
+</div>
+
+@section Scripts{
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script>
+        var vueApp = {
+            data() {
+                return {
+                    baseAddress: "https://localhost:7279",
+                    OId:"2",
+                    OrderDate: "2024-12-25",
+                    Question: "訂單問題",
+                    Title:"",
+                    Description:"",
+                    MName:"Joey",
+                    MPhone:"0986578412",
+                    MEmail: "joey4755@gmail.com",
+                    OStatus:"運送中",
+                    OAddress:"高雄市苓雅區中正三路211號",
+                    OPayment:"已付款",
+                    TotalPrice:3000,
+                    products:[
+                        { PName: "仿羊羔絨開襟外套",
+                          PSize:"XL",
+                          PColor:"紅色",
+                          PCount:4,
+                          PPrice:1600,
+
+                        },
+                        {
+                            PName: "仿羊羔絨開襟外套",
+                            PSize: "XL",
+                            PColor: "紅色",
+                            PCount: 4,
+                            PPrice: 1600,
+
+                        },
+                        {
+                            PName: "美麗諾羊毛混紡V領毛衣",
+                            PSize: "XL",
+                            PColor: "紅色",
+                            PCount: 4,
+                            PPrice: 1600,
+
+                        },
+                        {
+                            PName: "粗針混紡寬版連帽毛衣",
+                            PSize: "XL",
+                            PColor: "紅色",
+                            PCount: 4,
+                            PPrice: 1600,
+
+                        }
+
+                    ]
+                }
+            },
+            methods: {
+                send: function () {
+                    let _this = this;
+                    let request = {
+                        OId:_this.OId,
+                        Question:_this.Question,
+                        Title:_this.Title,
+                        Description:_this.Description
+                    }
+                    if (confirm("確定要送出嗎")) {
+                        axios.post(`${_this.baseAddress}/Ajax/PostAdvice`, request).then(response => {
+                            if (response.data.success) {
+                                alert("已送出");
+                                window.location.href = response.data.redirectUrl;
+                            } else {
+                                alert(response.data.message);
+                                window.location.href = response.data.redirectUrl;
+                            }
+                        }).catch(err => { 
+                            alert(err.message);
+                        })
+                    }
+
+                }
+            },
+        };
+        var app = Vue.createApp(vueApp).mount("#app");
+    </script>
+}

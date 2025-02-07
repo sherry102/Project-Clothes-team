@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nav.css?v=1.0" />
     <link rel="stylesheet" href="~/css/footerstyle.css?v=1.0" />
-    <link rel="stylesheet" href="~/css/FrontIndexstyle.css" />
+    <link rel="stylesheet" href="~/css/FrontIndexstyle.css?v=1.0" />
     <link href="~/assets/css/style.css" rel="stylesheet">
     <style>
         body{
@@ -37,11 +37,12 @@
                 
                 <div class="col-8 d-flex align-items-center">
                     <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
-                    <form class="d-flex me-5 form-search input-search">
+                    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("Search","FrontHome")">
                         <input class="form-control me-2 index-search"
                                type="search"
                                placeholder="Search"
                                aria-label="Search"
+                               name="KeyWord"
                                autocomplete="off"/>
                         <button class="btn btn-outline-success btn-search" type="submit">
                             <div><i class="bi bi-search"></i></div>

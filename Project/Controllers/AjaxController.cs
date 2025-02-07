@@ -104,7 +104,7 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> New4Sales() {
+        public async Task<IActionResult> New4Sales(string keyword) {
             var Newest4 = await  _context.Tproducts.OrderByDescending(x => x.PcreatedDate).Take(4).ToListAsync();
             return Json(Newest4);
         }
@@ -144,6 +144,28 @@ namespace Project.Controllers
             _context.Tcarts.Add(Cart);
             await _context.SaveChangesAsync();
             return "已加入購物車";
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostAdvice([FromBody]AdviceDTO Ad)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var Advice = new Tadvice
+            {
+                Mid=member.Mid,
+                Oid=Ad.OId,
+                Question=Ad.Question,
+                Title=Ad.Title,
+                Description=Ad.Description,
+            };
+            _context.Tadvices.Add(Advice);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, redirectUrl = Url.Action("FrontIndex", "FrontHome") });
         }
 
     }
