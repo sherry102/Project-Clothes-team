@@ -22,7 +22,7 @@
 
         public DateTime PcreatedDate { get; set; }
 
-        public string Pphoto { get; set; }
+        public string? Pphoto { get; set; }
 
         public bool PisHided { get; set; }
     }

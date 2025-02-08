@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTO;
 using Project.Models;
 using Project.ViewModel;
+using System.Security.Cryptography;
 
 namespace Project.Controllers
 {
@@ -16,12 +17,61 @@ namespace Project.Controllers
             _enviro = p;
             _context = context;
         }
-
-        [HttpGet]
-        public async Task<List<Tproduct>> Getproduct()
+        //前台ProductList
+        public IActionResult ProductList()
         {
-            var product = await _context.Tproducts.ToListAsync();
-            return product;
+            return View();
+        }
+        //前台Productdetail
+        public IActionResult Productdetail(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("List");
+
+            DbuniPayContext db = new DbuniPayContext();
+            Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+            if (x == null)
+                return RedirectToAction("List");
+
+            return View(new CProductWrap() { product = x });
+        }
+
+        [HttpPost]
+        public IActionResult Productdetail(CProductWrap p)
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
+            if (x != null)
+            {
+                x.Pname = p.Pname;
+                x.Pprice = p.Pprice;
+                x.Ptype = p.Ptype;
+                x.Psize = p.Psize;
+                x.Pcolor = p.Pcolor;
+                x.Pdescription = p.Pdescription;
+                x.Pcategory = p.Pcategory;
+                x.PcreatedDate = DateTime.Now;
+                x.Pinventory = p.Pinventory;
+                x.Pphoto= p.Pphoto;
+            }
+            return RedirectToAction("List");
+        }
+        [HttpGet]
+        public async Task<List<Tproduct>> Getproducts()
+        {
+            var products = await _context.Tproducts.ToListAsync();
+            return products;
+        }
+
+        [HttpGet("GetProductById")]
+        public async Task<IActionResult> GetProductById(int pid)
+        {
+            var product = await _context.Tproducts.FirstOrDefaultAsync(p => p.Pid == pid);
+            if (product == null)
+            {
+                return NotFound("找不到商品");
+            }
+            return Ok(product);
         }
 
         [HttpPost]
@@ -40,7 +90,7 @@ namespace Project.Controllers
                 Pcategory = p.Pcategory
             });
         }
-        
+        //後台ProductList
         public IActionResult List(ProductViewModel vm, int id)
         {
             DbuniPayContext db = new DbuniPayContext();

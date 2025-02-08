@@ -1,12 +1,14 @@
 ﻿@using System.Text.Json
+@model List<Project.Models.CProductWrap>
 @{
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section styles {
     <style>
-       
+
     </style>
 }
+
 <!-- 麵包屑 -->
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb mt-3">
@@ -15,24 +17,25 @@
     </ol>
 </nav>
 <!-- 產品列表 -->
-
 <div id="app">
     <div class="container mb-5 text-center">
         <input type="text" class="form-control col-lg-8 w-50 mb-3" v-model="filter" v-on:keyup="Filterproduct()" placeholder="請輸入篩選關鍵字" />
         <div class="row">
-            <div class="col-12 col-md-6 col-xl-3" v-for="item in product" v-if="product.length > 0" v-on:key="item.pid">
+            <div class="col-12 col-md-6 col-xl-3" v-for="item in products" v-if="products.length > 0 " v-on:key="item.pid">
                 <div class="card mb-3">
-                    <a v-bind:href="'/FrontHome/productdetail/' + item.pid">
-                        <img v-bind:src="'/Images/'+ item.pphoto" alt="" class="card-img-top" />
+                    <a v-bind:href="'/Product/Productdetail/' + item.pid">
+                        <img v-bind:src="'/Images/'+ item.pphoto" alt="" class="card-img-top"/>
                     </a>
                     <div class="card-body ">
+                        <a v-bind:href="'/Product/Productdetail/' + item.pid">
                         <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+                        </a>
                         <div class="card-text fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
                         <button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button>
-                        </div>
+                    </div>
                 </div>
             </div>
-            <div v-else="product.length == 0" class="text-center mt-5">
+            <div v-else="products.length == 0" class="text-center mt-5">
                 <p>找不到符合條件的商品。</p>
             </div>
         </div>
@@ -49,14 +52,14 @@
                 return {
                     baseAddress: "https://localhost:7279",
                     filter:"",
-                    product: [],
+                    products: [],
                 }
             },
             methods:{
                 List: function () {
                     let _this = this;
-                    axios.get(`${_this.baseAddress}/Product/Getproduct`).then(response => {
-                        _this.product = response.data;
+                    axios.get(`${_this.baseAddress}/Product/Getproducts`).then(response => {
+                        _this.products = response.data;
                     }).catch(err => {
                         alert(err.message)
                     })
@@ -68,15 +71,15 @@
                     request.ptype=_this.filter;
                     request.pcategory=_this.filter;
                     axios.post(`${_this.baseAddress}/Product/Filterproduct`, request).then(response=>{
-                        _this.product = response.data;
+                        _this.products = response.data;
                     });
                 },
             },
             mounted:function () {
                 let _this = this;
-                //_this.List();
+                _this.List();
                 _this.Filterproduct();
-               
+
             }
         };
         var app=Vue.createApp(vueApp).mount("#app");
