@@ -46,12 +46,9 @@
         </div>
     </div> *@
 
-    <div class="container my-3">
+    <div class="container">
         <div class="row">
-			<div class="col-lg-7 col-12" style="background-color:#FCFCFC; border:1px solid #E0E0E0; border-radius:10px">
-                <div class="d-flex text-center">
-
-                </div>
+			<div class="col-lg-7 col-12 my-3" style="background-color:#FCFCFC; border:1px solid #E0E0E0; border-radius:10px">
                 <div class=" d-flex mt-3">
                     <div class="col-6 ms-3">
                         <b>訂購人資訊：</b>
@@ -72,6 +69,13 @@
                     <b>訂單內容：</b>
                     <table class="table mt-2">
                         <tbody>
+                            <tr>
+                                <th>商品名稱</th>
+                                <th>尺寸</th>
+                                <th>顏色</th>
+                                <th>件數</th>
+                                <th>金額</th>
+                            </tr>
                             <tr v-for="item in products">
                                 <td>{{item.PName}}</td>
                                 <td>{{item.PSize}}</td>
@@ -89,7 +93,7 @@
 
 
             </div>
-            <div class="col-lg-5 col-12">
+            <div class="col-lg-5 col-12 my-3">
                 <form class="mt-2">
                     <div class="mb-3">
                         <label for="question" class="form-label mb-2">主要問題</label>

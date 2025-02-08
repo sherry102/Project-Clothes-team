@@ -31,6 +31,8 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tmember> Tmembers { get; set; }
 
+    public virtual DbSet<TmemberCoupon> TmemberCoupons { get; set; }
+
     public virtual DbSet<Torder> Torders { get; set; }
 
     public virtual DbSet<TorderDetail> TorderDetails { get; set; }
@@ -105,13 +107,14 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcoupon>(entity =>
         {
-            entity.HasKey(e => e.CouponId).HasName("PK__TCoupon__384AF1DAADD0377B");
+            entity.HasKey(e => e.Id).HasName("PK__TCoupon__384AF1DAADD0377B");
 
             entity.ToTable("TCoupon");
 
-            entity.Property(e => e.CouponId).HasColumnName("CouponID");
             entity.Property(e => e.CouponName).HasMaxLength(50);
-            entity.Property(e => e.Mid).HasColumnName("MID");
+            entity.Property(e => e.DateEnd).HasColumnType("datetime");
+            entity.Property(e => e.DateStart).HasColumnType("datetime");
+            entity.Property(e => e.PassWord).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Tcservice>(entity =>
@@ -226,6 +229,13 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("MPhoto");
             entity.Property(e => e.Mpoints).HasColumnName("MPoints");
+        });
+
+        modelBuilder.Entity<TmemberCoupon>(entity =>
+        {
+            entity.ToTable("TMemberCoupon");
+
+            entity.Property(e => e.Mid).HasColumnName("MId");
         });
 
         modelBuilder.Entity<Torder>(entity =>

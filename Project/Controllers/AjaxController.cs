@@ -168,5 +168,59 @@ namespace Project.Controllers
             return Json(new { success = true, redirectUrl = Url.Action("FrontIndex", "FrontHome") });
         }
 
+        [HttpGet]
+
+        public async Task<IActionResult> GetCoupon() {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var Coupon = await (from MCou in _context.TmemberCoupons
+                               join Cou in _context.Tcoupons on MCou.CouponId equals Cou.CouponId
+                               where MCou.Mid == member.Mid && MCou.IsUse == false && Cou.DateEnd >= DateTime.Now
+                               select new { 
+                                    CouponName=Cou.CouponName,
+                                    CouponDiscount=Cou.CouponDiscount,
+                                    CouponPercentage=(Cou.CouponPercentage*10).ToString("F0"),
+                                    DateStart=Cou.DateStart.ToString("yyyy-MM-dd"),
+                                    DateEnd=Cou.DateEnd.ToString("yyyy-MM-dd"),
+                               }
+                               ).ToListAsync();
+            return Json(new { success = true, data = Coupon });
+        }
+
+        [HttpPost]
+
+        public async Task<string> SendCoupon([FromBody]CouponDTO CouponPassWord) {
+
+            var Coupon = await _context.Tcoupons.Where(c => c.PassWord == CouponPassWord.CouponPassWord).FirstOrDefaultAsync();
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var MemberCoupon = await _context.TmemberCoupons.Where(c => c.Mid == member.Mid).ToListAsync();
+            if (string.IsNullOrEmpty(CouponPassWord.CouponPassWord))
+            {
+                return "請輸入優惠碼";
+            }
+            else if (Coupon==null)
+            {
+                return "無效的優惠碼";
+            }
+            else if (MemberCoupon.Any(c=>c.CouponId == Coupon.CouponId))
+            {
+                return "已領取過該優惠";
+            }
+            else {
+                var AddCoupon = new TmemberCoupon
+                {
+                    Mid = member.Mid,
+                    CouponId = Coupon.CouponId,
+                };
+                _context.TmemberCoupons.Add(AddCoupon);
+                _context.SaveChanges();
+                return "已加入該優惠";
+            }
+        }
     }
 }

@@ -40,5 +40,10 @@ namespace Project.Controllers
             return View();
         }
 
+        public IActionResult Coupon()
+        {
+            return View();
+        }
+
     }
 }
