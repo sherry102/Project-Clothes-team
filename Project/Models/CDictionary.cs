@@ -1,4 +1,4 @@
-﻿namespace Project.Models
+﻿namespace Project.Models//快取
 {
     public class CDictionary
     {
