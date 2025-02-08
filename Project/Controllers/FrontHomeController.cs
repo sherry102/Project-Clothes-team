@@ -35,6 +35,14 @@ namespace Project.Controllers
         {
             return View();
         }
+        public IActionResult Cart()
+        {
+            return View();
+        }
+        public IActionResult CartToPay()
+        { 
+            return View();
+        }
 
         public IActionResult Search(string KeyWord) {
             if (string.IsNullOrEmpty(KeyWord)) {

@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+
+<div id="checkout">
+    <div class="container">
+        <h1>結帳</h1>
+        <div class="checkout-items">
+            <div v-for="(item, index) in cartArray" :key="item.PName" class="checkout-item">
+                <img :src="item.customPhoto0 && item.customPhoto0 !== '' ? `${baseAddress}/images/${item.customPhoto0}` : '/images/no_image.jpg'" alt="商品圖片" class="img-responsive" />
+                <p>{{ item.pName }}</p>
+                <p>尺寸: {{ item.pSize }}</p>
+                <p>顏色: {{ item.pColor }}</p>
+                <p>數量: {{ item.pCount }}</p>
+                <p>NT$ {{ item.pPrice * item.pCount }}</p>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <h3>訂單總金額</h3>
+            <p>NT$ {{ totalPrice + 60 - 10 }}</p>
+            <button @@click="placeOrder">確認訂單</button>
+        </div>
+
+        <div class="address-section">
+            <h3>送貨地址</h3>
+            <!-- 用戶輸入送貨地址的表單 -->
+            <input type="text" v-model="shippingAddress" placeholder="請輸入送貨地址" />
+        </div>
+
+        <div class="payment-section">
+            <h3>支付方式</h3>
+            <!-- 用戶選擇支付方式 -->
+            <select v-model="paymentMethod">
+                <option value="creditCard">信用卡</option>
+                <option value="paypal">PayPal</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var vueApp = {
+            data() {
+                return {
+                    baseAddress: "https://localhost:7279",
+                    cartArray: [],
+                    shippingAddress: "",
+                    paymentMethod: "creditCard"
+                };
+            },
+            computed: {
+                totalPrice() {
+                    return this.cartArray.reduce((total, item) => {
+                        return total + (item.pPrice * item.pCount);
+                    }, 0);
+                }
+            },
+            methods: {
+                getCartItems() {
+                    let _this = this;
+                    const storedCart = localStorage.getItem('cartItems');
+                    if (storedCart) {
+                        _this.cartArray = JSON.parse(storedCart);
+                    } else {
+                        axios.post(`${_this.baseAddress}/Ajax/GetCartItems`, {})
+                            .then(response => {
+                                if (response.data) {
+                                    _this.cartArray = response.data;
+                                } else {
+                                    alert("請先登入會員");
+                                }
+                            })
+                            .catch(err => {
+                                alert("錯誤: " + err.message);
+                            });
+                    }
+                },
+                placeOrder() {
+                    // 在這裡提交訂單，進行結帳處理
+                    alert("訂單已成功提交！");
+                }
+            },
+            mounted: function () {
+                this.getCartItems();
+            }
+        };
+        var app = Vue.createApp(vueApp).mount("#checkout");
+    </script>
+}

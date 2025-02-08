@@ -16,6 +16,43 @@ namespace Project.Controllers
         }
 
         [HttpPost]
+        public async Task<IEnumerable<CustomCartDTO>> GetCartItems([FromBody] object request)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;  
+            }
+
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            Console.WriteLine($"Member MID: {member.Mid}");   
+
+            var cartItems = await _context.Tcarts
+                .Where(c => c.Mid == member.Mid)
+                .Select(c => new CustomCartDTO
+                {
+                    Id=c.Id,
+                    PName = c.Pname,
+                    PType = c.Ptype,
+                    PCategory = c.Pcategory,
+                    PCount = c.Pcount,
+                    PSize = c.Psize,
+                    PColor = c.Pcolor,
+                    CustomText0 = c.CustomText0,
+                    CustomText1 = c.CustomText1,
+                    CustomPhoto0 = c.CustomPhoto0,
+                    CustomPhoto1 = c.CustomPhoto1,
+                    Photo0 = c.Photo0,
+                    Photo1 = c.Photo1,
+                    PPrice = c.Pprice
+                }).ToListAsync();
+
+            Console.WriteLine($"Found {cartItems.Count} items.");  
+
+            return cartItems;  
+        } 
+         
+        [HttpPost]
         public async Task<string> PostFavorite([FromBody] FavoriteDTO favoriteDTO)
         {
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
@@ -145,6 +182,64 @@ namespace Project.Controllers
             await _context.SaveChangesAsync();
             return "已加入購物車";
         }
+
+        [HttpPut]
+        public async Task<string> UpdateItem(int productId, [FromBody] CustomCartDTO updatedCartItem)
+        { 
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return "請先登入會員";
+            }
+             
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+             
+            var cartItem = await _context.Tcarts
+                                         .Where(c => c.Mid == member.Mid && c.Pid == productId)
+                                         .FirstOrDefaultAsync();
+             
+            if (cartItem == null)
+            {
+                return "商品不存在";
+            }
+             
+            cartItem.Pcount = updatedCartItem.PCount;  // 修改数量 
+              
+            _context.Tcarts.Update(cartItem);
+            await _context.SaveChangesAsync();
+
+            return "商品已更新";
+        }
+
+
+
+
+        [HttpDelete]
+        public async Task<string> DeleteItem(int productId)
+        { 
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return "請先登入會員";
+            }
+            
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+             
+            var cartItem = await _context.Tcarts
+                             .Where(c => c.Mid == member.Mid && c.Pid == productId)  // 这里应该使用 Pid
+                             .FirstOrDefaultAsync();  // 注意这里是 cartItem.Id == productId
+             
+            if (cartItem == null)
+            { 
+                return "商品不存在"+ productId;
+            }
+             
+            _context.Tcarts.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return "已刪除商品";
+        }
+
 
     }
 }
