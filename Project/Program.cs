@@ -1,4 +1,5 @@
-using CoreMVC_SignalR_Chat.Hubs;
+using Project.Hubs;
+using Project.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
 
@@ -15,9 +16,21 @@ builder.Services.AddSession();
 builder.Services.AddDbContext<DbuniPayContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbuniPay"));
 });
-
+// WS 服務啟動
+//builder.Services.AddSingleton<ChatController>();
 //加入 SignalR
 builder.Services.AddSignalR();
+//允許跨域請求
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://127.0.0.1:5500") // 指定允許的前端來源
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials(); // 允許憑證
+    });
+});
 var app = builder.Build();
 
 
@@ -31,8 +44,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+//跨域啟動
+app.UseCors();
 //加入 Hub
-app.MapHub<ChatHub>("/ChatHub");
+app.MapHub<ChatHub>("/ChatRoom");
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();

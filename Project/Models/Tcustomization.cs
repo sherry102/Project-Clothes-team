@@ -15,7 +15,7 @@ public partial class Tcustomization
 
     public string Ccategory { get; set; } = null!;
 
-    public string CnSize { get; set; } = null!;
+    public string Csize { get; set; } = null!;
 
     public string Ccolor { get; set; } = null!;
 
