@@ -1,0 +1,549 @@
+﻿@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+<div id="app">
+    <div class="container">
+        <h1>我的購物車</h1>
+        <div class="check">
+            <div class="col-md-8 cart-items">
+                <div v-for="(item, index) in cartArray" :key="item.PName" class="cart-header">
+                    <div class="close1" @@click="removeItem(index)"></div>
+                    <div class="cart-sec simpleCart_shelfItem">
+                        <div class="cart-item cyc">
+                            <div class="cart-img-con1">
+                                <img :src="item.customPhoto0 && item.customPhoto0 !== '' ? `${baseAddress}/images/${item.customPhoto0}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
+
+                            </div>
+                            <div class="cart-img-con2">
+                                <img :src="item.customPhoto1 && item.customPhoto1 !== '' ? `${baseAddress}/images/${item.customPhoto1}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
+                            </div>
+                            <div class="cart-item-info">
+                                <p>{{ item.pType }} </p>
+                                <h3>
+                                    {{ item.pName }}
+                                </h3>
+                                <ul class="qty">
+                                    <li><p>尺寸 : {{ item.pSize }}</p></li>
+                                </ul>
+                                <ul class="qty">
+                                    <li><p>顏色 : {{ item.pColor }}</p></li>
+                                </ul>
+                                <ul class="qty">
+                                    <li><p>文字(正面) : {{ item.customText0 }}</p></li>
+                                </ul>
+                                <ul class="qty">
+                                    <li><p>文字(背面) : {{ item.customText1 }}</p></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="num">
+                            <div class="quantity-controls">
+                                <button @@click="updateQuantity(index, 'decrease')">-</button>
+                                <input type="text" class="quantity" v-model="item.pCount" readonly />
+                                <button @@click="updateQuantity(index, 'increase')">+</button>
+                            </div>
+                        </div>
+                        <div class="delivery">
+                            <p>NT$ {{ item.pPrice * item.pCount }}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3 cart-total">
+                <div class="order-summary-container">
+                    <p></p>
+                    <a class="continue" href="~/FrontHome/FrontIndex">繼續購物</a>
+                    <div class="price-details">
+                        <h3>訂單資訊</h3>
+                        <span>合計</span>
+                        <span class="total1">NT$ {{ totalPrice }}</span>
+                        <span>折價券</span>
+                        <span class="total1">- NT$ 10</span>
+                        <span>運費</span>
+                        <span class="total1">+NT$ 60</span>
+                        <div class="clearfix"></div>
+                    </div>
+                    <ul class="total_price">
+                        <li class="last_price"><h4>訂單總價</h4></li>
+                        <li class="last_price"><span>NT$ {{ totalPrice + 60 - 10 }}</span></li>
+                    </ul>
+                    <br />
+                    <a class="order" v-on:click="UpdateCart">前往結帳</a>
+
+                </div>
+
+                <div class="total-item">
+                    href="~/FrontHome/CartToPay"
+                    <h3 class="price-details">選擇折價券</h3>
+                    <h4>COUPONS</h4>
+                    <button class="cpns" href="#">使用折價券</button>
+                    <p><a href="#">Log In</a> to use accounts - linked coupons</p>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var vueApp = {
+            data() {
+                return {
+                    baseAddress: "https://localhost:7279",
+                    cartArray: []
+                };
+            },
+            computed: {
+                totalPrice() {
+                    return this.cartArray.reduce((total, item) => {
+                        return total + (item.pPrice * item.pCount);
+                    }, 0);
+                }
+            },
+            methods: {
+                getCartItems: function () {
+                    let _this = this;
+                    // 先從 LocalStorage 讀取資料
+                    const storedCart = localStorage.getItem('cartItems');
+                    if (storedCart) {
+                        _this.cartArray = JSON.parse(storedCart);
+                        console.log("從 LocalStorage 載入購物車項目", _this.cartArray);
+                    } else {
+                        // 如果 LocalStorage 沒有資料，從伺服器抓取
+                        axios.post(`${_this.baseAddress}/Ajax/GetCartItems`, {})
+                            .then(response => {
+                                console.log(response);
+                                if (response.data) {
+                                    _this.cartArray = response.data;
+                                    // 把資料存到 LocalStorage
+                                    localStorage.setItem('cartItems', JSON.stringify(response.data));
+                                    console.log(JSON.stringify(response.data, null, 2));
+                                } else {
+                                    alert("請先登入會員");
+                                }
+                            })
+                            .catch(err => {
+                                alert("錯誤: " + err.message);
+                            });
+                    }
+                },
+                updateQuantity(index, action) {
+                    if (action === 'increase') {
+                        this.cartArray[index].pCount++;
+                    } else if (action === 'decrease' && this.cartArray[index].pCount > 1) {
+                        this.cartArray[index].pCount--;
+                    }
+                    this.updateLocalStorage();
+                },
+                removeItem: function (index) {
+                    const itemToRemove = this.cartArray[index]; // 取得要刪除的商品
+                    const productId = itemToRemove.id; // 确保这里是正确的 ID 字段
+                    console.log("商品ID: ", productId);
+
+                    axios.delete(`${this.baseAddress}/Ajax/DeleteItem/${productId}`)
+                        .then(response => {
+                            if (response.data === "已刪除商品") {
+                                this.cartArray.splice(index, 1); // 从数组中删除该商品
+                                this.updateLocalStorage();
+                                alert("商品已成功刪除(此刪除功能有問題,待修)");
+                            } else {
+                                alert("刪除商品失敗: " + response.data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("刪除錯誤: ", error);
+                            alert("刪除錯誤: " + error.message);
+                        });
+                },
+                updateLocalStorage() {
+                    localStorage.setItem('cartItems', JSON.stringify(this.cartArray));
+                },
+                UpdateCart: function (item) {
+                    let _this = this;
+                    let updatedItem = {
+                        PCount: item.pCount,
+                    };
+                    console.log(updatedItem);
+                    axios.put(`${_this.baseAddress}/Ajax/UpdateItem/${item.Pid}`, updatedItem)
+                        .then(response => {
+                            alert("商品更新成功！此功能有問題..");
+                            localStorage.removeItem('cartItems');
+                            _this.getCartItems();
+                        })
+                        .catch(error => {
+                            alert("更新失敗: " + error.response.data);
+                        });
+                }
+            },
+            mounted: function () {
+                this.getCartItems();
+            }
+        };
+        var app = Vue.createApp(vueApp).mount("#app");
+
+    </script>
+}
+
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+TC&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+    <style>
+        .cart-sec {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1.5px dashed #ddd;
+            padding-bottom: 5px;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-img-con1,
+        .cart-img-con2 {
+            width: 22.5%;
+            padding: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+            .cart-img-con1 img,
+            .cart-img-con2 img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+
+
+        .cart-item-info {
+            width: 55%;
+            padding-right: 15px;
+            padding-left: 15px;
+            padding-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .num {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 15%;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            margin: 15px;
+        }
+
+            .quantity-controls button {
+                padding: 5px 10px;
+                font-size: 22px;
+                margin: 0 5px;
+                cursor: pointer;
+                border: none;
+                outline: none;
+                background-color: transparent;
+            }
+
+            .quantity-controls input.quantity {
+                width: 40px;
+                text-align: center;
+                padding: 5px;
+                font-size: 16px;
+            }
+
+        .delivery {
+            width: 15%;
+            padding-left: 15px;
+        }
+
+        .cart-item-info,
+        .delivery {
+            display: inline-block;
+            vertical-align: top;
+            box-sizing: border-box;
+        }
+
+        .check {
+            padding: 2em 0 4em 0;
+            display: flex;
+        }
+
+        .cart-item-info h2 {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .cart-item-info p {
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .cart-item-info h3 {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0.7em 0;
+        }
+
+        .size_3 {
+            width: 100%;
+        }
+
+        .delivery {
+            width: 15%;
+            padding-left: 15px;
+        }
+
+            .delivery p {
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 24.5px;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+
+        .cart-item-info h4 span {
+            font-size: 0.65em;
+            font-weight: 400;
+        }
+
+        .close1,
+        .close2 {
+            font-size: 1.5em;
+            color: #000;
+            cursor: pointer;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            transition: color 0.2s ease-in-out;
+        }
+
+            .close1:before,
+            .close2:before {
+                content: "\f00d"; /* Font Awesome 'x' icon */
+                font-family: "Font Awesome 5 Free";
+                font-weight: 900;
+                font-size: 1em;
+            }
+
+        .cart-header {
+            position: relative;
+            margin: 5px;
+        }
+
+        .cart-header2 {
+            position: relative;
+        }
+
+        a.order {
+            background: hsla(224, 50%, 60%, 0.75);
+            padding: 10px 20px;
+            font-family: "Lato", sans-serif;
+            font-size: 1em;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            font-weight: 600;
+            text-align: center;
+            margin: 3em 0;
+        }
+
+            a.order:hover {
+                background: #000;
+            }
+
+        .order-summary-container {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .total-item,
+        .cart-items {
+            margin-top: 0em;
+            padding-bottom: 2em;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            width: 60%;
+        }
+
+        .total1 {
+            text-align: right;
+        }
+
+        .total-item {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+            .total-item h3 {
+                color: #333;
+                font-size: 1.4em;
+                margin-bottom: 1em;
+            }
+
+            .total-item h4 {
+                font-size: 0.8em;
+                font-weight: 600;
+                color: #9c9c9c;
+                display: inline-block;
+                margin-right: 6em;
+            }
+
+        a.cpns {
+            background: hsla(224, 50%, 60%, 0.75);
+            color: #fff;
+            font-family: "Lato", sans-serif;
+            padding: 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+            a.cpns:hover {
+                background: #000;
+            }
+
+        .total-item p {
+            font-size: 0.9em;
+            font-weight: 400;
+            margin-top: 1em;
+        }
+
+            .total-item p a {
+                color: #727272;
+            }
+
+                .total-item p a:hover {
+                    color: #000;
+                    text-decoration: underline;
+                }
+
+        a.continue {
+            background: hsla(224, 50%, 60%, 0.75);
+            padding: 10px 20px;
+            font-family: "Lato", sans-serif;
+            font-size: 1em;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+            a.continue:hover {
+                background: #000;
+            }
+
+        ul.total_price {
+            padding: 0;
+            margin: 1em 0 0 0;
+            list-style: none;
+        }
+
+            ul.total_price li.last_price {
+                width: 50%;
+                float: left;
+            }
+
+                ul.total_price li.last_price span {
+                    font-size: 1.6em;
+                    color: #000;
+                }
+
+        .price-details {
+            border-bottom: 1px solid #ddd9d9;
+            padding-bottom: 10px;
+        }
+
+            .price-details h3 {
+                color: #000;
+                font-size: 1.4em;
+                margin-bottom: 1em;
+            }
+
+            .price-details span {
+                width: 50%;
+                float: left;
+                font-size: 1em;
+                color: #000;
+                line-height: 2em;
+            }
+
+        h1 {
+            font-size: 1.5em;
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            font-family: "Lato", sans-serif;
+            text-align: left;
+        }
+
+            h1::after {
+                content: "";
+                display: block;
+                width: 68%;
+                height: 2px;
+                background-color: #ddd;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+        a.item_add1 {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            padding: 10px 15px;
+            background: url(0) #7d4df5;
+        }
+
+            a.item_add1:hover {
+                background: rgb(3, 193, 167);
+                text-decoration: none;
+                color: #fff;
+            }
+
+        .btn_5 {
+            padding: 25px 40px;
+            font-size: 1.1em;
+        }
+
+        ul.qty {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+            ul.qty li {
+                display: inline-block;
+                margin-right: 5%;
+                margin-bottom: 5px;
+            }
+
+                ul.qty li p {
+                    font-size: 12px;
+                    color: #555;
+                    margin: 0;
+                }
+
+    </style>
+}
