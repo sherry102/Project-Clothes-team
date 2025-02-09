@@ -228,12 +228,12 @@ namespace Project.Controllers
 			return View();
 		}
 		[HttpPost]
-		public IActionResult Login(MemberViewModel m)
+		public IActionResult Login(MemberViewModel m)//存入快取
 		{
 			DbuniPayContext db = new DbuniPayContext();
-			Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
+			Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.faccount && c.Mpassword == m.fpassword);
 			string Error = "false";
-			if (T != null && T.Mpassword == m.Password)
+			if (T != null && T.Mpassword == m.fpassword)
 			{
 				string json = JsonSerializer.Serialize(T);
 				HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);

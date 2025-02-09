@@ -2,8 +2,8 @@
 {
     public class MemberViewModel
     {
-        public string Account { get; set; }
+        public string faccount { get; set; }
 
-        public  string Password { get; set; }
+        public  string fpassword { get; set; }
     }
 }

@@ -1,0 +1,108 @@
+const { createApp } = Vue;
+createApp({
+  data() {
+    return {
+      account: '',
+      password: ''
+    }
+  },
+  methods: {
+    doLogin() {
+      // ... 登入邏輯 ...
+    },
+    gotoRegister() {  // 添加註冊方法
+      window.location.href = '/Account/Register';
+    }
+  }
+}).mount('#vueLogin');  // 添加 mount 和閉合括號 
+
+<nav class="navbar navbar-light py-1">
+    <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle menu-women navtitle"
+                   href="~/FrontHome/Product"
+                   id="navbarDropdown"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Women
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav> 
+
+<style>
+    /* 現有的樣式 */
+    .button-person {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* 新增以下樣式 */
+    .btn-link {
+        padding: 0;  /* 移除按鈕內邊距 */
+        border: none;  /* 移除邊框 */
+        vertical-align: baseline;  /* 基準線對齊 */
+        line-height: 1;  /* 設置行高為1 */
+    }
+
+    /* 統一所有圖標的容器樣式 */
+    .icon-container {
+        display: flex;  /* 改為 flex */
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* 圖標連結樣式 */
+    .icon-container a {
+        display: flex;  /* 讓連結也使用 flex */
+        align-items: center;
+        text-decoration: none;  /* 移除連結底線 */
+        color: inherit;  /* 繼承顏色 */
+    }
+
+    /* 按鈕樣式重置 */
+    .icon-container .btn-link {
+        display: flex;  /* 讓按鈕也使用 flex */
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: none;
+        color: inherit;
+        height: auto;  /* 重置高度 */
+    }
+
+    /* 統一所有圖標樣式 */
+    .icon-style {
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;  /* 確保寬度一致 */
+        height: 1.5rem;  /* 確保高度一致 */
+    }
+</style>
+
+<!-- HTML結構修改 -->
+<div class="col-4 d-flex align-items-center">
+    <div class="ms-auto icon-container">
+        <!-- 收藏圖標 -->
+        <a href="~/FrontHome/Favorite">
+            <i class="bi bi-heart icon-style"></i>
+        </a>
+        <!-- 購物車圖標 -->
+        <a href="">
+            <i class="bi bi-handbag icon-style"></i>
+        </a>
+        <!-- 會員圖標 -->
+        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#loginModal" id="person">
+            <i class="bi bi-person icon-style"></i>
+        </button>
+    </div>
+</div> 
