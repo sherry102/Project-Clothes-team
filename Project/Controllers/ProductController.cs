@@ -17,80 +17,45 @@ namespace Project.Controllers
             _enviro = p;
             _context = context;
         }
+
         //前台ProductList
-        public IActionResult ProductList()
+        public IActionResult ProductList(string keyword, int id)
         {
-            return View();
+            DbuniPayContext db = new DbuniPayContext();
+            IEnumerable<Tproduct> datas = null;
+            if (string.IsNullOrEmpty(keyword))
+                datas = db.Tproducts
+                        .Where(t => !t.PisHided);  // 過濾已下架的記錄
+            else
+                datas = db.Tproducts.Where(t => t.Pname.Contains(keyword)|| t.Ptype.Contains(keyword)|| t.Pcategory.Contains(keyword));
+            List<CProductWrap> ProductList = new List<CProductWrap>();
+            foreach (var t in datas)
+                ProductList.Add(new CProductWrap() { product = t });
+            return View(ProductList);
         }
+
         //前台Productdetail
-        public IActionResult Productdetail(int? id)
+        public IActionResult ProductDetail(int? id)
         {
             if (id == null)
-                return RedirectToAction("List");
+                return RedirectToAction("ProductList");
 
             DbuniPayContext db = new DbuniPayContext();
             Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
             if (x == null)
-                return RedirectToAction("List");
+                return RedirectToAction("ProductList");
 
-            return View(new CProductWrap() { product = x });
-        }
+            // 查詢對應的圖片列表
+            List<string> images = db.Tpimages
+                                     .Where(img => img.Pid == id)
+                                     .Select(img => img.Piname) // 取得圖片名稱
+                                     .ToList();
 
-        [HttpPost]
-        public IActionResult Productdetail(CProductWrap p)
-        {
-            DbuniPayContext db = new DbuniPayContext();
-            Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
-            if (x != null)
-            {
-                x.Pname = p.Pname;
-                x.Pprice = p.Pprice;
-                x.Ptype = p.Ptype;
-                x.Psize = p.Psize;
-                x.Pcolor = p.Pcolor;
-                x.Pdescription = p.Pdescription;
-                x.Pcategory = p.Pcategory;
-                x.PcreatedDate = DateTime.Now;
-                x.Pinventory = p.Pinventory;
-                x.Pphoto= p.Pphoto;
-            }
-            return RedirectToAction("List");
-        }
-        [HttpGet]
-        public async Task<List<Tproduct>> Getproducts()
-        {
-            var products = await _context.Tproducts.ToListAsync();
-            return products;
-        }
-
-        [HttpGet("GetProductById")]
-        public async Task<IActionResult> GetProductById(int pid)
-        {
-            var product = await _context.Tproducts.FirstOrDefaultAsync(p => p.Pid == pid);
-            if (product == null)
-            {
-                return NotFound("找不到商品");
-            }
-            return Ok(product);
-        }
-
-        [HttpPost]
-        public async Task<IEnumerable<ProductDTO>> FilterProduct([FromBody] ProductDTO ProductDTO)
-        {
-            return _context.Tproducts.Where(p => p.Pid == ProductDTO.Pid ||
-            p.Pname.Contains(ProductDTO.Pname) || p.Ptype.Contains(ProductDTO.Ptype) ||
-            p.Pcategory.Contains(ProductDTO.Pcategory))
-            .Select(p => new ProductDTO
-            {
-                Pid = p.Pid,
-                Pname = p.Pname,
-                Pprice = p.Pprice,
-                Pphoto = p.Pphoto,
-                Ptype = p.Ptype,
-                Pcategory = p.Pcategory
+            return View(new CProductWrap() { product = x, Images = images
             });
         }
-        //後台ProductList
+        
+        //後台List
         public IActionResult List(ProductViewModel vm, int id)
         {
             DbuniPayContext db = new DbuniPayContext();
@@ -107,7 +72,7 @@ namespace Project.Controllers
             return View(list);
         }
 
-        //下架
+        //後台商品下架
         public IActionResult Hide(int? id)
         {
             if (id != null)
@@ -122,7 +87,7 @@ namespace Project.Controllers
             }
             return RedirectToAction("List");
         }
-
+        //後台新增商品
         public IActionResult Create()
         {
             return View();
@@ -152,7 +117,7 @@ namespace Project.Controllers
             db.SaveChanges();
             return RedirectToAction("List");
         }
-
+        //後台編輯商品
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -166,7 +131,7 @@ namespace Project.Controllers
             return View(new CProductWrap() { product = x });
         }
         [HttpPost]
-        public IActionResult Edit(CProductWrap p)
+        public IActionResult Edit(CProductWrap p , List<IFormFile> photos)
         {
             DbuniPayContext db = new DbuniPayContext();
             Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
@@ -188,12 +153,37 @@ namespace Project.Controllers
                     x.Pphoto = photoName;
                     p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
                 }
+
+                // 處理多張圖片上傳 (存入 Tpimages)
+                if (photos != null && photos.Count > 0)
+                {
+                    foreach (var photo in photos)
+                    {
+                        if (photo.Length > 0)
+                        {
+                            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName);
+                            string imagePath = Path.Combine(_enviro.WebRootPath, "images", imageName);
+
+                            using (var stream = new FileStream(imagePath, FileMode.Create))
+                            {
+                                photo.CopyTo(stream);
+                            }
+                            // 存入 Tpimage 表
+                            Tpimage img = new Tpimage()
+                            {
+                                Pid = p.Pid,   // 關聯產品 ID
+                                Piname = imageName // 存圖片名稱
+                            };
+                            db.Tpimages.Add(img);
+                        }
+                    }
+                }
                 db.SaveChanges();
             }
             return RedirectToAction("List");
         }
 
-        // 重新上架頁面
+        // 後台重新上架頁面
         public IActionResult Renew(ProductViewModel vm)
         { 
             DbuniPayContext db = new DbuniPayContext();
@@ -210,9 +200,7 @@ namespace Project.Controllers
             return View(list);
         }
 
-       
-
-        // 重新上架
+        // 後台重新上架
         public IActionResult Recovery(int id)
         {
             if (id != null)
@@ -228,7 +216,7 @@ namespace Project.Controllers
             return RedirectToAction("List");
         }
 
-        // 刪除商品
+        // 後台刪除商品
         public IActionResult Delete(int? id)
         {
             if (id != null)

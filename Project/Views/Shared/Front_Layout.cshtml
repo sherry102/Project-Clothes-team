@@ -78,21 +78,19 @@
         <!-- 標題 -->
         <div class="container mt-2">
             <div class="row">
-
                 <div class="col-8 d-flex align-items-center">
                     <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
-                    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("Search","FrontHome")">
+                    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("ProductList","Product")">
                         <input class="form-control me-2 index-search"
                                type="search"
                                placeholder="搜尋商品"
                                aria-label="Search"
-                               name="KeyWord"
+                               name="keyword"
                                autocomplete="off"/>
                         <button class="btn btn-outline-success btn-search" type="submit">
                             <div><i class="bi bi-search"></i></div>
                         </button>
                     </form>
-
                 </div>
                <div class="header-icons">
                     <div class="ms-auto">               
@@ -119,7 +117,7 @@
                                                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                                                 z-index: 1000;">
                                         <!-- 選單項目 -->
-                                        <a href="/Member/Profile" class="dropdown-item py-2">
+                                        <a href="~/Member/Profile" class="dropdown-item py-2">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
                                                     <i class="bi bi-person" style="font-size: 1rem;"></i>
@@ -127,7 +125,7 @@
                                                 <span>我的帳戶</span>
                                             </div>
                                         </a>
-                                        <a href="/Member/Orders" class="dropdown-item py-2">
+                                        <a href="~/Member/Orders" class="dropdown-item py-2">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
                                                     <i class="bi bi-bag" style="font-size: 1rem;"></i>
@@ -156,27 +154,20 @@
                                         </a>
                                     </div>
                                 </div>
-                        <!-- 收藏圖標 -->
-                        <a href="~/FrontHome/Favorite" class="icon-link">
-                            <i class="bi bi-heart "></i>
-                        </a>
-                        <!-- 購物車圖標 -->
-                        <a href="" class="icon-link">
-                            <i class="bi bi-handbag"></i>
-                        </a>
+                                <!-- 收藏圖標 -->
+                                <a href="~/FrontHome/Favorite" class="icon-link">
+                                <i class="bi bi-heart "></i>
+                                </a>
+                                <!-- 購物車圖標 -->
+                                <a href="~/FrontHome/Cart" class="icon-link">
+                                <i class="bi bi-handbag"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-                @* <div class="col-4 d-flex align-items-center">
-                    <div class="ms-auto">
-                        <a href="~/FrontHome/Favorite"> <i class="bi bi-heart"></i></a>
-                        <a href="~/FrontHome/Cart"> <i class="bi bi-handbag"></i></a>
-                        <a href=""> <i class="bi bi-person"></i></a>
-                    </div>
-                </div> *@
         </div>
-    </div>
         <hr class="m-1" />
         <!-- 導覽列 -->
         <div class="container">
@@ -186,40 +177,43 @@
                         <div class="container-fluid">
                             <ul class="navbar-nav me-auto mb-lg-0 d-flex flex-row">
                                     <li class="nav-item dropdown ">
-                                        <a class="nav-link dropdown-toggle menu-women navtitle"
-                                           href="~/FrontHome/Product"
+                                        <a href="@Url.Action("ProductList", "Product", new { keyword = "女裝" })"
+                                           class="nav-link dropdown-toggle menu-women navtitle"
                                            id="navbarDropdown"
                                            role="button"
                                            data-bs-toggle="dropdown"
-                                           aria-expanded="false">
-                                            女裝
+                                           aria-expanded="false"
+                                           onclick="location.href=this.href">
+                                           WOMEN
                                         </a>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle menu-men navtitle "
-                                           href="~/FrontHome/Product"
+                                           href="@Url.Action("ProductList", "Product", new { keyword = "男裝" })"
                                            id="navbarDropdown"
                                            role="button"
                                            data-bs-toggle="dropdown"
-                                           aria-expanded="false">
-                                            男裝
+                                           aria-expanded="false"
+                                           onclick="location.href=this.href">
+                                            MEN
                                         </a>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle menu-kids navtitle"
-                                           href="~/FrontHome/Product"
+                                           href="@Url.Action("ProductList", "Product", new { keyword = "童裝" })"
                                            id="navbarDropdown"
                                            role="button"
                                            data-bs-toggle="dropdown"
-                                           aria-expanded="false">
-                                            兒童
+                                           aria-expanded="false"
+                                           onclick="location.href=this.href">
+                                            KID
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link  navtitle" href="#">樣式</a>
+                                    <a class="nav-link  navtitle" href="~/Product/Style">STYLE</a>
                                     </li>
                                     <li class="nav-item ">
-                                        <a href="~/FrontHome/Customize" class="nav-link navtitle" href="#">客製化</a>
+                                    <a class="nav-link navtitle" href="~/FrontHome/Customize">客製化</a>
                                     </li>
                                 </ul>
                         </div>
@@ -232,27 +226,27 @@
         <div class="fs-6" id="menu-women">
             <div class="menu ">
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">上衣</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">短袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">長袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">襯衫</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝上衣" })" class="item">上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝短袖上衣" })" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝長袖上衣" })" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝襯衫" })" class="item">襯衫</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">下著</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">褲子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">裙子</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝下著" })" class="item">下著</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝褲子" })" class="item">褲子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝裙子" })" class="item">裙子</a></div>
 
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">連身</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">洋裝</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">外套</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝上衣" })" class="item">連身</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝洋裝" })" class="item">洋裝</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝外套" })" class="item">外套</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">配件</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">鞋子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">帽子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">包包</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝上衣" })" class="item">配件</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝鞋子" })" class="item">鞋子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝帽子" })" class="item">帽子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "女裝包包" })" class="item">包包</a></div>
                 </div>
             </div>
         </div>
@@ -260,26 +254,26 @@
         <div class="fs-6" id="menu-men">
             <div class="menu">
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">上衣</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">短袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">長袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">襯衫</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝上衣" })" class="item">上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝短袖上衣" })" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝長袖上衣" })" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝襯衫" })" class="item">襯衫</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">下著</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">褲子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">裙子</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝下著" })" class="item">下著</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝長褲" })" class="item">長褲</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝短褲" })" class="item">短褲</a></div>
 
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">連身</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">外套</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝連身" })" class="item">連身</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝外套" })" class="item">外套</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">配件</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">鞋子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">帽子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">包包</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝配件" })" class="item">配件</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝鞋子" })" class="item">鞋子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝帽子" })" class="item">帽子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "男裝包包" })" class="item">包包</a></div>
                 </div>
             </div>
         </div>
@@ -287,27 +281,27 @@
         <div class="fs-6" id="menu-kids">
             <div class="menu">
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">上衣</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">短袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">長袖上衣</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">襯衫</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝上衣" })" class="item">上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝短袖上衣" })" class="item">短袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝長袖上衣" })" class="item">長袖上衣</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝襯衫" })" class="item">襯衫</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">下著</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">褲子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">裙子</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝下著" })" class="item">下著</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝褲子" })" class="item">褲子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝裙子" })" class="item">裙子</a></div>
 
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">連身</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">洋裝</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">外套</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝連身" })" class="item">連身</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝洋裝" })" class="item">洋裝</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝外套" })" class="item">外套</a></div>
                 </div>
                 <div class="menu-column">
-                    <div class="my-2 fw-bold">配件</div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">鞋子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">帽子</a></div>
-                    <div class="my-4"><a href="~/Product/ProductList" class="item">包包</a></div>
+                    <div class="my-2 fw-bold"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝配件" })" class="item">配件</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝鞋子" })" class="item">鞋子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝帽子" })" class="item">帽子</a></div>
+                    <div class="my-4"><a href="@Url.Action("ProductList", "Product", new { keyword = "童裝包包" })" class="item">包包</a></div>
                 </div>
             </div>
         </div>

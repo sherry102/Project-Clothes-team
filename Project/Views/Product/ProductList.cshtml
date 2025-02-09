@@ -1,11 +1,15 @@
-﻿@using System.Text.Json
-@model List<Project.Models.CProductWrap>
+﻿@model List<Project.Models.CProductWrap>
+
 @{
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section styles {
     <style>
-
+        .card-body {
+            position: relative;
+            justify-content: space-between;
+            font-size: 18px;
+        }
     </style>
 }
 
@@ -19,69 +23,28 @@
 <!-- 產品列表 -->
 <div id="app">
     <div class="container mb-5 text-center">
-        <input type="text" class="form-control col-lg-8 w-50 mb-3" v-model="filter" v-on:keyup="Filterproduct()" placeholder="請輸入篩選關鍵字" />
         <div class="row">
-            <div class="col-12 col-md-6 col-xl-3" v-for="item in products" v-if="products.length > 0 " v-on:key="item.pid">
-                <div class="card mb-3">
-                    <a v-bind:href="'/Product/Productdetail/' + item.pid">
-                        <img v-bind:src="'/Images/'+ item.pphoto" alt="" class="card-img-top"/>
-                    </a>
-                    <div class="card-body ">
-                        <a v-bind:href="'/Product/Productdetail/' + item.pid">
-                        <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+            @if (!Model.Any(m => !m.PisHided))
+            {
+                <div class="col-12">
+                    <p class="text-center mt-5">找不到符合條件的商品。</p>
+                </div>
+            }
+            else{@foreach (var item in Model.Where(m => !m.PisHided))
+                {<div class="col-12 col-md-6 col-xl-3">
+                    <div class="card mb-3" >
+                        <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
+                        <img src="~/images/@item.Pphoto" alt="" class="card-img-top" />
                         </a>
-                        <div class="card-text fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
-                        <button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button>
+                    <div class="card-body">
+                        <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
+                        <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">@Html.DisplayFor(modelItem => item.Pname)</div>
+                        </a>
+                        <div class="card-text mt-1 ps-2 pb-2" style="color:black">NT$ @Html.DisplayFor(modelItem => item.Pprice)</div>
+                        <button type="button" class="btn btn-outline-secondary mt-2" v-on:click="">加入購物車</button>
                     </div>
                 </div>
-            </div>
-            <div v-else="products.length == 0" class="text-center mt-5">
-                <p>找不到符合條件的商品。</p>
-            </div>
+            </div>}}
         </div>
     </div>
 </div>
-
-@section Scripts
-{
-    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        var vueApp={
-            data() {
-                return {
-                    baseAddress: "https://localhost:7279",
-                    filter:"",
-                    products: [],
-                }
-            },
-            methods:{
-                List: function () {
-                    let _this = this;
-                    axios.get(`${_this.baseAddress}/Product/Getproducts`).then(response => {
-                        _this.products = response.data;
-                    }).catch(err => {
-                        alert(err.message)
-                    })
-                },
-               Filterproduct:function(){
-                    let _this=this;
-                    var request={};
-                    request.pname=_this.filter;
-                    request.ptype=_this.filter;
-                    request.pcategory=_this.filter;
-                    axios.post(`${_this.baseAddress}/Product/Filterproduct`, request).then(response=>{
-                        _this.products = response.data;
-                    });
-                },
-            },
-            mounted:function () {
-                let _this = this;
-                _this.List();
-                _this.Filterproduct();
-
-            }
-        };
-        var app=Vue.createApp(vueApp).mount("#app");
-    </script>
-}

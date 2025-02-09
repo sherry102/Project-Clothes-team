@@ -1,7 +1,6 @@
 ﻿@model Project.Models.CProductWrap
 
 @{
-    ViewData["Title"] = "Productdetail";
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section Styles {
@@ -26,10 +25,35 @@
         .product-item {
             text-align: center;
         }
-     
-*    </style>
-}
 
+        .container{
+            margin: 0;
+            padding: 0;
+        }
+        .sticky-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto; /* 確保如果內容過長，仍可在內部滾動 */
+        }
+
+        .sticky-sidebar::-webkit-scrollbar {
+            display: none;
+        }
+        .product-images img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        .product-images .col-6 {
+            padding: 0; /* 移除 Bootstrap 預設間距 */
+        }
+        
+        </style>
+}
 <!-- breadcrumb 麵包屑 -->
 <nav aria-label="breadcrumb" class="p-3">
     <ol class="breadcrumb">
@@ -38,37 +62,33 @@
         <li class="breadcrumb-item active" aria-current="page">商品介紹</li>
     </ol>
 </nav>
-<div id="app" class="container">
+<div class="container">
     <div class="row">
-        <div class="col-12 col-md-6 p-5">
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="~/Images/@Html.DisplayFor(model => model.Pphoto)" class="d-block w-100" alt="">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="~/Images/@Html.DisplayFor(model => model.Pphoto)" class="d-block w-100" alt="">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="~/Images/@Html.DisplayFor(model => model.Pphoto)" class="d-block w-100" alt="">
-                    </div>
+        <!-- 左側圖片區-->
+        <div class="col-md-8">
+            <div class="row product-images">
+                <div class="col-6">
+                    <img src="~/Images/@Html.DisplayFor(model => model.Pphoto)" alt="">
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                        data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                        data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                @{
+                    int count = 0;
+                    @foreach (var image in Model.Images)
+                    {
+                        count++;
+                        <div class="col-6">
+                            <img src="~/Images/@image" alt="商品圖片">
+                        </div>
+                    }       
+                }
             </div>
         </div>
-        <div class="col-12 col-md-6 p-5">
-            <div class="fs-2 ms-4"> @Html.DisplayFor(model => model.Pname) - @Html.DisplayFor(model => model.Pcolor)</div>
-            <div class="fs-2 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice) </div>
-            <div class="fs-3 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription) </div>
+
+        <!-- 右側固定欄 -->
+        <div class="col-md-4 sticky-sidebar p-3 ">
+            <div class="fs-3 ms-4"> @Html.DisplayFor(model => model.Pname) </div>
+            <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice) </div>
+            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription) </div>
+            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pcolor) </div>
             <div class="fs-5 ms-4">
                 <div class="my-5">
                     <button type="button" class="btn btn-outline-dark" value="S">S</button>
@@ -85,10 +105,59 @@
                     <div class="mt-5"><button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button></div>
                 </div>
             </div>
-            
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="fw-bold">會員</span>
+                        <span class="text-warning">★★★★★</span>
+                    </h5>
+                    <p class="text-muted">2024-06-17 20:13</p>
+                    <p class="card-text">
+                        超好看的
+                    </p>
+                    <div class="d-flex mt-6">
+                        <img src="~/Images/pc-01-06.jpg" class="img-thumbnail me-2" width="120">
+                        <img src="~/Images/pc-01-07.jpg" class="img-thumbnail" width="120">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
+                    <p class="card-text">
+                      感謝你的購買
+                    </p>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="fw-bold">會員</span>
+                        <span class="text-warning">★★★★★</span>
+                    </h5>
+                    <p class="text-muted">2024-06-17 20:13</p>
+                    <p class="card-text">
+                        超好看的
+                    </p>
+                    <div class="d-flex mt-6">
+                        <img src="~/Images/pc-01-04.jpg" class="img-thumbnail me-2" width="120">
+                        <img src="~/Images/pc-01-05.jpg" class="img-thumbnail" width="120">
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
+                    <p class="card-text">
+                     感謝你的購買
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 
 @section Scripts
 {

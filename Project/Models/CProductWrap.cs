@@ -76,13 +76,16 @@ namespace Project.Models
             set { _product.PcreatedDate = value; }
         }
         [DisplayName("照片")]
-        public string Pphoto
+        public string? Pphoto
         {
             get { return _product.Pphoto; }
             set { _product.Pphoto = value; }
         }
+        public List<string> Images { get; set; } = new List<string>(); // 存圖片名稱
+
         [DisplayName("照片路徑")]
         public IFormFile photoPath { get; set; }
+        public List<IFormFile> Photos { get; set; } = new List<IFormFile>(); // 多張圖片
 
         [DisplayName("是否隱藏")]
         public bool PisHided
