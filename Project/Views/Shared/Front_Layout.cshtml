@@ -20,7 +20,13 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nav.css?v=1.0" />
     <link rel="stylesheet" href="~/css/footerstyle.css?v=1.0" />
-    <link rel="stylesheet" href="~/css/FrontIndexstyle.css" />
+    <link rel="stylesheet" href="~/css/FrontIndexstyle.css?v=1.0" />
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <style>
+        body{
+            background-color:white !important;
+        }
+    </style>
     <link rel="stylesheet" href="~/css/chat.css" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -32,11 +38,13 @@
 
                 <div class="col-8 d-flex align-items-center">
                     <a class="navbar-brand titleName" href="~/FrontHome/FrontIndex">UniPay</a>
-                    <form class="d-flex me-5 form-search input-search">
+                    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("Search","FrontHome")">
                         <input class="form-control me-2 index-search"
                                type="search"
-                               placeholder="Search"
-                               aria-label="Search" />
+                               placeholder="搜尋商品"
+                               aria-label="Search"
+                               name="KeyWord"
+                               autocomplete="off"/>
                         <button class="btn btn-outline-success btn-search" type="submit">
                             <div><i class="bi bi-search"></i></div>
                         </button>
@@ -54,49 +62,49 @@
         </div>
         <hr class="m-1" />
         <!-- 導覽列 -->
-        <div class="container fs-5">
+        <div class="container">
             <div class="row">
                 <div class="col-12">
                     <nav class="navbar navbar-light py-1 ">
                         <div class="container-fluid">
                             <ul class="navbar-nav me-auto mb-lg-0 d-flex flex-row">
-                                <li class="nav-item dropdown ">
-                                    <a class="nav-link dropdown-toggle menu-women navtitle"
-                                       href="~/Product/ProductList"
-                                       id="navbarDropdown"
-                                       role="button"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false">
-                                        Women
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle menu-men navtitle "
-                                       href="~/Product/ProductList"
-                                       id="navbarDropdown"
-                                       role="button"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false">
-                                        Men
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle menu-kids navtitle"
-                                       href="~/Product/ProductList"
-                                       id="navbarDropdown"
-                                       role="button"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false">
-                                        Kids
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link  navtitle" href="#">Styles</a>
-                                </li>
-                                <li class="nav-item ">
-                                    <a href="~/FrontHome/Customize" class="nav-link navtitle" href="#">Freestyle</a>
-                                </li>
-                            </ul>
+                                    <li class="nav-item dropdown ">
+                                        <a class="nav-link dropdown-toggle menu-women navtitle"
+                                           href="~/FrontHome/Product"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            女裝
+                                        </a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle menu-men navtitle "
+                                           href="~/FrontHome/Product"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            男裝
+                                        </a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle menu-kids navtitle"
+                                           href="~/FrontHome/Product"
+                                           id="navbarDropdown"
+                                           role="button"
+                                           data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            兒童
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link  navtitle" href="#">樣式</a>
+                                    </li>
+                                    <li class="nav-item ">
+                                        <a href="~/FrontHome/Customize" class="nav-link navtitle" href="#">客製化</a>
+                                    </li>
+                                </ul>
                         </div>
                     </nav>
                 </div>

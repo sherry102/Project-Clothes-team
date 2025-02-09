@@ -15,6 +15,8 @@ public partial class DbuniPayContext : DbContext
     {
     }
 
+    public virtual DbSet<Tadvice> Tadvices { get; set; }
+
     public virtual DbSet<Tcart> Tcarts { get; set; }
 
     public virtual DbSet<Tchat> Tchats { get; set; }
@@ -29,6 +31,8 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tmember> Tmembers { get; set; }
 
+    public virtual DbSet<TmemberCoupon> TmemberCoupons { get; set; }
+
     public virtual DbSet<Tmessage> Tmessages { get; set; }
 
     public virtual DbSet<Torder> Torders { get; set; }
@@ -41,6 +45,20 @@ public partial class DbuniPayContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Tadvice>(entity =>
+        {
+            entity.ToTable("TAdvice");
+
+            entity.Property(e => e.DateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(150);
+            entity.Property(e => e.Mid).HasColumnName("MId");
+            entity.Property(e => e.Oid).HasColumnName("OId");
+            entity.Property(e => e.Question).HasMaxLength(50);
+            entity.Property(e => e.Title).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Tchat>(entity =>
         {
             entity.HasKey(e => e.ChatId).HasName("PK__TChat__A9FBE626A5779CCB");
@@ -105,13 +123,14 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcoupon>(entity =>
         {
-            entity.HasKey(e => e.CouponId).HasName("PK__TCoupon__384AF1DA2111270D");
+            entity.HasKey(e => e.Id).HasName("PK__TCoupon__384AF1DAADD0377B");
 
             entity.ToTable("TCoupon");
 
-            entity.Property(e => e.CouponId).HasColumnName("CouponID");
             entity.Property(e => e.CouponName).HasMaxLength(50);
-            entity.Property(e => e.Mid).HasColumnName("MID");
+            entity.Property(e => e.DateEnd).HasColumnType("datetime");
+            entity.Property(e => e.DateStart).HasColumnType("datetime");
+            entity.Property(e => e.PassWord).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Tcustomization>(entity =>
@@ -208,6 +227,13 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("MPhoto");
             entity.Property(e => e.Mpoints).HasColumnName("MPoints");
+        });
+
+        modelBuilder.Entity<TmemberCoupon>(entity =>
+        {
+            entity.ToTable("TMemberCoupon");
+
+            entity.Property(e => e.Mid).HasColumnName("MId");
         });
 
         modelBuilder.Entity<Tmessage>(entity =>

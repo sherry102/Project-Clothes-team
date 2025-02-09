@@ -36,12 +36,14 @@ namespace Project.Controllers
             return View();
         }
 
-        public IActionResult Search(string KeyWord) {
-            if (string.IsNullOrEmpty(KeyWord)) {
-                return View();
-            }
-            ViewBag.KeyWord = KeyWord;
+        public IActionResult Advice() {
             return View();
         }
-	}
+
+        public IActionResult Coupon()
+        {
+            return View();
+        }
+
+    }
 }
