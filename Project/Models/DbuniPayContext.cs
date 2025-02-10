@@ -19,19 +19,21 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tcart> Tcarts { get; set; }
 
+    public virtual DbSet<Tchat> Tchats { get; set; }
+
     public virtual DbSet<Tcomment> Tcomments { get; set; }
 
     public virtual DbSet<Tcoupon> Tcoupons { get; set; }
 
     public virtual DbSet<Tcservice> Tcservices { get; set; }
 
-    public virtual DbSet<Tcustomization> Tcustomizations { get; set; }
-
     public virtual DbSet<Tfavorite> Tfavorites { get; set; }
 
     public virtual DbSet<Tmember> Tmembers { get; set; }
 
     public virtual DbSet<TmemberCoupon> TmemberCoupons { get; set; }
+
+    public virtual DbSet<Tmessage> Tmessages { get; set; }
 
     public virtual DbSet<Torder> Torders { get; set; }
 
@@ -85,6 +87,20 @@ public partial class DbuniPayContext : DbContext
                 .HasColumnName("PType");
         });
 
+        modelBuilder.Entity<Tchat>(entity =>
+        {
+            entity.HasKey(e => e.ChatId).HasName("PK__TChat__A9FBE62643457CCE");
+
+            entity.ToTable("TChat");
+
+            entity.Property(e => e.ChatId).HasColumnName("ChatID");
+            entity.Property(e => e.ChatConnectId).HasColumnName("ChatConnectID");
+            entity.Property(e => e.ChatCreateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Mid).HasColumnName("MID");
+        });
+
         modelBuilder.Entity<Tcomment>(entity =>
         {
             entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F41326690FACF");
@@ -135,39 +151,6 @@ public partial class DbuniPayContext : DbContext
                 .HasColumnName("CSStatus");
             entity.Property(e => e.Cstexts).HasColumnName("CSTexts");
             entity.Property(e => e.Mid).HasColumnName("MID");
-        });
-
-        modelBuilder.Entity<Tcustomization>(entity =>
-        {
-            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC599AB66385");
-
-            entity.ToTable("TCustomization");
-
-            entity.Property(e => e.Cid).HasColumnName("CID");
-            entity.Property(e => e.Ccategory)
-                .HasMaxLength(20)
-                .HasColumnName("CCategory");
-            entity.Property(e => e.Ccolor)
-                .HasMaxLength(20)
-                .HasColumnName("CColor");
-            entity.Property(e => e.Cfont)
-                .HasMaxLength(20)
-                .HasColumnName("CFont");
-            entity.Property(e => e.CfontSize).HasColumnName("CFontSize");
-            entity.Property(e => e.Cimage)
-                .HasMaxLength(500)
-                .HasColumnName("CImage");
-            entity.Property(e => e.CnSize).HasMaxLength(20);
-            entity.Property(e => e.Cname)
-                .HasMaxLength(20)
-                .HasColumnName("CName");
-            entity.Property(e => e.Cprice).HasColumnName("CPrice");
-            entity.Property(e => e.Ctext)
-                .HasMaxLength(500)
-                .HasColumnName("CText");
-            entity.Property(e => e.Ctype)
-                .HasMaxLength(20)
-                .HasColumnName("CType");
         });
 
         modelBuilder.Entity<Tfavorite>(entity =>
@@ -236,6 +219,20 @@ public partial class DbuniPayContext : DbContext
             entity.ToTable("TMemberCoupon");
 
             entity.Property(e => e.Mid).HasColumnName("MId");
+        });
+
+        modelBuilder.Entity<Tmessage>(entity =>
+        {
+            entity.HasKey(e => e.MessageId).HasName("PK__TMessage__C87C037CD8E1CEC0");
+
+            entity.ToTable("TMessage");
+
+            entity.Property(e => e.MessageId).HasColumnName("MessageID");
+            entity.Property(e => e.ChatId).HasColumnName("ChatID");
+            entity.Property(e => e.MessageSendId).HasColumnName("MessageSendID");
+            entity.Property(e => e.MessageTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Torder>(entity =>
