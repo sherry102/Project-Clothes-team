@@ -13,5 +13,5 @@ public partial class Tmessage
 
     public string MessageContent { get; set; } = null!;
 
-    public DateTime? MessageTime { get; set; }
+    public DateTime MessageTime { get; set; }
 }
