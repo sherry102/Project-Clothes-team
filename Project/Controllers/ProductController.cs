@@ -27,7 +27,7 @@ namespace Project.Controllers
                 datas = db.Tproducts
                         .Where(t => !t.PisHided);  // 過濾已下架的記錄
             else
-                datas = db.Tproducts.Where(t => t.Pname.Contains(keyword)|| t.Ptype.Contains(keyword)|| t.Pcategory.Contains(keyword));
+                datas = db.Tproducts.Where(t => t.Pname.Contains(keyword) || t.Ptype.Contains(keyword) || t.Pcategory.Contains(keyword));
             List<CProductWrap> ProductList = new List<CProductWrap>();
             foreach (var t in datas)
                 ProductList.Add(new CProductWrap() { product = t });
@@ -51,10 +51,13 @@ namespace Project.Controllers
                                      .Select(img => img.Piname) // 取得圖片名稱
                                      .ToList();
 
-            return View(new CProductWrap() { product = x, Images = images
+            return View(new CProductWrap()
+            {
+                product = x,
+                Images = images
             });
         }
-        
+
         //後台List
         public IActionResult List(ProductViewModel vm, int id)
         {
@@ -93,30 +96,77 @@ namespace Project.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CProductWrap p)
+        public IActionResult Create(CProductWrap p, List<IFormFile> photos)
         {
-            if (p.photoPath == null)
+            DbuniPayContext db = new DbuniPayContext();
+            var transaction = db.Database.BeginTransaction();
+            try
             {
-                // 返回視圖，並顯示錯誤訊息
-                ModelState.AddModelError("photoPath", "必須上傳照片。");
-                return View(p);
-            }
+                if (p.photoPath == null)
+                {
+                    ModelState.AddModelError("photoPath", "必須上傳照片。");
+                    return View(p);
+                }
 
-            string photoName = Guid.NewGuid().ToString() + ".jpg";
-            p.Pphoto = photoName;
-            using (var fileStream = new FileStream(
+                // 處理主圖上傳
+                string photoName = Guid.NewGuid().ToString() + ".jpg";
+                p.Pphoto = photoName;
+                using (var fileStream = new FileStream(
                     Path.Combine(_enviro.WebRootPath, "images", photoName),
                     FileMode.Create))
-            {
-                p.photoPath.CopyTo(fileStream);
-            }
+                {
+                    p.photoPath.CopyTo(fileStream);
+                }
 
-            DbuniPayContext db = new DbuniPayContext();
-            p.PcreatedDate = DateTime.Now;
-            db.Tproducts.Add(p.product);
-            db.SaveChanges();
-            return RedirectToAction("List");
+                // 設置創建時間
+                p.PcreatedDate = DateTime.Now;
+
+                // 先新增產品，讓資料庫生成 Pid
+                db.Tproducts.Add(p.product);
+                db.SaveChanges();  // 確保 Pid 生成
+
+                // 獲取剛剛插入的產品 ID
+                int productId = p.product.Pid;
+
+                // 處理多張圖片上傳 (存入 Tpimages)
+                if (photos != null && photos.Count > 0)
+                {
+                    foreach (var photo in photos)
+                    {
+                        if (photo.Length > 0)
+                        {
+                            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName);
+                            string imagePath = Path.Combine(_enviro.WebRootPath, "images", imageName);
+
+                            using (var stream = new FileStream(imagePath, FileMode.Create))
+                            {
+                                photo.CopyTo(stream);
+                            }
+
+                            // 存入 Tpimage 表
+                            Tpimage img = new Tpimage()
+                            {
+                                Pid = productId,   // 關聯產品 ID
+                                Piname = imageName // 存圖片名稱
+                            };
+                            db.Tpimages.Add(img);
+                        }
+                    }
+                }
+
+                db.SaveChanges(); // 儲存所有圖片
+                transaction.Commit(); // 交易提交
+
+                return RedirectToAction("List");
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback(); // 發生錯誤，回滾交易
+                ModelState.AddModelError("", "發生錯誤：" + ex.Message);
+                return View(p);
+            }
         }
+
         //後台編輯商品
         public IActionResult Edit(int? id)
         {
@@ -131,7 +181,7 @@ namespace Project.Controllers
             return View(new CProductWrap() { product = x });
         }
         [HttpPost]
-        public IActionResult Edit(CProductWrap p , List<IFormFile> photos)
+        public IActionResult Edit(CProductWrap p, List<IFormFile> photos)
         {
             DbuniPayContext db = new DbuniPayContext();
             Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
@@ -143,10 +193,11 @@ namespace Project.Controllers
                 x.Psize = p.Psize;
                 x.Pcolor = p.Pcolor;
                 x.Pdescription = p.Pdescription;
-                x.Pcategory = p.Pcategory;     
+                x.Pcategory = p.Pcategory;
                 x.PcreatedDate = DateTime.Now;
                 x.Pinventory = p.Pinventory;
 
+                //存首圖
                 if (p.photoPath != null)
                 {
                     string photoName = Guid.NewGuid().ToString() + ".jpg";
@@ -154,7 +205,7 @@ namespace Project.Controllers
                     p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
                 }
 
-                // 處理多張圖片上傳 (存入 Tpimages)
+                // 編輯多張圖片上傳 (存入 Tpimages)
                 if (photos != null && photos.Count > 0)
                 {
                     foreach (var photo in photos)
@@ -185,7 +236,7 @@ namespace Project.Controllers
 
         // 後台重新上架頁面
         public IActionResult Renew(ProductViewModel vm)
-        { 
+        {
             DbuniPayContext db = new DbuniPayContext();
             string keyword = vm.txtKeyword;
             IEnumerable<Tproduct> datas = null;
@@ -230,6 +281,11 @@ namespace Project.Controllers
                 }
             }
             return RedirectToAction("Renew");
+        }
+
+        public IActionResult Style()
+        {
+            return View();
         }
     }
 }

@@ -85,7 +85,11 @@ namespace Project.Models
 
         [DisplayName("照片路徑")]
         public IFormFile photoPath { get; set; }
+
         public List<IFormFile> Photos { get; set; } = new List<IFormFile>(); // 多張圖片
+
+        public List<Tpimage> ImgList { get; set; } = new List<Tpimage>();
+
 
         [DisplayName("是否隱藏")]
         public bool PisHided
