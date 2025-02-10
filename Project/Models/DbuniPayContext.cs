@@ -25,7 +25,7 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tcoupon> Tcoupons { get; set; }
 
-    public virtual DbSet<Tcustomization> Tcustomizations { get; set; }
+    public virtual DbSet<Tcservice> Tcservices { get; set; }
 
     public virtual DbSet<Tfavorite> Tfavorites { get; set; }
 
@@ -101,6 +101,20 @@ public partial class DbuniPayContext : DbContext
                 .HasColumnName("PType");
         });
 
+        modelBuilder.Entity<Tchat>(entity =>
+        {
+            entity.HasKey(e => e.ChatId).HasName("PK__TChat__A9FBE62643457CCE");
+
+            entity.ToTable("TChat");
+
+            entity.Property(e => e.ChatId).HasColumnName("ChatID");
+            entity.Property(e => e.ChatConnectId).HasColumnName("ChatConnectID");
+            entity.Property(e => e.ChatCreateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Mid).HasColumnName("MID");
+        });
+
         modelBuilder.Entity<Tcomment>(entity =>
         {
             entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F4132E21C5029");
@@ -133,39 +147,24 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.PassWord).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<Tcustomization>(entity =>
+        modelBuilder.Entity<Tcservice>(entity =>
         {
-            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC59F6095E80");
+            entity.HasKey(e => e.Csid).HasName("PK__TCServic__F5F0195BE5B4BA9B");
 
-            entity.ToTable("TCustomization");
+            entity.ToTable("TCService");
 
-            entity.Property(e => e.Cid).HasColumnName("CID");
-            entity.Property(e => e.Ccategory)
-                .HasMaxLength(20)
-                .HasColumnName("CCategory");
-            entity.Property(e => e.Ccolor)
-                .HasMaxLength(20)
-                .HasColumnName("CColor");
-            entity.Property(e => e.Cfont)
-                .HasMaxLength(20)
-                .HasColumnName("CFont");
-            entity.Property(e => e.CfontSize).HasColumnName("CFontSize");
-            entity.Property(e => e.Cimage)
-                .HasMaxLength(500)
-                .HasColumnName("CImage");
-            entity.Property(e => e.Cname)
-                .HasMaxLength(20)
-                .HasColumnName("CName");
-            entity.Property(e => e.Cprice).HasColumnName("CPrice");
-            entity.Property(e => e.Csize)
-                .HasMaxLength(20)
-                .HasColumnName("CSize");
-            entity.Property(e => e.Ctext)
-                .HasMaxLength(500)
-                .HasColumnName("CText");
-            entity.Property(e => e.Ctype)
-                .HasMaxLength(20)
-                .HasColumnName("CType");
+            entity.Property(e => e.Csid).HasColumnName("CSID");
+            entity.Property(e => e.Csgmtimes)
+                .HasColumnType("datetime")
+                .HasColumnName("CSGMTimes");
+            entity.Property(e => e.Csmtimes)
+                .HasColumnType("datetime")
+                .HasColumnName("CSMTimes");
+            entity.Property(e => e.Csstatus)
+                .HasMaxLength(50)
+                .HasColumnName("CSStatus");
+            entity.Property(e => e.Cstexts).HasColumnName("CSTexts");
+            entity.Property(e => e.Mid).HasColumnName("MID");
         });
 
         modelBuilder.Entity<Tfavorite>(entity =>

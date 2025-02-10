@@ -215,7 +215,7 @@ namespace Project.Controllers
             }
             var member = JsonSerializer.Deserialize<Tmember>(json);
             var Coupon = await (from MCou in _context.TmemberCoupons
-                               join Cou in _context.Tcoupons on MCou.CouponId equals Cou.CouponId
+                               join Cou in _context.Tcoupons on MCou.CouponId equals Cou.Id
                                where MCou.Mid == member.Mid && MCou.IsUse == false && Cou.DateEnd >= DateTime.Now
                                select new { 
                                     CouponName=Cou.CouponName,
@@ -244,7 +244,7 @@ namespace Project.Controllers
             {
                 return "無效的優惠碼";
             }
-            else if (MemberCoupon.Any(c=>c.CouponId == Coupon.CouponId))
+            else if (MemberCoupon.Any(c=>c.CouponId == Coupon.Id))
             {
                 return "已領取過該優惠";
             }
@@ -252,12 +252,69 @@ namespace Project.Controllers
                 var AddCoupon = new TmemberCoupon
                 {
                     Mid = member.Mid,
-                    CouponId = Coupon.CouponId,
+                    CouponId = Coupon.Id,
                 };
                 _context.TmemberCoupons.Add(AddCoupon);
                 _context.SaveChanges();
                 return "已加入該優惠";
             }
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> GetAllCoupon() {
+            var coupon = await (from Cou in _context.Tcoupons
+                                select new
+                                {
+                                    Id=Cou.Id,
+                                    CouponName = Cou.CouponName,
+                                    CouponDiscount = Cou.CouponDiscount,
+                                    CouponPercentage = (Cou.CouponPercentage * 10).ToString("F0"),
+                                    DateStart = Cou.DateStart,
+                                    DateEnd = Cou.DateEnd,
+                                    Password = Cou.PassWord
+                                }
+                                ).OrderByDescending(c => c.DateStart)
+                                 .ToListAsync();
+            return Json(coupon);
+        }
+
+        [HttpPost]
+
+        public async Task<string> Delete([FromBody] CouponDTO coupon) {
+            var CouponToDelete = await _context.Tcoupons.FindAsync(coupon.Id);
+            if (CouponToDelete == null) {
+                return "查不到該筆資料，刪除失敗";
+            }
+            _context.Tcoupons.Remove(CouponToDelete);
+            await _context.SaveChangesAsync();
+            return "已刪除資料";
+        }
+
+        [HttpPost]
+
+        public async Task<string> addCoupon([FromBody] CouponDTO coupon)
+        {
+                var Coupon = new Tcoupon
+                {
+                    CouponName = coupon.CouponName,
+                    CouponDiscount = coupon.CouponDiscount,
+                    CouponPercentage = coupon.CouponPercentage,
+                    DateStart = coupon.DateStart,
+                    DateEnd = coupon.DateEnd,
+                    PassWord = coupon.CouponPassWord
+                };
+                _context.Tcoupons.Add(Coupon);
+                await _context.SaveChangesAsync();
+                return "已新增此優惠券";
+        }
+
+        [HttpGet("Ajax/openEdit/{id}")]
+
+        public async Task<IActionResult> openEdit(int id) {
+
+            var coupon = await _context.Tcoupons.FindAsync(id);
+            return Json(coupon);
         }
 
         [HttpPut]

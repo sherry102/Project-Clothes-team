@@ -7,8 +7,6 @@ public partial class Tcoupon
 {
     public int Id { get; set; }
 
-    public int CouponId { get; set; }
-
     public string CouponName { get; set; } = null!;
 
     public int CouponDiscount { get; set; }
