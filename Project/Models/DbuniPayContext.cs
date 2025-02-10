@@ -43,6 +43,8 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<Tproduct> Tproducts { get; set; }
 
+    public virtual DbSet<Tstyle> Tstyles { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Tadvice>(entity =>
@@ -360,6 +362,16 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Ptype)
                 .HasMaxLength(20)
                 .HasColumnName("PType");
+        });
+
+        modelBuilder.Entity<Tstyle>(entity =>
+        {
+            entity.HasKey(e => e.Sid).HasName("PK__TStyle__CA195950D3FA64C7");
+
+            entity.ToTable("TStyle");
+
+            entity.Property(e => e.Sid).HasColumnName("SId");
+            entity.Property(e => e.StyleImg).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);
