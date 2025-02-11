@@ -9,33 +9,35 @@
             errorMessage: '', // 顯示錯誤訊息
             isLoggedIn: false,// 追踪用戶是否已登入
             memberInfo: null,  // 存儲會員信息           
-            isiconBubbleVisible: true,// 控制人像圖標是否顯示 
-            showLoginModal: false   // 新增：控制登入 Modal 的顯示狀態
+            showLoginModal: false // Modal顯示狀態
             };
         },// 頁面載入時檢查登入狀態
-        mounted() {
-            this.checkLoginStatus();
-            // 監聽 Modal 顯示事件
-            const loginModal = document.getElementById('loginModal'); // 獲取登入模態框元素
-            if (loginModal) {// 為模態框顯示事件添加監聽器
-                loginModal.addEventListener('shown.bs.modal', () => {
-                    this.$nextTick(() => {// 在下一個 DOM 更新循環中執行
-                    const accountInput = this.$refs.accountInput;
-                        if (accountInput) {
-                            accountInput.focus();
-                        }
-                    });
-                });               
-            }
-       },// 定義組件的方法
+       mounted() {
+           // 初始化 Modal 實例
+           this.modalInstance = new bootstrap.Modal(document.getElementById('loginModal'), {
+               keyboard: true,
+               backdrop: true
+           });
+
+           // 監聽 Modal 顯示事件
+           document.getElementById('loginModal').addEventListener('shown.bs.modal', () => {
+               // 確保在 Modal 完全顯示後設置焦點
+               this.$nextTick(() => {
+                   const accountInput = this.$refs.accountInput;
+                   if (accountInput) {
+                       accountInput.focus();
+                   }
+               });
+           });
+       },
+       // 定義組件的方法
        methods: {
-           handleMemberClick(event) {
+           handleMemberClick() {
                if (!this.isLoggedIn) {
-                   this.showLoginModal = true; // 更新：使用 Vue 的數據屬性控制 Modal
-                   this.$nextTick(() => {
-                       const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                       loginModal.show();
-                   });
+                   this.showLoginModal = true;
+                   this.modalInstance.show();
+                   // 重置表單
+                   this.resetForm();
                }
            },
            // 重置表單數據
@@ -86,24 +88,24 @@
                this.passwordVisible = !this.passwordVisible;
            },
            handleKeyNavigation(currentField, action, event) {// 處理鍵盤導航
-               if (event) {// 阻止默認事件
-                   event.preventDefault();
-               }
+               // 防止預設行為
+               event?.preventDefault();
+
                const navigationMap = {
                    account: {
-                       Enter: 'password',
-                       ArrowDown: 'password',
-                       ArrowUp: 'loginButton'
+                       Enter: 'password',// 從帳號按Enter -> 移至密碼欄位
+                       ArrowDown: 'password',// 從帳號按向下鍵 -> 移至密碼欄位
+                       ArrowUp: 'loginButton'// 從帳號按向上鍵 -> 移至登入按鈕
                    },
                    password: {
-                       Enter: 'loginButton',
-                       ArrowDown: 'loginButton',
-                       ArrowUp: 'account'
+                       Enter: 'loginButton',// 從密碼按Enter -> 移至登入按鈕
+                       ArrowDown: 'loginButton',// 從密碼按向下鍵 -> 移至登入按鈕
+                       ArrowUp: 'account'// 從密碼按向上鍵 -> 移至帳號欄位
                    },
                    loginButton: {
-                       Enter: 'doLogin',
-                       ArrowDown: 'account',
-                       ArrowUp: 'password'
+                       Enter: 'doLogin',// 在登入按鈕按Enter -> 執行登入
+                       ArrowDown: 'account',// 從登入按鈕按向下鍵 -> 移至帳號欄位
+                       ArrowUp: 'password'// 從登入按鈕按向上鍵 -> 移至密碼欄位                   
                    }
                };
                const targetField = navigationMap[currentField][action];// 找到目標欄位

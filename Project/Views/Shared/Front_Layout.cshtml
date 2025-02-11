@@ -153,28 +153,32 @@
                             <div class="mb-4">
                                 <input id="faccount"
                                        type="text"
-                                       class="form-control"
+                                       ref="accountInput"                                       
                                        placeholder="請輸入帳號、手機或 Email"
-                                       style="height: 40px;"
+                                       style="height: 40px;" 
+                                       class="form-control" 
+                                       autocomplete="username"
                                        v-model="faccount"
                                        v-on:keydown.enter="handleKeyNavigation('account', 'Enter', $event)"
                                        v-on:keydown.down="handleKeyNavigation('account', 'ArrowDown', $event)"
                                        v-on:keydown.up="handleKeyNavigation('account', 'ArrowUp', $event)"
-                                       ref="accountInput" />
+                                       
+                                        />
                             </div>
                             <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
                             <!-- 密碼欄位 -->
                             <div class="mb-4 position-relative">
                                 <input id="fpassword"
                                        v-on:type="passwordVisible ? 'text' : 'password'"
-                                       class="form-control"
+                                       ref="passwordInput"
+                                       v-model="fpassword"                                      
                                        placeholder="請輸入密碼"
-                                       style="height: 40px;"
-                                       v-model="fpassword"
+                                       style="height: 40px;"                                      
                                        v-on:keydown.enter="handleKeyNavigation('password', 'Enter', $event)"
                                        v-on:keydown.down="handleKeyNavigation('password', 'ArrowDown', $event)"
                                        v-on:keydown.up="handleKeyNavigation('password', 'ArrowUp', $event)"
-                                       ref="passwordInput" />
+                                       class="form-control"
+                                       autocomplete="current-password" />
                                 <!-- 眼睛圖示按鈕 -->
                                 <button type="button"
                                         class="btn position-absolute end-0 top-50 translate-middle-y"
@@ -195,13 +199,14 @@
                             </div>
 
                             <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->
-                            <button class="btn w-100 mb-4"
+                            <button 
                                     style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"
+                                    ref="loginButton"
                                     v-on:click="doLogin"
                                     v-on:keydown.enter ="doLogin"
                                     v-on:keydown.up="handleKeyNavigation('loginButton', 'ArrowUp', $event)"
                                     v-on:keydown.down="handleKeyNavigation('loginButton', 'ArrowDown', $event)"
-                                    ref="loginButton">
+                                    class="btn w-100 mb-4">
                                 <span v-if="!isLoading">開始購物吧！</span>                               
                             </button>
 
