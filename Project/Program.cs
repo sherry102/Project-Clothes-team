@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers().AddNewtonsoftJson(); // ? 確保支援 JObject
+
+builder.Services.AddMemoryCache(); // ? 註冊記憶體快取
+
 // Add services to the DI container.
 builder.Services.AddDbContext<DbuniPayContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
