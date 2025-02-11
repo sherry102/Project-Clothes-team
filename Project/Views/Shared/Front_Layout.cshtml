@@ -13,10 +13,10 @@
           crossorigin="anonymous">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />   
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nav.css?v=1.0" />
     <link rel="stylesheet" href="~/css/footerstyle.css?v=1.0" />
@@ -32,6 +32,7 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="mb-0 h-100  d-flex flex-column">
+    <div id="app-errors-global" style="display: none; color: red; position: fixed; top: 20px; right: 20px; z-index: 9999; background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
     <header>
         <!-- 標題 -->
         <div class="container mt-2">
@@ -136,8 +137,7 @@
                 </div>                    
             </div>
                 <!-- 登入 Modal -->
-                <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" 
-                    aria-hidden="true" v-if="showLoginModal" v-on:click.self ="handleModalBackdropClick">
+                <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content p-4" style="border-radius: 0;">
 
@@ -146,39 +146,47 @@
                                 登入
                             </h2>
 
+                            <!-- 錯誤訊息容器修改 -->
+                            <div id="app-errors"
+                                 class="alert alert-danger"
+                                 style="display: none; margin-bottom: 15px;"
+                                 role="alert">
+                            </div>
+
                             <label for="faccount" style="font-size: 20px; color:#007979;">帳號</label>
                             <!-- 帳號/手機欄位 -->
-                            <div class="mb-4">
-                                <input id="faccount"
-                                       type="text"
-                                       ref="accountInput"                                       
-                                       placeholder="請輸入帳號、手機或 Email"
-                                       style="height: 40px;" 
-                                       class="form-control" 
-                                       autocomplete="username"
-                                       v-model="faccount"
-                                       v-on:keydown.enter="handleKeyNavigation('account', 'Enter', $event)"
-                                       v-on:keydown.down="handleKeyNavigation('account', 'ArrowDown', $event)"
-                                       v-on:keydown.up="handleKeyNavigation('account', 'ArrowUp', $event)"
-                                       
-                                        />
+                            <div id="accountSection" class="mb-4">
+                                <input  id="faccount"
+                                        type="text"
+                                        ref="accountInput"                                       
+                                        placeholder="請輸入帳號、手機或 Email"                                       
+                                        class="form-control" 
+                                        autocomplete="username"
+                                        v-model="faccount"
+                                        v-on:keydown.enter.prevent ="handleKeyNavigation('account', 'Enter')"
+                                        v-on:keydown.down.prevent ="handleKeyNavigation('account', 'ArrowDown')"
+                                        v-on:keydown.up.prevent ="handleKeyNavigation('account', 'ArrowUp')"
+                                        autofocus
+                                        style="height: 40px;" />                          
                             </div>
                             <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
                             <!-- 密碼欄位 -->
-                            <div class="mb-4 position-relative">
-                                <input id="fpassword"
-                                       v-on:type="passwordVisible ? 'text' : 'password'"
-                                       ref="passwordInput"
-                                       v-model="fpassword"                                      
-                                       placeholder="請輸入密碼"
-                                       style="height: 40px;"                                      
-                                       v-on:keydown.enter="handleKeyNavigation('password', 'Enter', $event)"
-                                       v-on:keydown.down="handleKeyNavigation('password', 'ArrowDown', $event)"
-                                       v-on:keydown.up="handleKeyNavigation('password', 'ArrowUp', $event)"
-                                       class="form-control"
-                                       autocomplete="current-password" />
+                            <div id="passwordSection" class="mb-4 position-relative">
+                                <input  id="fpassword" 
+                                        ref="passwordInput" 
+                                        v-model="fpassword"
+                                        v-bind:type="passwordVisible ? 'text' : 'password'"
+                                        placeholder="請輸入密碼"
+                                        class="form-control"
+                                        autocomplete="current-password"
+                                        style="height: 40px;"
+                                        v-on:keydown.enter.prevent ="handleKeyNavigation('password', 'Enter')"
+                                        v-on:keydown.down.prevent ="handleKeyNavigation('password', 'ArrowDown')"
+                                        v-on:keydown.up.prevent="handleKeyNavigation('password', 'ArrowUp')" />
+                                        
                                 <!-- 眼睛圖示按鈕 -->
-                                <button type="button"
+                                <button id="togglePassword"
+                                        type="button"
                                         class="btn position-absolute end-0 top-50 translate-middle-y"
                                         style="background: none; border: none; outline: none; z-index: 10;"
                                         v-on:click="togglePasswordVisibility">
@@ -196,15 +204,17 @@
                                 </a>
                             </div>
 
-                            <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->
-                            <button 
-                                    style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"
+                            <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->                            
+                            <button id="loginButton"
+                                    type="submit"
                                     ref="loginButton"
+                                    class="btn w-100 mb-4"
+                                    style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"                                    
                                     v-on:click="doLogin"
-                                    v-on:keydown.enter ="doLogin"
-                                    v-on:keydown.up="handleKeyNavigation('loginButton', 'ArrowUp', $event)"
-                                    v-on:keydown.down="handleKeyNavigation('loginButton', 'ArrowDown', $event)"
-                                    class="btn w-100 mb-4">
+                                    v-on:keyup.enter ="doLogin"
+                                    v-on:keyup.up="handleKeyNavigation('loginButton', 'ArrowUp', $event)"
+                                    v-on:keyup.down="handleKeyNavigation('loginButton', 'ArrowDown', $event)"
+                                    >
                                 <span v-if="!isLoading">開始購物吧！</span>                               
                             </button>
 
@@ -217,11 +227,11 @@
                                      alt="Line"
                                      style="width:60px; cursor:pointer;"
                                      v-on:click ="handleLineLogin" />
-                            </div>
+                                </div>                           
                         </div>
                     </div>
                 </div>
-            </div>
+       </div>
     </div>
         <hr class="m-1" />
         <!-- 導覽列 -->
@@ -463,21 +473,26 @@
             </div>
 
         </div>
-    </footer>
-    
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/popper.min.js"></script>
+    </footer>         
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.15/vue.global.prod.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>   
+            crossorigin="anonymous"></script>
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/nav.js"></script>
     <script src="~/js/chat.js"></script>
     <script src="~/js/personicon.js"></script>
+    <script src="~/js/Fvalidation.js"></script>
     <script src="~/assets/js/main.js"></script>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

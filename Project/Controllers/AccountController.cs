@@ -22,7 +22,7 @@ namespace Project.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Login(MemberViewModel m)//存入快取
+        public IActionResult Login(PersoniconViewModel m)//存入快取
         {
             DbuniPayContext db = new DbuniPayContext();
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.faccount && c.Mpassword == m.fpassword);
@@ -39,9 +39,6 @@ namespace Project.Controllers
                 ViewBag.Error = Error;
                 return View();
             }
-
         }
-
-
     }
 }
