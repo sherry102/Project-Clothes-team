@@ -30,21 +30,54 @@
                     <p class="text-center mt-5">找不到符合條件的商品。</p>
                 </div>
             }
-            else{@foreach (var item in Model.Where(m => !m.PisHided))
-                {<div class="col-12 col-md-6 col-xl-3">
-                    <div class="card mb-3" >
-                        <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
-                        <img src="~/images/@item.Pphoto" alt="" class="card-img-top" />
-                        </a>
-                    <div class="card-body">
-                        <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
-                        <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">@Html.DisplayFor(modelItem => item.Pname)</div>
-                        </a>
-                        <div class="card-text mt-1 ps-2 pb-2" style="color:black">NT$ @Html.DisplayFor(modelItem => item.Pprice)</div>
-                        <button type="button" class="btn btn-outline-secondary mt-2" v-on:click="">加入購物車</button>
+            else
+            {
+                @foreach (var item in Model.Where(m => m.Pinventory != 0))
+                {
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card mb-3">
+                            <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
+                                <img src="~/images/@item.Pphoto" alt="" class="card-img-top" />
+                            </a>
+                            <div class="card-body">
+                                <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
+                                    <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">@Html.DisplayFor(modelItem => item.Pname)</div>
+                                </a>
+                                <div class="card-text mt-1 ps-2 pb-2" style="color:black">NT$ @Html.DisplayFor(modelItem => item.Pprice)</div>
+                                <button type="button" class="btn btn-outline-secondary mt-2"
+                                        onclick="addToFavorite('@item.Pid', '@item.Pname', '@item.Pphoto', '@item.Pprice')">
+                                    加入最愛
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>}}
+                }
+            }
         </div>
     </div>
+
 </div>
+
+@section scripts {
+    <script>
+          function addToFavorite(productId, productName, productPhoto, productPrice) {
+            $.ajax({
+                url: '/AJAX/PostFavorite',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PPhoto: productPhoto,
+                    PPrice: productPrice
+                }),
+                success: function(response) {
+                    alert(response);
+                },
+                error: function(xhr, status, error) {
+                    alert(err);
+                }
+            });
+        }
+    </script>
+}

@@ -17,16 +17,16 @@
             border-radius: 10px !important;
         }
 
-        .btn-side:hover {
-            background-color: #8a8282c7 !important;
-            border: 1px solid #8891a3c7 !important;
-        }
+            .btn-side:hover {
+                background-color: #8a8282c7 !important;
+                border: 1px solid #8891a3c7 !important;
+            }
 
         .product-item {
             text-align: center;
         }
 
-      
+
         .sticky-sidebar {
             position: sticky;
             top: 0;
@@ -34,9 +34,10 @@
             overflow-y: auto; /* 確保如果內容過長，仍可在內部滾動 */
         }
 
-        .sticky-sidebar::-webkit-scrollbar {
-            display: none;
-        }
+            .sticky-sidebar::-webkit-scrollbar {
+                display: none;
+            }
+
         .product-images img {
             width: 100%;
             height: auto;
@@ -48,8 +49,7 @@
         .product-images .col-6 {
             padding: 0; /* 移除 Bootstrap 預設間距 */
         }
-        
-        </style>
+    </style>
 }
 <!-- breadcrumb 麵包屑 -->
 <nav aria-label="breadcrumb" class="p-3">
@@ -75,7 +75,7 @@
                         <div class="col-6">
                             <img src="~/Images/@image" alt="商品圖片">
                         </div>
-                    }       
+                    }
                 }
             </div>
         </div>
@@ -99,7 +99,16 @@
                         <input type="text" class="form-control text-center" value="1" id="quantity">
                         <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
                     </div>
-                    <div class="mt-5"><button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button></div>
+                    <button type="button" class="btn btn-outline-secondary mt-2"
+                            onclick="addToCart('@Model.Pid', '@Model.Pname', '@Model.Pphoto', '@Model.Pprice')">
+                        加入購物車
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary mt-2"
+                            onclick="addToFavorite('@Model.Pid', '@Model.Pname', '@Model.Pphoto', '@Model.Pprice')">
+                        加入最愛
+                    </button>
+
                 </div>
             </div>
             <div class="card mt-5">
@@ -123,7 +132,7 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
                     <p class="card-text">
-                      感謝你的購買
+                        感謝你的購買
                     </p>
                 </div>
             </div>
@@ -147,7 +156,7 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
                     <p class="card-text">
-                     感謝你的購買
+                        感謝你的購買
                     </p>
                 </div>
             </div>
@@ -169,6 +178,48 @@
           if (parseInt(quantity.value) > 1) {
             quantity.value = parseInt(quantity.value) - 1;
           }
+        }
+
+        function addToCart(productId, productName, productPhoto, productPrice) {
+            var quantity = parseInt(document.getElementById("quantity").value); // 取得目前輸入的數量
+            $.ajax({
+                url: '/AJAX/SaveToCart', // 確保此路徑正確
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PPhoto: productPhoto,
+                    PPrice: productPrice,
+                    Quantity: quantity // 使用者選擇的數量
+                }),
+                success: function(response) {
+                    alert(response); // 顯示伺服器回傳的訊息
+                },
+                error: function(xhr, status, error) {
+                    console.error("加入購物車時發生錯誤: " + error);
+                    alert("加入購物車失敗，請稍後再試！");
+                }
+            });
+        }
+         function addToFavorite(productId, productName, productPhoto, productPrice) {
+            $.ajax({
+                url: '/AJAX/PostFavorite',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PPhoto: productPhoto,
+                    PPrice: productPrice
+                }),
+                success: function(response) {
+                    alert(response);
+                },
+                error: function(xhr, status, error) {
+                    alert(err);
+                }
+            });
         }
     </script>
 }
