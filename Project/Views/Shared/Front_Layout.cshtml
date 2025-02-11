@@ -51,81 +51,72 @@
                         </button>
                     </form>
                 </div>
-            <!--icon圖標-->
-            <div class="header-icons">
-                <!-- 新增：點擊外部關閉下拉選單 -->
-                <div class="ms-auto" v-on:click.self ="closeDropdown">                    
+                <!--icon圖標-->
+                <div class="header-icons">
+                    <!-- 新增：點擊外部關閉下拉選單 -->
+                    <div class="ms-auto">                    
                     <!-- 會員區域 -->
                         <div class="member-area position-relative">
                             <!-- 會員圖示按鈕 -->
-                                <div class="d-flex align-items-center" id="personicon">
-                                    <button class="btn btn-link d-flex align-items-center"
-                                        data-bs-toggle="modal" data-bs-target="#loginModal"
-                                        v-on:click="handleMemberClick"
-                                        v-on:class="{'active': showDropdown}"
+                            <div class="d-flex align-items-center" id="personicon">
+                                <button class="btn btn-link d-flex align-items-center"
+                                        id="memberButton"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#loginModal"
                                         style="text-decoration: none; color: inherit; padding: 0;">
-                                        <i class="bi bi-person" style="font-size: 1.2rem;"></i>
-                                    </button>
-                                </div>
-                            <!-- 會員下拉選單 - 使用 transition 添加動畫效果 -->
-                            <transition name="dropdown">
-                                <div v-if="isLoggedIn && showDropdown"
-                                     class="dropdown-menu position-absolute show"
-                                     style="min-width: 150px;
-                                            top: calc(100% + 7px);
-                                            left: 0;
-                                            margin-top: 0;
-                                            border-radius: 4px;
-                                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                                            z-index: 1000;">
-                                        <!-- 選單項目 -->
-                                        <a href="/Member/Profile" class="dropdown-item py-2"
-                                            v-on:class="{'active': selectedItem === 'profile'}"
-                                            v-on:mouseenter ="selectedItem = 'profile'">
-                                            <div class="d-flex align-items-center" style="gap: 12px;">
-                                                <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-person" style="font-size: 1rem;"></i>
-                                                </div>
-                                                <span>我的帳戶</span>
-                                            </div>
-                                        </a>
-                                        <a href="/Member/Orders" class="dropdown-item py-2"
-                                            v-on:class="{'active': selectedItem === 'profile'}"
-                                            v-on:mouseenter="selectedItem = 'profile'">
-                                            <div class="d-flex align-items-center" style="gap: 12px;">
-                                                <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-bag" style="font-size: 1rem;"></i>
-                                                </div>
-                                                <span>我的訂單</span>
-                                            </div>
-                                        </a>
-                                        <a href="/Member/Coupons" class="dropdown-item py-2"
-                                            v-on:class="{'active': selectedItem === 'profile'}"
-                                            v-on:mouseenter="selectedItem = 'profile'">
-                                            <div class="d-flex align-items-center" style="gap: 12px;">
-                                                <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-ticket-perforated" style="font-size: 1rem;"></i>
-                                                </div>
-                                                <span>優惠券</span>
-                                            </div>
-                                        </a>
-                                    <!-- 分隔線 -->
-                                    <div class="dropdown-divider"></div>
-                                        <a href="#"
-                                           class="dropdown-item py-2"
-                                           v-on:class="{'active': selectedItem === 'profile'}"
-                                           v-on:mouseenter="selectedItem = 'profile'"
-                                           v-on:click.prevent="handleLogout">
-                                            <div class="d-flex align-items-center" style="gap: 12px;">
-                                                <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-box-arrow-right" style="font-size: 1rem;"></i>
-                                                </div>
-                                                <span>退出登錄</span>
-                                            </div>
-                                        </a>
+                                    <i class="bi bi-person" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
+                            <!-- 會員下拉選單 -->
+                            <div id="memberDropdown" 
+                                 class="dropdown-menu position-absolute"
+                                 style="display: none; 
+                                        min-width: 150px;                                     
+                                        top: calc(100% + 7px);
+                                        left: 0;
+                                        margin-top: 0;
+                                        border-radius: 4px;
+                                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                        z-index: 1000;">
+                                <!-- 選單項目 -->
+                                <a href="/Member/Profile" class="dropdown-item py-2" data-item="profile">
+                                    <div class="d-flex align-items-center" style="gap: 12px;">
+                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">         
+                                             <i class="bi bi-person" style="font-size: 1rem;"></i>
+                                        </div>
+                                            <span>我的帳戶</span>
                                     </div>
-                            </transition>
+                                </a>
+                                <a href="/Member/Orders" class="dropdown-item py-2" data-item="orders">
+                                    <div class="d-flex align-items-center" style="gap: 12px;">
+                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-bag" style="font-size: 1rem;"></i>
+                                        </div>
+                                        <span>我的訂單</span>
+                                    </div>
+                                </a>
+                                <a herf="/Member/Coupons" class="dropdown-item py-2" data-item="coupons">
+                                    <div class="d-flex align-items-center" style="gap: 12px;">
+                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-ticket-perforated" style="font-size: 1rem;"></i>
+                                        </div>
+                                        <span>優惠券</span>
+                                    </div>
+                                </a>
+                                <!-- 分隔線 -->
+                                <div class="dropdown-divider"></div>
+                                
+                                    <a href="#" class="dropdown-item py-2" id="logoutButton" data-item="logout">
+                                        <div class="d-flex align-items-center" style="gap: 12px;">
+                                            <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-box-arrow-right" style="font-size: 1rem;"></i>
+                                            </div>
+                                                <span>退出登錄</span>
+                                        </div>
+                                    </a>
+                            </div>
                         </div>
+                    </div>
                         <!-- 收藏圖標 -->
                         <a href="~/FrontHome/Favorite" class="icon-link">
                             <i class="bi bi-heart "></i>
@@ -134,105 +125,88 @@
                         <a href="" class="icon-link">
                             <i class="bi bi-handbag"></i>                
                         </a>                    
-                </div>                    
-            </div>
+                </div>                                    
                 <!-- 登入 Modal -->
                 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content p-4" style="border-radius: 0;">
+                            <form id="loginForm">
+                                <!-- 登入標題 (置中) -->
+                                <h2 class="text-center mb-4" style="font-weight:700; font-size:1.5rem; color:darkorange">
+                                    登入
+                                </h2>
 
-                            <!-- 登入標題 (置中) -->
-                            <h2 class="text-center mb-4" style="font-weight:700; font-size:1.5rem; color:darkorange">
-                                登入
-                            </h2>
+                                <!-- 錯誤訊息容器：移除 Vue 相關屬性 -->
+                                <div id="errorMessage"
+                                     class="alert alert-danger"
+                                     style="display: none; margin-bottom: 15px;"
+                                     role="alert">
+                                </div>
 
-                            <!-- 錯誤訊息容器修改 -->
-                            <div id="app-errors"
-                                 class="alert alert-danger"
-                                 style="display: none; margin-bottom: 15px;"
-                                 role="alert">
-                            </div>
+                                <label for="faccount" style="font-size: 20px; color:#007979;">帳號</label>
+                                <!-- 帳號/手機欄位 -->
+                                <div id="accountSection" class="mb-4">
+                                    <input id="faccount"
+                                           name="faccount"
+                                           type="text"                    
+                                           placeholder="請輸入帳號、手機或 Email"
+                                           class="form-control"
+                                           autocomplete="username"
+                                           autofocus
+                                           style="height: 40px;" />
+                                </div>
+                                <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
+                                <!-- 密碼欄位 -->
+                                <div id="passwordSection" class="mb-4 position-relative">
+                                    <input id="fpassword"
+                                           name="fpassword"
+                                           type="password"                                          
+                                           placeholder="請輸入密碼"
+                                           class="form-control"
+                                           autocomplete="current-password"
+                                           style="height: 40px;" />
 
-                            <label for="faccount" style="font-size: 20px; color:#007979;">帳號</label>
-                            <!-- 帳號/手機欄位 -->
-                            <div id="accountSection" class="mb-4">
-                                <input  id="faccount"
-                                        type="text"
-                                        ref="accountInput"                                       
-                                        placeholder="請輸入帳號、手機或 Email"                                       
-                                        class="form-control" 
-                                        autocomplete="username"
-                                        v-model="faccount"
-                                        v-on:keydown.enter.prevent ="handleKeyNavigation('account', 'Enter')"
-                                        v-on:keydown.down.prevent ="handleKeyNavigation('account', 'ArrowDown')"
-                                        v-on:keydown.up.prevent ="handleKeyNavigation('account', 'ArrowUp')"
-                                        autofocus
-                                        style="height: 40px;" />                          
-                            </div>
-                            <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
-                            <!-- 密碼欄位 -->
-                            <div id="passwordSection" class="mb-4 position-relative">
-                                <input  id="fpassword" 
-                                        ref="passwordInput" 
-                                        v-model="fpassword"
-                                        v-bind:type="passwordVisible ? 'text' : 'password'"
-                                        placeholder="請輸入密碼"
-                                        class="form-control"
-                                        autocomplete="current-password"
-                                        style="height: 40px;"
-                                        v-on:keydown.enter.prevent ="handleKeyNavigation('password', 'Enter')"
-                                        v-on:keydown.down.prevent ="handleKeyNavigation('password', 'ArrowDown')"
-                                        v-on:keydown.up.prevent="handleKeyNavigation('password', 'ArrowUp')" />
-                                        
-                                <!-- 眼睛圖示按鈕 -->
-                                <button id="togglePassword"
-                                        type="button"
-                                        class="btn position-absolute end-0 top-50 translate-middle-y"
-                                        style="background: none; border: none; outline: none; z-index: 10;"
-                                        v-on:click="togglePasswordVisibility">
-                                    <i :class="passwordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"
-                                       style="color: #AE0000;"></i>
+                                    <!-- 眼睛圖示按鈕 -->
+                                    <button id="togglePassword"
+                                            type="button"
+                                            class="btn position-absolute end-0 top-50 translate-middle-y"
+                                            style="background: none; border: none; outline: none; z-index: 10;">
+                                        <i class="bi bi-eye-slash" style="color: #AE0000;"></i>
+                                    </button>
+                                </div>
+
+                                <!-- 忘記密碼連結 -->
+                                <div class="mb-4 text-end">
+                                    <a href="/Account/ForgotPassword"
+                                       class="link-secondary"
+                                       style="font-size: 0.9rem;">
+                                        忘記密碼？
+                                    </a>
+                                </div>
+
+                                <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->
+                                <button id="loginButton"
+                                        type="submit"
+                                        class="btn w-100 mb-4"
+                                        style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;">                                        
+                                    <span>開始購物吧！</span>
                                 </button>
-                            </div>
 
-                            <!-- 忘記密碼連結 -->
-                            <div class="mb-4 text-end">
-                                <a href="/Account/ForgotPassword"
-                                   class="link-secondary"
-                                   style="font-size: 0.9rem;">
-                                    忘記密碼？
-                                </a>
-                            </div>
-
-                            <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->                            
-                            <button id="loginButton"
-                                    type="submit"
-                                    ref="loginButton"
-                                    class="btn w-100 mb-4"
-                                    style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"                                    
-                                    v-on:click="doLogin"
-                                    v-on:keyup.enter ="doLogin"
-                                    v-on:keyup.up="handleKeyNavigation('loginButton', 'ArrowUp', $event)"
-                                    v-on:keyup.down="handleKeyNavigation('loginButton', 'ArrowDown', $event)"
-                                    >
-                                <span v-if="!isLoading">開始購物吧！</span>                               
-                            </button>
-
-                            <!-- 社群登入: 文字 + LINE圖示 -->
-                            <div class="text-center my-3">
-                                或使用社群帳號登入
-                            </div>
-                            <div class="text-center mb-4">
-                                <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
-                                     alt="Line"
-                                     style="width:60px; cursor:pointer;"
-                                     v-on:click ="handleLineLogin" />
-                                </div>                           
+                                <!-- 社群登入: 文字 + LINE圖示 -->
+                                <div class="text-center my-3">
+                                    或使用社群帳號登入
+                                </div>
+                                <div class="text-center mb-4">
+                                    <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
+                                         alt="Line"
+                                         style="width:60px; cursor:pointer;" />
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-       </div>
-    </div>
+            </div>
+        </div>
         <hr class="m-1" />
         <!-- 導覽列 -->
         <div class="container">
