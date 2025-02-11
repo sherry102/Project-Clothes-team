@@ -7,49 +7,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WebApplication2</title>
-    <style>
-        /* icon 容器基本設定 */
-        .header-icons {
-            position: absolute;
-            top: 20px;
-            right: 50px;
-            display: flex;
-            align-items: center;
-        }
-
-            /* icon 群組設定 */
-            .header-icons .ms-auto {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            /* 統一所有 icon 的基本大小 */
-            .header-icons .bi {
-                font-size: 30px !important; /* 固定大小 */
-                width: 24px !important; /* 強制寬度 */
-                height: 24px !important; /* 強制高度 */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            /* 特別針對 person icon 的大小設定 */
-            .header-icons .bi-person {
-                font-size: 35px !important; /* 稍微加大一點 */
-                width: 28px !important;
-                height: 28px !important;
-            }
-
-        /* icon 連結樣式 */
-        .icon-link {
-            text-decoration: none;
-            color: #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
     <title>@ViewData["Title"]</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -65,6 +22,7 @@
     <link rel="stylesheet" href="~/css/footerstyle.css?v=1.0" />
     <link rel="stylesheet" href="~/css/FrontIndexstyle.css?v=1.0" />
     <link href="~/assets/css/style.css?v=1.0" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/icon.css" />
     <style>
         body{
             background-color:white !important;
@@ -92,32 +50,37 @@
                         </button>
                     </form>
                 </div>
-               <div class="header-icons">
-                    <div class="ms-auto">               
-                        <div class="header-icons">
-                            <div class="ms-auto">
-                                <!-- 會員區域 -->
-                                <div class="member-area position-relative">
-                                    <!-- 會員圖示按鈕 -->
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-link d-flex align-items-center"
-                                                v-on:click="handleMemberClick"
-                                                style="text-decoration: none; color: inherit; padding: 0;">
-                                            <i class="bi bi-person" style="font-size: 1.2rem;"></i>
-                                        </button>
-                                    </div>
-                                    <!-- 會員下拉選單 - 調整位置與間距 -->
-                                    <div v-if="isLoggedIn && showDropdown"
-                                         class="dropdown-menu position-absolute show"
-                                         style="min-width: 150px;
-                                                top: calc(100% + 7px);
-                                                left: 0;
-                                                margin-top: 0;
-                                                border-radius: 4px;
-                                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                                                z-index: 1000;">
+            <!--icon圖標-->
+            <div class="header-icons">
+                <!-- 新增：點擊外部關閉下拉選單 -->
+                <div class="ms-auto" v-on:click.self ="closeDropdown">                    
+                    <!-- 會員區域 -->
+                        <div class="member-area position-relative">
+                            <!-- 會員圖示按鈕 -->
+                                <div class="d-flex align-items-center" id="personicon">
+                                    <button class="btn btn-link d-flex align-items-center"
+                                        data-bs-toggle="modal" data-bs-target="#loginModal"
+                                        v-on:click="handleMemberClick"
+                                        v-on:class="{'active': showDropdown}"
+                                        style="text-decoration: none; color: inherit; padding: 0;">
+                                        <i class="bi bi-person" style="font-size: 1.2rem;"></i>
+                                    </button>
+                                </div>
+                            <!-- 會員下拉選單 - 使用 transition 添加動畫效果 -->
+                            <transition name="dropdown">
+                                <div v-if="isLoggedIn && showDropdown"
+                                     class="dropdown-menu position-absolute show"
+                                     style="min-width: 150px;
+                                            top: calc(100% + 7px);
+                                            left: 0;
+                                            margin-top: 0;
+                                            border-radius: 4px;
+                                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                            z-index: 1000;">
                                         <!-- 選單項目 -->
-                                        <a href="~/Member/Profile" class="dropdown-item py-2">
+                                        <a href="/Member/Profile" class="dropdown-item py-2"
+                                            v-on:class="{'active': selectedItem === 'profile'}"
+                                            v-on:mouseenter ="selectedItem = 'profile'">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
                                                     <i class="bi bi-person" style="font-size: 1rem;"></i>
@@ -125,7 +88,9 @@
                                                 <span>我的帳戶</span>
                                             </div>
                                         </a>
-                                        <a href="~/Member/Orders" class="dropdown-item py-2">
+                                        <a href="/Member/Orders" class="dropdown-item py-2"
+                                            v-on:class="{'active': selectedItem === 'profile'}"
+                                            v-on:mouseenter="selectedItem = 'profile'">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
                                                     <i class="bi bi-bag" style="font-size: 1rem;"></i>
@@ -133,7 +98,9 @@
                                                 <span>我的訂單</span>
                                             </div>
                                         </a>
-                                        <a href="/Member/Coupons" class="dropdown-item py-2">
+                                        <a href="/Member/Coupons" class="dropdown-item py-2"
+                                            v-on:class="{'active': selectedItem === 'profile'}"
+                                            v-on:mouseenter="selectedItem = 'profile'">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
                                                     <i class="bi bi-ticket-perforated" style="font-size: 1rem;"></i>
@@ -141,9 +108,12 @@
                                                 <span>優惠券</span>
                                             </div>
                                         </a>
-                                        <div class="dropdown-divider"></div>
+                                    <!-- 分隔線 -->
+                                    <div class="dropdown-divider"></div>
                                         <a href="#"
                                            class="dropdown-item py-2"
+                                           v-on:class="{'active': selectedItem === 'profile'}"
+                                           v-on:mouseenter="selectedItem = 'profile'"
                                            v-on:click.prevent="handleLogout">
                                             <div class="d-flex align-items-center" style="gap: 12px;">
                                                 <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
@@ -153,21 +123,106 @@
                                             </div>
                                         </a>
                                     </div>
-                                </div>
-                                <!-- 收藏圖標 -->
-                                <a href="~/FrontHome/Favorite" class="icon-link">
-                                <i class="bi bi-heart "></i>
+                            </transition>
+                        </div>
+                        <!-- 收藏圖標 -->
+                        <a href="~/FrontHome/Favorite" class="icon-link">
+                            <i class="bi bi-heart "></i>
+                        </a>
+                        <!-- 購物車圖標 -->
+                        <a href="" class="icon-link">
+                            <i class="bi bi-handbag"></i>                
+                        </a>                    
+                </div>                    
+            </div>
+                <!-- 登入 Modal -->
+                <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" 
+                    aria-hidden="true" v-if="showLoginModal" v-on:click.self ="handleModalBackdropClick">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content p-4" style="border-radius: 0;">
+
+                            <!-- 登入標題 (置中) -->
+                            <h2 class="text-center mb-4" style="font-weight:700; font-size:1.5rem; color:darkorange">
+                                登入
+                            </h2>
+
+                            <label for="faccount" style="font-size: 20px; color:#007979;">帳號</label>
+                            <!-- 帳號/手機欄位 -->
+                            <div class="mb-4">
+                                <input id="faccount"
+                                       type="text"
+                                       ref="accountInput"                                       
+                                       placeholder="請輸入帳號、手機或 Email"
+                                       style="height: 40px;" 
+                                       class="form-control" 
+                                       autocomplete="username"
+                                       v-model="faccount"
+                                       v-on:keydown.enter="handleKeyNavigation('account', 'Enter', $event)"
+                                       v-on:keydown.down="handleKeyNavigation('account', 'ArrowDown', $event)"
+                                       v-on:keydown.up="handleKeyNavigation('account', 'ArrowUp', $event)"
+                                       
+                                        />
+                            </div>
+                            <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
+                            <!-- 密碼欄位 -->
+                            <div class="mb-4 position-relative">
+                                <input id="fpassword"
+                                       v-on:type="passwordVisible ? 'text' : 'password'"
+                                       ref="passwordInput"
+                                       v-model="fpassword"                                      
+                                       placeholder="請輸入密碼"
+                                       style="height: 40px;"                                      
+                                       v-on:keydown.enter="handleKeyNavigation('password', 'Enter', $event)"
+                                       v-on:keydown.down="handleKeyNavigation('password', 'ArrowDown', $event)"
+                                       v-on:keydown.up="handleKeyNavigation('password', 'ArrowUp', $event)"
+                                       class="form-control"
+                                       autocomplete="current-password" />
+                                <!-- 眼睛圖示按鈕 -->
+                                <button type="button"
+                                        class="btn position-absolute end-0 top-50 translate-middle-y"
+                                        style="background: none; border: none; outline: none; z-index: 10;"
+                                        v-on:click="togglePasswordVisibility">
+                                    <i :class="passwordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"
+                                       style="color: #AE0000;"></i>
+                                </button>
+                            </div>
+
+                            <!-- 忘記密碼連結 -->
+                            <div class="mb-4 text-end">
+                                <a href="/Account/ForgotPassword"
+                                   class="link-secondary"
+                                   style="font-size: 0.9rem;">
+                                    忘記密碼？
                                 </a>
-                                <!-- 購物車圖標 -->
-                                <a href="~/FrontHome/Cart" class="icon-link">
-                                <i class="bi bi-handbag"></i>
-                                </a>
+                            </div>
+
+                            <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->
+                            <button 
+                                    style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"
+                                    ref="loginButton"
+                                    v-on:click="doLogin"
+                                    v-on:keydown.enter ="doLogin"
+                                    v-on:keydown.up="handleKeyNavigation('loginButton', 'ArrowUp', $event)"
+                                    v-on:keydown.down="handleKeyNavigation('loginButton', 'ArrowDown', $event)"
+                                    class="btn w-100 mb-4">
+                                <span v-if="!isLoading">開始購物吧！</span>                               
+                            </button>
+
+                            <!-- 社群登入: 文字 + LINE圖示 -->
+                            <div class="text-center my-3">
+                                或使用社群帳號登入
+                            </div>
+                            <div class="text-center mb-4">
+                                <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
+                                     alt="Line"
+                                     style="width:60px; cursor:pointer;"
+                                     v-on:click ="handleLineLogin" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
         <hr class="m-1" />
         <!-- 導覽列 -->
         <div class="container">
@@ -409,98 +464,7 @@
 
         </div>
     </footer>
-    <!-- Vue 容器，掌管 Modal 內部的表單資料 -->
-    <!-- 登入 Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4" style="border-radius: 0;">
-
-                <!-- 登入標題 (置中) -->
-                <h2 class="text-center mb-4" style="font-weight:700; font-size:1.5rem; color:darkorange">
-                    登入
-                </h2>
-
-                <label for="faccount" style="font-size: 20px; color:#007979;">帳號</label>
-                <!-- 帳號/手機欄位 -->
-                <div id="vueLogin">
-                    <div class="mb-4">
-                        <input id="faccount"
-                                type="text"
-                                class="form-control"
-                                placeholder="請輸入帳號、手機或 Email"
-                                style="height: 40px;"
-                                v-model="faccount"
-                                v-on:keydown.enter="handleKeyNavigation('account', 'Enter', $event)"
-                                v-on:keydown.down="handleKeyNavigation('account', 'ArrowDown', $event)"
-                                v-on:keydown.up="handleKeyNavigation('account', 'ArrowDown', $event)"
-                                ref="accountInput" />
-                    </div>
-                    <label for="fpassword" style="font-size: 20px; color:#6C3365;">密碼</label>
-                    <!-- 密碼欄位 -->
-                    <div class="mb-4 position-relative">
-                        <input id="fpassword"
-                                :type="passwordVisible ? 'text' : 'password'"
-                                class="form-control"
-                                placeholder="請輸入密碼"
-                                style="height: 40px;"
-                                v-model="fpassword"
-                                v-on:keydown.enter="handleKeyNavigation('password', 'Enter', $event)"
-                                v-on:keydown.down="handleKeyNavigation('password', 'ArrowDown', $event)"
-                                v-on:keydown.up="handleKeyNavigation('password', 'ArrowUp', $event)"
-                                ref="passwordInput" />
-                        <!-- 眼睛圖示按鈕 -->
-                        <button type="button"
-                                class="btn position-absolute end-0 top-50 translate-middle-y"
-                                style="background: none; border: none; outline: none; z-index: 10;"
-                                v-on:click="togglePasswordVisibility">
-                            <i :class="passwordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"
-                                style="color: #AE0000;"></i>
-                        </button>
-                    </div>
-
-                    <!-- 忘記密碼 (靠右) -->
-                    <div class="mb-4 text-end">
-                        <a href="#" class="link-secondary" style="font-size: 0.9rem;">
-                            忘記密碼？
-                        </a>
-                    </div>
-
-                    <!-- 大按鈕: 開始購物吧！ (紅色背景，字白) -->
-                    <button class="btn w-100 mb-4"
-                            style="background-color: #FF5A5F; color: #fff; font-size: 1.1rem; height:50px;"
-                            v-on:click="doLogin"
-                            v-on:keydown.up="handleKeyNavigation('loginButton', 'up')"
-                            v-on:keydown.down="handleKeyNavigation('loginButton', 'down')"
-                            ref="loginButton">
-                        開始購物吧！
-                    </button>
-
-                    <!-- 社群登入: 文字 + LINE圖示 -->
-                    <div class="text-center my-3">
-                        或使用社群帳號登入
-                    </div>
-                    <div class="text-center mb-4">
-                        <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
-                                alt="Line"
-                                style="width:60px; cursor:pointer;" />
-                    </div>
-
-                            
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @*  <!-- 還不是會員 (註冊按鈕) -->
-    <div class="text-center">
-    <button class="btn btn-outline-danger px-4"
-    style="border:2px solid #ff5a5f; font-size:1rem; height:50px;"
-    v-on:click="gotoRegister">
-    註冊會員
-    </button>
-    </div> *@
     
-
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -512,195 +476,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="~/js/nav.js"></script>
     <script src="~/js/chat.js"></script>
+    <script src="~/js/personicon.js"></script>
     <script src="~/assets/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
-
-    <!-- 初始化 Vue -->
-    <script>
-        const { createApp } = Vue;
-        createApp({
-            data() {
-                return {
-                    faccount: '',   
-                    fpassword: '',  
-                    passwordVisible: false,// 密碼是否顯示明文
-                    isLoading: false,// 是否顯示 Loading 狀態
-                    errorMessage: '', // 顯示錯誤訊息
-                    isLoggedIn: false,// 是否登入
-                    memberInfo: null,  // 會員資訊
-                    showDropdown: false// 新增會員下拉選單相關資料
-                };
-            },// 頁面載入時檢查登入狀態
-             mounted() {                    
-                this.checkLoginStatus();
-                
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) {
-                loginModal.addEventListener('shown.bs.modal', () => {
-                    this.$nextTick(() => {
-                    if (this.$refs.accountInput) {
-                        this.$refs.accountInput.focus();
-                            }
-                        });
-                    });
-                }
-            },                 
-            methods: {                                            
-                togglePasswordVisibility() {
-                    this.passwordVisible = !this.passwordVisible;                   
-                },
-                
-            handleKeyNavigation(currentField, action, event) {
-                if (event) {
-                    event.preventDefault();
-                }
-                const navigationMap = {
-                    account: {
-                        Enter: 'password',
-                        ArrowDown: 'password',
-                        ArrowUp: 'loginButton'
-                    },
-                    password: {
-                        Enter: 'loginButton',
-                        ArrowDown: 'loginButton',
-                        ArrowUp: 'account'
-                    },
-                    loginButton: {
-                        Enter: 'doLogin',
-                        ArrowDown: 'account',
-                        ArrowUp: 'password'
-                    }
-                };
-                const targetField = navigationMap[currentField][action];// 找到目標欄位
-
-                    if (targetField === 'doLogin') { // 如果目標是 "doLogin" 代表要直接執行登入
-                        this.doLogin();
-                        return;
-                    }
-                    this.$nextTick(() => {
-                        const element = targetField === 'loginButton'
-                            ? this.$refs.loginButton
-                            : this.$refs[`${targetField}Input`];
-                    if (element) {
-                    element.focus();
-                        }
-                    });
-                },
-                
-                async doLogin() {
-                    if (!this.faccount || !this.fpassword) {
-                        alert('請填寫完整的帳號和密碼！');
-                        return;
-                    }
-                    this.isLoading = true;// 設置加載狀態
-                    this.errorMessage = '';
-                try {
-                    const loginData = {// 準備登入數據
-                        faccount: this.faccount.trim(),
-                        fpassword: this.fpassword
-                    };
-                    const response = await fetch('/Account/Login', {// 發送登入請求
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify(loginData)
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        this.isLoggedIn = true;// 登入成功
-                        await this.checkLoginStatus();
-
-                        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                    if (loginModal) {
-                        loginModal.hide();                        
-                    }
-                    
-                    setTimeout(() => {// 延遲重定向以確保 Modal 完全關閉
-                        window.location.href = data.redirectUrl || '/FrontHome/FrontIndex';
-                        }, 300);                    
-                    } 
-                    else {
-                        this.errorMessage = data.message || '登入失敗，請檢查帳號密碼！';
-                        alert(this.errorMessage);
-                    }
-                } 
-                catch (error) {
-                    console.error('Login error:', error);
-                    this.errorMessage = '系統發生錯誤，請稍後再試！';
-                    alert(this.errorMessage);
-                    }
-                    finally {
-                        this.isLoading = false;
-                }
-            },
-            // 會員圖示點擊處理                               
-            async handleMemberClick() {
-                if (this.isLoggedIn) {
-                    this.showDropdown = !this.showDropdown;
-                } 
-                else {
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
-                }
-            },
-
-            async handleLogout() {
-            try {
-                const response = await fetch('/Account/Logout', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
-                        this.isLoggedIn = false;
-                        this.showDropdown = false;
-                        this.memberInfo = null;
-                        window.location.href = '/';
-                    }
-                    else {
-                        alert('登出失敗，請稍後再試');
-                    }
-                } 
-                catch (error) {
-                    console.error('登出時發生錯誤:', error);
-                    alert('系統發生錯誤，請稍後再試');
-                    }
-                },
-                
-            async checkLoginStatus() { // 建議新增：檢查登入狀態的方法
-                try {
-                    const response = await fetch('/Account/CheckLoginStatus', {
-                        method: 'GET',
-                        credentials: 'include'
-                    });
-
-                    const data = await response.json();
-
-                    if (data.isLoggedIn) {
-                        this.isLoggedIn = true;
-                        this.memberInfo = data.memberInfo;
-                    }
-                    else {
-                        this.isLoggedIn = false;
-                        this.memberInfo = null;
-                    }
-                }
-                catch (error) {
-                    console.error('檢查登入狀態時發生錯誤:', error);
-                    }
-                }
-            }           
-        }).mount('#vueLogin');
-    </script>
 </body>
 </html>

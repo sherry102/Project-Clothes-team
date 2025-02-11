@@ -1,0 +1,41 @@
+﻿/* icon 容器基本設定 */
+.header-icons {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+    display: flex;
+    align-items: center;
+}
+
+    /* icon 群組設定 */
+    .header-icons .ms-auto {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* 統一所有 icon 的基本大小 */
+    .header-icons .bi {
+        font-size: 30px !important; /* 固定大小 */
+        width: 24px !important; /* 強制寬度 */
+        height: 24px !important; /* 強制高度 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 特別針對 person icon 的大小設定 */
+    .header-icons .bi-person {
+        font-size: 35px !important; /* 稍微加大一點 */
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+/* icon 連結樣式 */
+.icon-link {
+    text-decoration: none;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
