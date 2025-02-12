@@ -119,7 +119,7 @@
                         <input class="form-control" type="text" v-model="PassWordEdit" required />
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" v-on:click="edit">儲存</button>
+                        <button type="button" class="btn btn-primary" v-on:click="saveEdit">儲存</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     </div>
                 </div>
@@ -147,6 +147,7 @@
                     DateEnd:"",
                     PassWord:"",
                     End:"",
+                    CouponId:"",
                     CouponNameEdit:"",
                     CouponDiscountEdit:"",
                     CouponPercentageEdit:"",
@@ -185,7 +186,7 @@
                     let request = { Id: id };
                     let _this = this;
                     if (confirm("確定要刪除該筆資料嗎?")) {
-                        axios.post(`${_this.baseAddress}/Ajax/Delete`, request).then(response => { 
+                        axios.delete(`${_this.baseAddress}/Ajax/Delete/${id}`).then(response => { 
                             alert(response.data);
                             this.GetAllCoupon();
                         }).catch(err => { 
@@ -193,8 +194,29 @@
                         })
                     }
                 },
-                edit: function () { 
-                    
+                saveEdit: function () { 
+                    let _this = this;
+                    let id = _this.editId;
+                    let request = {
+                        CouponName:_this.CouponNameEdit,
+                        CouponDiscount:_this.CouponDiscountEdit,
+                        CouponPercentage:_this.CouponPercentageEdit,
+                        DateStart:_this.DateStartEdit,
+                        DateEnd:_this.DateEndEdit,
+                        CouponPassWord:_this.PassWordEdit
+                    }
+                    axios.put(`${_this.baseAddress}/Ajax/saveEdit/${id}`,request).then(response => {
+                        if (response.data.success) {
+                            alert(response.data.message);
+                            window.location.href = response.data.redirectUrl;
+                            _this.GetAllCoupon();
+                        } else {
+                            alert(response.data.message);
+                            window.location.href = response.data.redirectUrl;
+                        }
+                    }).catch(err => { 
+                        alert(err.message);
+                    });
                 },
                 openEdit: function (id) { 
                     let _this=this;
@@ -211,6 +233,7 @@
                         let formattedDateEnd = dateEnd.getFullYear() + '-' +
                             (dateEnd.getMonth() + 1).toString().padStart(2, '0') + '-' +
                             dateEnd.getDate().toString().padStart(2, '0');
+                        _this.CouponId = id;
                         _this.CouponNameEdit = response.data.couponName;
                         _this.CouponDiscountEdit = response.data.couponDiscount;
                         _this.CouponPercentageEdit=response.data.couponPercentage;

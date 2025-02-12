@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/Front_Layout.cshtml";
+    Layout = "~/Views/Shared/FrontMember_Layoutcshtml.cshtml";
 }
 
 @section styles{
@@ -24,7 +24,7 @@
         <div class="row">
             <div class="d-flex col-12 mt-3">
                 <h3 class="d-flex align-items-center" style="font-weight:500 !important;">
-                    優惠券
+                    我的優惠券
                 </h3>
                 <form class="ms-auto d-flex">
                     <input class="form-control" type="text" placeholder="輸入優惠碼" v-model="CouponPassWord"/>
@@ -95,7 +95,6 @@
                             alert(response.data.message);
                             window.location.href = response.data.redirectUrl;
                         } else {
-                            console.log(response.data.data);
                             _this.Coupon = response.data.data;
                         };
                     }).catch(err => {

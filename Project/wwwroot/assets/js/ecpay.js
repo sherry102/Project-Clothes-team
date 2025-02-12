@@ -9,7 +9,7 @@
     //step3 : 新增訂單到資料庫
     $.ajax({
         type: 'POST',
-        url: 'https://localhost:7279/api/AddOrders',
+        url: 'https://localhost:7279/api/ecpay/AddOrders',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(json),
         success: function (res) {

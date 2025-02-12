@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/Front_Layout.cshtml";
+    Layout = "~/Views/Shared/FrontMember_Layoutcshtml.cshtml";
 }
 @section styles{
     <style>
@@ -105,11 +105,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="title" class="form-label mb-2">主旨</label>
-                        <input type="text" class="form-control" id="title" v-model="Title" required>
+                        <input type="text" class="form-control" id="title" v-model="Title">
                     </div>
                     <div class="mb-3">
                         <label class="form-label  mb-2">簡述 <span style="font-size:14px; color:darkred">(150字以內)</span></label>
-                        <textarea class="form-control" style="height:150px;overflow-y: scroll; resize: none;" maxlength="150" v-model="Description" required></textarea>
+                        <textarea class="form-control" style="height:150px;overflow-y: scroll; resize: none;" maxlength="150" v-model="Description"></textarea>
                     </div>
                     <button type="button" class="btn btn-send" v-on:click="send">送出</button>
                 </form>
