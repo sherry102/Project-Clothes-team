@@ -21,11 +21,11 @@ namespace Project.Controllers
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(json))
             {
-                return null;  
+                return null;
             }
 
             var member = JsonSerializer.Deserialize<Tmember>(json);
-            Console.WriteLine($"Member MID: {member.Mid}");   
+            Console.WriteLine($"Member MID: {member.Mid}");
 
             var cartItems = await _context.Tcarts
                 .Where(c => c.Mid == member.Mid)
@@ -184,6 +184,41 @@ namespace Project.Controllers
         }
 
         [HttpPost]
+        public async Task<string> SaveToOrder([FromBody] OrderDTO order)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return "請先登入會員";
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json); 
+            try
+            { 
+                var newOrder = new Torder
+                { 
+                    Odiscountedprice = order.ODiscountedprice,
+                    OtotalPrice = order.OTotalPrice,
+                    Oname = order.OName,
+                    Oaddress = order.OAddress,
+                    Ophone = order.OPhone,
+                    Oemail = order.OEmail,
+                    Ostatus = order.OStatus,
+                    Opayment = order.OPayment,
+                    Odate = DateTime.Now,  
+                    Mid = member.Mid, 
+                }; 
+                _context.Torders.Add(newOrder);
+                await _context.SaveChangesAsync(); 
+                return "訂單成立";
+            }
+            catch (Exception ex)
+            { 
+                return "訂單成立失敗";
+            }
+        }
+         
+
+        [HttpPost]
         public async Task<IActionResult> PostAdvice([FromBody]AdviceDTO Ad)
         {
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
@@ -329,7 +364,7 @@ namespace Project.Controllers
             var member = JsonSerializer.Deserialize<Tmember>(json);
              
             var cartItem = await _context.Tcarts
-                                         .Where(c => c.Mid == member.Mid && c.Pid == productId)
+                                         .Where(c => c.Mid == member.Mid && c.Id == productId)
                                          .FirstOrDefaultAsync();
              
             if (cartItem == null)

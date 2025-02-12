@@ -1,4 +1,4 @@
-using Project.Hubs;
+
 using Project.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
@@ -47,13 +47,13 @@ app.UseStaticFiles();
 //¸ó°ì±Ò°Ê
 app.UseCors();
 //¥[¤J Hub
-app.MapHub<ChatHub>("/ChatRoom");
+
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=FrontHome}/{action=FrontIndex}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();

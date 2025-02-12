@@ -27,13 +27,13 @@ namespace Project.Controllers
         public JsonResult Login([FromBody] MemberViewModel model)
         {
             // 1. 增加詳細的偵錯日誌
-            Console.WriteLine($"Login attempt - Account: {model.faccount}, Password: {model.fpassword}");
+            Console.WriteLine($"Login attempt - Account: {model.Account}, Password: {model.Password}");
 
             // 1. 首先進行必要欄位驗證
-            if (model == null || string.IsNullOrWhiteSpace(model.faccount) || string.IsNullOrWhiteSpace(model.fpassword))
+            if (model == null || string.IsNullOrWhiteSpace(model.Account) || string.IsNullOrWhiteSpace(model.Password))
             {
                 Console.WriteLine("Login failed: Empty Account or Password");
-                return Json(new{ success = false, message = "帳號或密碼不可為空！" });
+                return Json(new { success = false, message = "帳號或密碼不可為空！" });
             }
 
             try
@@ -41,20 +41,20 @@ namespace Project.Controllers
                 // 2. 使用更安全的查詢方式
                 var matchedAccounts = _context.Tmembers
                 .Where(m =>
-                    m.Mphone == model.faccount.Trim() ||
-                    m.Maccount == model.faccount.Trim() ||
-                    m.Memail == model.faccount.Trim())
+                    m.Mphone == model.Account.Trim() ||
+                    m.Maccount == model.Account.Trim() ||
+                    m.Memail == model.Account.Trim())
                 .ToList();
 
                 Console.WriteLine($"Matched Accounts count: {matchedAccounts.Count}");
 
                 // 4. 更精確的登入驗證
                 var member = matchedAccounts
-                    .FirstOrDefault(m => m.Mpassword == model.fpassword);
+                    .FirstOrDefault(m => m.Mpassword == model.Password);
 
                 if (member != null)
                 {
-             
+
                     // 5. 使用更安全的序列化方式
                     var memberInfo = new Dictionary<string, object>
                     {
@@ -62,29 +62,29 @@ namespace Project.Controllers
                         { "Mname", member.Mname },
                         { "Maccount", member.Maccount }
                     };
-                                
+
                     HttpContext.Session.SetString(
                         CDictionary.SK_LOGEDIN_USER,
                         System.Text.Json.JsonSerializer.Serialize(memberInfo)
                     );
                     Console.WriteLine($"User {member.Maccount} logged in successfully");
-                 
+
 
                     return Json(new
                     {
                         success = true,
                         message = "登入成功！",
                         redirectUrl = "/FrontHome/FrontIndex",
-                         memberInfo = new  // 新增會員信息
-                         {
-                             Mname = member.Mname,
-                             Maccount = member.Maccount
-                         }
+                        memberInfo = new  // 新增會員信息
+                        {
+                            Mname = member.Mname,
+                            Maccount = member.Maccount
+                        }
                     });
                 }
                 else
                 {
-                    Console.WriteLine($"Login failed for account: {model.faccount}");
+                    Console.WriteLine($"Login failed for account: {model.Account}");
 
                     return Json(new
                     {
@@ -95,10 +95,10 @@ namespace Project.Controllers
                             matchedAccountsCount = matchedAccounts.Count
                         }
                     });
-                }            
+                }
             }
             catch (Exception ex)
-            {                
+            {
                 Console.WriteLine($"Login error: {ex.Message}");
 
                 return Json(new
