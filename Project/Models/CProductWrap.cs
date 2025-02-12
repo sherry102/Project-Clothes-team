@@ -84,12 +84,21 @@ namespace Project.Models
 
         public List<string> Images { get; set; } = new List<string>(); // 存圖片名稱
 
+        public List<string> Colors { get; set; } = new List<string>(); //存顏色
+
+        public List<string> Sizes { get; set; } = new List<string>();  //存尺寸
+
+        public Dictionary<string, int> StockMap { get; set; } = new Dictionary<string, int>();
+        // 存放顏色+尺寸的庫存數量
+
         [DisplayName("照片路徑")]
         public IFormFile? photoPath { get; set; }
 
         public List<IFormFile> Photos { get; set; } = new List<IFormFile>(); // 多張圖片
 
         public List<Tpimage> ImgList { get; set; } = new List<Tpimage>();
+  
+
 
         [DisplayName("是否隱藏")]
         public bool PisHided

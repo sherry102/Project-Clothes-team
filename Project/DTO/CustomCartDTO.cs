@@ -5,6 +5,9 @@ namespace Project.DTO
     public class CustomCartDTO
     { 
         public int Id { get; set; }
+
+        public int PId { get; set; }
+
         public string PName { get; set; }
 
         public string PType { get; set; }

@@ -51,10 +51,24 @@ namespace Project.Controllers
                                      .Select(img => img.Piname) // 取得圖片名稱
                                      .ToList();
 
+            // 查詢對應的顏色與尺寸（不顯示 Pstock = 0 的）
+            var inventory = db.TproductInventories
+                              .Where(inv => inv.Pid == id)
+                              .ToList();
+
+            List<string> colors = inventory.Select(inv => inv.Pcolor).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+            List<string> sizes = inventory.Select(inv => inv.Psize).Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
+
+            // 建立顏色+尺寸的庫存數據
+            Dictionary<string, int> stockMap = inventory.ToDictionary(inv => $"{inv.Pcolor}-{inv.Psize}", inv => inv.Pstock);
+
             return View(new CProductWrap()
             {
                 product = x,
-                Images = images
+                Images = images,
+                Colors = colors,
+                Sizes = sizes,
+                StockMap = stockMap
             });
         }
 
