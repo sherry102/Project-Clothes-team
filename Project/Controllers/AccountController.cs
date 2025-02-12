@@ -5,170 +5,117 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Linq;
 
-
 namespace Project.Controllers
 {
     public class AccountController : Controller
     {
         private readonly DbuniPayContext _context;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(DbuniPayContext context)
+        public AccountController(DbuniPayContext context, ILogger<AccountController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        // GET: 回傳登入頁面
-        public IActionResult Login()
+        // 新增：檢查登入狀態的端點
+        [HttpGet]
+        public IActionResult CheckLoginStatus()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public JsonResult Login([FromBody] MemberViewModel model)
-        {
-            // 1. 增加詳細的偵錯日誌
-            Console.WriteLine($"Login attempt - Account: {model.faccount}, Password: {model.fpassword}");
-
-            // 1. 首先進行必要欄位驗證
-            if (model == null || string.IsNullOrWhiteSpace(model.faccount) || string.IsNullOrWhiteSpace(model.fpassword))
-            {
-                Console.WriteLine("Login failed: Empty Account or Password");
-                return Json(new{ success = false, message = "帳號或密碼不可為空！" });
-            }
-
             try
             {
-                // 2. 使用更安全的查詢方式
-                var matchedAccounts = _context.Tmembers
-                .Where(m =>
-                    m.Mphone == model.faccount.Trim() ||
-                    m.Maccount == model.faccount.Trim() ||
-                    m.Memail == model.faccount.Trim())
-                .ToList();
+                // 從 Session 中獲取用戶信息
+                var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                bool isLoggedIn = !string.IsNullOrEmpty(memberJson);
 
-                Console.WriteLine($"Matched Accounts count: {matchedAccounts.Count}");
+                return Json(new { isLoggedIn });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "檢查登入狀態時發生錯誤");
+                return Json(new { isLoggedIn = false });
+            }
+        }
 
-                // 4. 更精確的登入驗證
-                var member = matchedAccounts
-                    .FirstOrDefault(m => m.Mpassword == model.fpassword);
+        // 修改：改進登入邏輯
+        [HttpPost]
+        public IActionResult Login(PersoniconViewModel model)
+        {
+            try
+            {
+                // 驗證用戶憑證
+                var member = _context.Tmembers.FirstOrDefault(m =>
+                    m.Maccount == model.faccount &&
+                    m.Mpassword == model.fpassword);
 
                 if (member != null)
                 {
-             
-                    // 5. 使用更安全的序列化方式
-                    var memberInfo = new Dictionary<string, object>
-                    {
-                        { "Mid", member.Mid },
-                        { "Mname", member.Mname },
-                        { "Maccount", member.Maccount }
-                    };
-                                
-                    HttpContext.Session.SetString(
-                        CDictionary.SK_LOGEDIN_USER,
-                        System.Text.Json.JsonSerializer.Serialize(memberInfo)
-                    );
-                    Console.WriteLine($"User {member.Maccount} logged in successfully");
-                 
+                    // 登入成功
+                    string memberJson = JsonSerializer.Serialize(member);
+                    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, memberJson);
 
-                    return Json(new
+                    // AJAX 請求返回 JSON
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        success = true,
-                        message = "登入成功！",
-                        redirectUrl = "/FrontHome/FrontIndex",
-                         memberInfo = new  // 新增會員信息
-                         {
-                             Mname = member.Mname,
-                             Maccount = member.Maccount
-                         }
-                    });
+                        return Json(new
+                        {
+                            success = true,
+                            message = "登入成功",
+                            redirectUrl = Url.Action("FrontIndex", "FrontHome")
+                        });
+                    }
+
+                    // 一般請求進行重定向
+                    return RedirectToAction("FrontIndex", "FrontHome");
                 }
-                else
-                {
-                    Console.WriteLine($"Login failed for account: {model.faccount}");
 
+                // 登入失敗
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    _logger.LogWarning("登入失敗：使用者帳號或密碼錯誤");
                     return Json(new
                     {
                         success = false,
-                        message = "帳號或密碼錯誤",
-                        debugInfo = new
-                        {
-                            matchedAccountsCount = matchedAccounts.Count
-                        }
+                        message = "帳號或密碼錯誤"
                     });
-                }            
+                }
+
+                // 一般請求返回視圖
+                ViewBag.Error = "true";
+                return View();
             }
             catch (Exception ex)
-            {                
-                Console.WriteLine($"Login error: {ex.Message}");
-
-                return Json(new
+            {
+                _logger.LogError(ex, "登入過程發生錯誤");
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    success = false,
-                    message = "系統發生錯誤，請稍後再試"
-                });
+                    return Json(new
+                    {
+                        success = false,
+                        message = "登入過程發生錯誤，請稍後再試"
+                    });
+                }
+
+                ViewBag.Error = "true";
+                ViewBag.ErrorMessage = "系統發生錯誤，請稍後再試";
+                return View();
             }
         }
-        // 登出方法
+
+        // 新增：登出端點
         [HttpPost]
-        public IActionResult SignOut()
-        {
-            HttpContext.Session.Clear();
-            return Json(new
-            {
-                success = true,
-                message = "登出成功"
-            });
-        }
-        // 在這裡加入新的 CheckLoginStatus 方法
-        [HttpGet]
-        public JsonResult CheckLoginStatus()
+        public IActionResult Logout()
         {
             try
             {
-                var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-
-                if (string.IsNullOrEmpty(userJson))
-                {
-                    return Json(new { isLoggedIn = false });
-                }
-
-                var memberInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(userJson);
-
-                var filteredMemberInfo = new Dictionary<string, object>
-                {
-                    { "Mname", memberInfo["Mname"] },
-                    { "Maccount", memberInfo["Maccount"] }
-                };
-
-                return Json(new
-                {
-                    isLoggedIn = true,
-                    memberInfo = filteredMemberInfo
-                });
+                HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"檢查登入狀態時發生錯誤: {ex.Message}");
-                return Json(new
-                {
-                    isLoggedIn = false,
-                    error = "檢查登入狀態時發生錯誤"
-                });
+                _logger.LogError(ex, "登出過程發生錯誤");
+                return Json(new { success = false, message = "登出過程發生錯誤" });
             }
-        }
-        // 隱私權頁面
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-        // 錯誤處理
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-            });
         }
     }
 }

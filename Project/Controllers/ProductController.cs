@@ -63,16 +63,28 @@ namespace Project.Controllers
         {
             DbuniPayContext db = new DbuniPayContext();
             string keyword = vm.txtKeyword;
-            IEnumerable<Tproduct> datas = null;
-            if (string.IsNullOrEmpty(keyword))
-                datas = db.Tproducts
-                        .Where(t => !t.PisHided);  // 過濾已刪除的記錄
-            else
-                datas = db.Tproducts.Where(t => t.Pdescription.Contains(keyword));
-            List<CProductWrap> list = new List<CProductWrap>();
-            foreach (var t in datas)
-                list.Add(new CProductWrap() { product = t });
-            return View(list);
+
+            // 取得符合條件的產品 (排除隱藏的)
+            var query = db.Tproducts
+                          .Where(t => !t.PisHided);
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(t => t.Pdescription.Contains(keyword));
+            }
+
+            // 直接用 LINQ Join 取得產品與庫存
+            var productList = query
+                .Select(t => new CProductWrap
+                {
+                    product = t,
+                    TproductInventories = db.TproductInventories
+                                   .Where(i => i.Pid == t.Pid)
+                                   .ToList()
+                })
+                .ToList();
+
+            return View(productList);
         }
 
         //後台商品下架
@@ -190,8 +202,6 @@ namespace Project.Controllers
                 x.Pname = p.Pname;
                 x.Pprice = p.Pprice;
                 x.Ptype = p.Ptype;
-                x.Psize = p.Psize;
-                x.Pcolor = p.Pcolor;
                 x.Pdescription = p.Pdescription;
                 x.Pcategory = p.Pcategory;
                 x.PcreatedDate = DateTime.Now;
