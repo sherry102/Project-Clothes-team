@@ -29,7 +29,7 @@
             <th>@Html.DisplayNameFor(model => model[0].Pcategory)</th>
             <th>@Html.DisplayNameFor(model => model[0].Pdescription)</th>
             @*<th>@Html.DisplayNameFor(model => model[0].Pinventory)</th>*@
-            <th>@Html.DisplayNameFor(model => model[0].PcreatedDate)</th>
+            @*<th>@Html.DisplayNameFor(model => model[0].PcreatedDate)</th>*@
             <th>操作</th>
         </tr>
     </thead>
@@ -42,7 +42,7 @@
                 <tr>
                     <td>@count</td>
                     <td>
-                        <img src="~/images/@item.Pphoto" height="80" width="90" class="rounded" />
+                        <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
                     </td>
                     <td>@Html.DisplayFor(modelItem => item.Pname)</td>
                     <td>@Html.DisplayFor(modelItem => item.Pprice)</td>
@@ -50,7 +50,7 @@
                     <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
                     <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
                    @* <td>@Html.DisplayFor(modelItem => item.Pinventory)</td>*@
-                    <td>@Html.DisplayFor(modelItem => item.PcreatedDate)</td>
+                   @*<td>@Html.DisplayFor(modelItem => item.PcreatedDate)</td>*@
                     <td>
                         @Html.ActionLink("修改", "Edit", new { id = item.Pid }, new { @class = "btn btn btn-outline-dark btn-sm" })
                         @Html.ActionLink("下架", "Hide", "Product", new { id = item.Pid },
