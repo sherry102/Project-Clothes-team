@@ -1,9 +1,14 @@
-using Project.Hubs;
+
 using Project.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers().AddNewtonsoftJson(); // ? 確保支援 JObject
+
+builder.Services.AddMemoryCache(); // ? 註冊記憶體快取
+
 // Add services to the DI container.
 builder.Services.AddDbContext<DbuniPayContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -47,13 +52,13 @@ app.UseStaticFiles();
 //跨域啟動
 app.UseCors();
 //加入 Hub
-app.MapHub<ChatHub>("/ChatRoom");
+
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=FrontHome}/{action=FrontIndex}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();

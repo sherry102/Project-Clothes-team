@@ -231,13 +231,13 @@ namespace Project.Controllers
 		public IActionResult Login(MemberViewModel m)//存入快取
 		{
 			DbuniPayContext db = new DbuniPayContext();
-			Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.faccount && c.Mpassword == m.fpassword);
+			Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.Account && c.Mpassword == m.Password);
 			string Error = "false";
-			if (T != null && T.Mpassword == m.fpassword)
+			if (T != null && T.Mpassword == m.Password)
 			{
 				string json = JsonSerializer.Serialize(T);
 				HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-				return RedirectToAction("Index","Home");
+				return RedirectToAction("FrontIndex","FrontHome");
 			}
 			else
 			{

@@ -328,7 +328,6 @@
                 GetTop4Sales: function () {
                     let _this = this;
                     axios.get(`${_this.baseAddress}/Ajax/Top4Sales`).then(response => {
-                        console.log(response.data);
                         _this.Top4Sales = response.data;
                         _this.GetFavoriteID();
                     }).catch(err => {

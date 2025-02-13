@@ -11,11 +11,11 @@
                     <div class="cart-sec simpleCart_shelfItem">
                         <div class="cart-item cyc">
                             <div class="cart-img-con1">
-                                <img :src="item.customPhoto0 && item.customPhoto0 !== '' ? `${baseAddress}/images/${item.customPhoto0}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
+                                <img :src="item.photo0" class="img-responsive" alt="" />
 
                             </div>
                             <div class="cart-img-con2">
-                                <img :src="item.customPhoto1 && item.customPhoto1 !== '' ? `${baseAddress}/images/${item.customPhoto1}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
+                                <img :src="item.photo1" class="img-responsive" alt="" />
                             </div>
                             <div class="cart-item-info">
                                 <p>{{ item.pType }} </p>

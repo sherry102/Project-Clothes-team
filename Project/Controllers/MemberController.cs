@@ -265,7 +265,7 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Profile(CMemberWrap t)
+        public IActionResult Profile(MemberProfilecs t)
         {
             DbuniPayContext db = new DbuniPayContext();
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == t.Mid);
@@ -275,7 +275,7 @@ namespace Project.Controllers
                 T.Mgender = t.Mgender;
                 T.Memail = t.Memail;
                 T.Maddress = t.Maddress;
-                T.Mbirthday =DateOnly.Parse(t.Mbirthday);
+                T.Mbirthday =t.Mbirthdays;
                 T.Mphone = t.Mphone;
                 if (t.photoPath != null)
                 {

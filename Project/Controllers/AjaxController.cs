@@ -279,16 +279,37 @@ namespace Project.Controllers
             return Json(coupon);
         }
 
-        [HttpPost]
+        [HttpDelete]
 
-        public async Task<string> Delete([FromBody] CouponDTO coupon) {
-            var CouponToDelete = await _context.Tcoupons.FindAsync(coupon.Id);
+        public async Task<string> Delete(int id) {
+            var CouponToDelete = await _context.Tcoupons.FindAsync(id);
             if (CouponToDelete == null) {
                 return "查不到該筆資料，刪除失敗";
             }
             _context.Tcoupons.Remove(CouponToDelete);
             await _context.SaveChangesAsync();
             return "已刪除資料";
+        }
+
+        [HttpPut]
+
+        public async Task<IActionResult> saveEdit(int id,[FromBody]CouponDTO coupon) {
+
+            var CouponEdit = await _context.Tcoupons.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (CouponEdit!=null) {
+                CouponEdit.CouponName = coupon.CouponName;
+                CouponEdit.CouponDiscount = coupon.CouponDiscount;
+                CouponEdit.CouponPercentage = coupon.CouponPercentage;
+                CouponEdit.DateStart = coupon.DateStart;
+                CouponEdit.DateEnd = coupon.DateEnd;
+                CouponEdit.PassWord = coupon.CouponPassWord;
+
+                _context.Tcoupons.Update(CouponEdit);
+               await _context.SaveChangesAsync();
+                return Json(new { success = true, message="更新成功", redirectUrl = Url.Action("Coupon", "Other") });
+            }
+
+            return Json(new { success = false, message = "更新失敗", redirectUrl = Url.Action("Coupon", "Other") });
         }
 
         [HttpPost]
