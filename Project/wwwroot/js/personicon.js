@@ -1,46 +1,49 @@
-﻿const {createApp} = Vue;
-   createApp({
-        data() {
-        return {
-            faccount: '',
-            fpassword: '',
-            passwordVisible: false,// 密碼是否顯示明文
-            isLoading: false,// 是否顯示 Loading 狀態
-            errorMessage: '', // 顯示錯誤訊息
-            isLoggedIn: false,// 追踪用戶是否已登入
-            memberInfo: null,  // 存儲會員信息           
-            showLoginModal: false // Modal顯示狀態
-            };
-        },// 頁面載入時檢查登入狀態
-       mounted() {
-           // 初始化 Modal 實例
-           this.modalInstance = new bootstrap.Modal(document.getElementById('loginModal'), {
-               keyboard: true,
-               backdrop: true
-           });
+﻿// 等待 DOM 載入完成後執行所有程式
+document.addEventListener('DOMContentLoaded', function () {
+    // 初始化必要的 DOM 元素
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal')); // 登入模態框
+    const memberButton = document.getElementById('memberButton');                  // 會員按鈕
+    const memberDropdown = document.getElementById('memberDropdown');             // 會員下拉選單
+    const loginForm = document.getElementById('loginForm');                       // 登入表單
+    const errorMessage = document.getElementById('errorMessage');                 // 錯誤訊息顯示區
+    const togglePasswordBtn = document.getElementById('togglePassword');          // 密碼顯示切換按鈕
+    const passwordInput = document.getElementById('fpassword');                   // 密碼輸入框
+    const logoutButton = document.getElementById('logoutButton');                 // 登出按鈕
 
-           // 監聽 Modal 顯示事件
-           document.getElementById('loginModal').addEventListener('shown.bs.modal', () => {
-               // 確保在 Modal 完全顯示後設置焦點
-               this.$nextTick(() => {
-                   const accountInput = this.$refs.accountInput;
-                   if (accountInput) {
-                       accountInput.focus();
-                   }
-               });
-           });
-       },
-       // 定義組件的方法
-       methods: {
-           handleMemberClick() {
-               if (!this.isLoggedIn) {
-                   this.showLoginModal = true;
-                   this.modalInstance.show();
-                   // 重置表單
-                   this.resetForm();
-               }
+    // 設置密碼輸入框的初始狀態
+    passwordInput.type = 'password';                                             // 確保密碼輸入為隱藏狀態
+    togglePasswordBtn.querySelector('i').className = 'bi bi-eye-slash';          // 設置眼睛圖示為關閉狀態
+
+    // 檢查登入狀態並設置對應的行為
+    async function checkLoginStatus() {
+        try {
+            const response = await fetch('/Account/CheckLoginStatus');
+            const data = await response.json();
+
+            if (data.isLoggedIn) {
+                // 已登入狀態：移除模態框觸發器，啟用下拉選單功能
+                memberButton.removeAttribute('data-bs-toggle');
+                memberButton.removeAttribute('data-bs-target');
+                memberButton.onclick = function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    memberDropdown.style.display =
+                        memberDropdown.style.display === 'none' ? 'block' : 'none';
+                };
+            } else {
+                // 未登入狀態：設置模態框觸發器
+                memberButton.setAttribute('data-bs-toggle', 'modal');
+                memberButton.setAttribute('data-bs-target', '#loginModal');
+                memberButton.onclick = null;
+                memberDropdown.style.display = 'none';
+            }
+            return data.isLoggedIn;
+        } catch (error) {
+            console.error('檢查登入狀態時發生錯誤:', error);
+            return false;
+        }
            },
-           // 重置表單數據
+           // ���m���ƾ�
            resetForm() {
                this.faccount = '';
                this.fpassword = '';
@@ -49,79 +52,74 @@
            },
            async doLogin() {
                if (!this.faccount || !this.fpassword) {
-                   alert('請填寫完整的帳號和密碼！');
+                   alert('�ж�g���㪺�b���M�K�X�I');
                    return;
-               }
-               this.isLoading = true;// 設置加載狀態  
-               try {
-                   const response = await fetch('/Account/Login', {
-                       method: 'POST',
-                       headers: {
-                           'Content-Type': 'application/json',
-                           'X-Requested-With': 'XMLHttpRequest'
-                       },
-                       credentials: 'include',
-                       body: JSON.stringify({
-                           faccount: this.faccount.trim(),
-                           fpassword: this.fpassword
-                       })
-                   });
-                   const data = await response.json();
-                   if (data.success) {
-                       this.isLoggedIn = true;
-                       await this.checkLoginStatus();
-                       this.showLoginModal = false; // 更新：關閉 Modal
-                       window.location.href = data.redirectUrl || '/FrontHome/FrontIndex';
-                   } else {
-                       this.errorMessage = data.message || '登入失敗，請檢查帳號密碼！';
-                       alert(this.errorMessage);
-                   }
-               } catch (error) {
-                   console.error('Login error:', error);
-                   this.errorMessage = '系統發生錯誤，請稍後再試！';
-                   alert(this.errorMessage);
-               } finally {
-                   this.isLoading = false;
-               }
-           },// 切換密碼可見性                   
-           togglePasswordVisibility() {
-               this.passwordVisible = !this.passwordVisible;
-           },
-           handleKeyNavigation(currentField, action, event) {// 處理鍵盤導航
-               // 防止預設行為
-               event?.preventDefault();
+    }
 
-               const navigationMap = {
-                   account: {
-                       Enter: 'password',// 從帳號按Enter -> 移至密碼欄位
-                       ArrowDown: 'password',// 從帳號按向下鍵 -> 移至密碼欄位
-                       ArrowUp: 'loginButton'// 從帳號按向上鍵 -> 移至登入按鈕
-                   },
-                   password: {
-                       Enter: 'loginButton',// 從密碼按Enter -> 移至登入按鈕
-                       ArrowDown: 'loginButton',// 從密碼按向下鍵 -> 移至登入按鈕
-                       ArrowUp: 'account'// 從密碼按向上鍵 -> 移至帳號欄位
-                   },
-                   loginButton: {
-                       Enter: 'doLogin',// 在登入按鈕按Enter -> 執行登入
-                       ArrowDown: 'account',// 從登入按鈕按向下鍵 -> 移至帳號欄位
-                       ArrowUp: 'password'// 從登入按鈕按向上鍵 -> 移至密碼欄位                   
-                   }
-               };
-               const targetField = navigationMap[currentField][action];// 找到目標欄位
+    // 處理登入表單提交
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        errorMessage.style.display = 'none';  // 清除之前的錯誤訊息
 
-               if (targetField === 'doLogin') { // 如果目標是 "doLogin" 代表要直接執行登入
-                   this.doLogin();
-                   return;
-               } // 在下一個 DOM 更新循環中切換焦點
-               this.$nextTick(() => {
-                   const element = targetField === 'loginButton'
-                       ? this.$refs.loginButton
-                       : this.$refs[`${targetField}Input`];
-                   if (element) { // 如果有抓到對應的元素，則讓該元素獲得焦點
-                       element.focus();
-                   }
-               });
-           }
-       }
-   }).mount('#vueLogin');
+        // 獲取表單數據
+        const formData = new FormData(loginForm);
+
+        try {
+            const response = await fetch('/Account/Login', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // 登入成功
+                loginModal.hide();                // 隱藏登入視窗
+                await checkLoginStatus();         // 更新登入狀態
+                window.location.reload();         // 重新載入頁面
+            } else {
+                // 登入失敗
+                const text = await response.text();
+                errorMessage.textContent = '帳號或密碼錯誤';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('登入過程發生錯誤:', error);
+            errorMessage.textContent = '登入過程發生錯誤，請稍後再試';
+            errorMessage.style.display = 'block';
+        }
+    });
+
+    // 密碼顯示切換功能
+    togglePasswordBtn.addEventListener('click', function () {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        // 更新眼睛圖示
+        const icon = togglePasswordBtn.querySelector('i');
+        icon.className = `bi bi-eye${type === 'password' ? '-slash' : ''}`;
+    });
+
+    // 點擊頁面其他區域時關閉下拉選單
+    document.addEventListener('click', function (event) {
+        if (!memberButton.contains(event.target) &&
+            !memberDropdown.contains(event.target)) {
+            memberDropdown.style.display = 'none';
+        }
+    });
+
+    // 登出功能
+    logoutButton.addEventListener('click', async function (event) {
+        event.preventDefault();
+        try {
+            const response = await fetch('/Account/Logout', {
+                method: 'POST'
+            });
+            if (response.ok) {
+                window.location.reload();  // �n�X�᭫�s���J����
+            }
+        } catch (error) {
+            console.error('�n�X�ɵo�Ϳ��~:', error);
+        }
+    });
+
+    // 頁面載入時檢查登入狀態
+    checkLoginStatus();
+});

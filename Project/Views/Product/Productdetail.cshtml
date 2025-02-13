@@ -17,19 +17,16 @@
             border-radius: 10px !important;
         }
 
-        .btn-side:hover {
-            background-color: #8a8282c7 !important;
-            border: 1px solid #8891a3c7 !important;
-        }
+            .btn-side:hover {
+                background-color: #8a8282c7 !important;
+                border: 1px solid #8891a3c7 !important;
+            }
 
         .product-item {
             text-align: center;
         }
 
-        .container{
-            margin: 0;
-            padding: 0;
-        }
+
         .sticky-sidebar {
             position: sticky;
             top: 0;
@@ -37,9 +34,10 @@
             overflow-y: auto; /* 確保如果內容過長，仍可在內部滾動 */
         }
 
-        .sticky-sidebar::-webkit-scrollbar {
-            display: none;
-        }
+            .sticky-sidebar::-webkit-scrollbar {
+                display: none;
+            }
+
         .product-images img {
             width: 100%;
             height: auto;
@@ -51,8 +49,7 @@
         .product-images .col-6 {
             padding: 0; /* 移除 Bootstrap 預設間距 */
         }
-        
-        </style>
+    </style>
 }
 <!-- breadcrumb 麵包屑 -->
 <nav aria-label="breadcrumb" class="p-3">
@@ -78,7 +75,7 @@
                         <div class="col-6">
                             <img src="~/Images/@image" alt="商品圖片">
                         </div>
-                    }       
+                    }
                 }
             </div>
         </div>
@@ -88,13 +85,34 @@
             <div class="fs-3 ms-4"> @Html.DisplayFor(model => model.Pname) </div>
             <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice) </div>
             <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription) </div>
-            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pcolor) </div>
             <div class="fs-5 ms-4">
+
                 <div class="my-5">
-                    <button type="button" class="btn btn-outline-dark" value="S">S</button>
-                    <button type="button" class="btn btn-outline-dark" value="M">M</button>
-                    <button type="button" class="btn btn-outline-dark" value="L">L</button>
-                    <button type="button" class="btn btn-outline-dark" value="XL">XL</button>
+                    @foreach (var color in Model.Colors)
+                    {
+                        // 計算該顏色的總庫存量
+                        int totalStock = Model.StockMap
+                        .Where(s => s.Key.StartsWith(color + "-")) // 找出這個顏色的所有尺寸
+                        .Sum(s => s.Value); // 加總庫存數量
+
+                        // 如果該顏色總庫存為 0，按鈕禁用
+                        bool isOutOfStock = totalStock == 0;
+
+                        <button type="button" class="btn btn-outline-dark"
+                                value="@color"
+                        @(isOutOfStock ? "disabled" : "")>
+                            @color (@totalStock)
+                        </button>
+                    }
+                <div class="my-5">
+                        @foreach (var size in Model.Sizes)
+                        {
+                            bool hasStock = Model.StockMap.Any(s => s.Key.EndsWith(size) && s.Value > 0);
+                            if (hasStock)
+                            {
+                                <button type="button" class="btn btn-outline-dark" value="@size">@size</button>
+                            }
+                        }
                 </div>
                 <div class="fs-5 mt-4">
                     <div class="input-group" style="max-width: 150px;">
@@ -102,56 +120,16 @@
                         <input type="text" class="form-control text-center" value="1" id="quantity">
                         <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
                     </div>
-                    <div class="mt-5"><button type="button" class="btn btn-outline-secondary" v-on:click="">加入購物車</button></div>
-                </div>
-            </div>
-            <div class="card mt-5">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <span class="fw-bold">會員</span>
-                        <span class="text-warning">★★★★★</span>
-                    </h5>
-                    <p class="text-muted">2024-06-17 20:13</p>
-                    <p class="card-text">
-                        超好看的
-                    </p>
-                    <div class="d-flex mt-6">
-                        <img src="~/Images/pc-01-06.jpg" class="img-thumbnail me-2" width="120">
-                        <img src="~/Images/pc-01-07.jpg" class="img-thumbnail" width="120">
-                    </div>
-                </div>
-            </div>
+                    <button type="button" class="btn btn-outline-secondary mt-2"
+                            onclick="addToCart('@Model.Pid', '@Model.Pname','@Model.Pphoto','@Model.Pprice')">
+                        加入購物車
+                    </button>
 
-            <div class="card mt-3 bg-light">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
-                    <p class="card-text">
-                      感謝你的購買
-                    </p>
-                </div>
-            </div>
-            <div class="card mt-5">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <span class="fw-bold">會員</span>
-                        <span class="text-warning">★★★★★</span>
-                    </h5>
-                    <p class="text-muted">2024-06-17 20:13</p>
-                    <p class="card-text">
-                        超好看的
-                    </p>
-                    <div class="d-flex mt-6">
-                        <img src="~/Images/pc-01-04.jpg" class="img-thumbnail me-2" width="120">
-                        <img src="~/Images/pc-01-05.jpg" class="img-thumbnail" width="120">
+                    <button type="button" class="btn btn-outline-secondary mt-2"
+                            onclick="addToFavorite('@Model.Pid', '@Model.Pname', '@Model.Pphoto', '@Model.Pprice')">
+                        加入最愛
+                    </button>
                     </div>
-                </div>
-            </div>
-            <div class="card mt-3 bg-light">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">賣家回應</h6>
-                    <p class="card-text">
-                     感謝你的購買
-                    </p>
                 </div>
             </div>
         </div>
@@ -162,6 +140,19 @@
 @section Scripts
 {
     <script>
+         $(document).ready(function () {
+            $(".color-btn").click(function () {
+                var selectedColor = $(this).data("color");
+
+                // 高亮選擇的顏色
+                $(".color-btn").removeClass("active");
+                $(this).addClass("active");
+
+                // 顯示對應尺寸按鈕
+                $(".size-btn").hide();
+                $(".size-btn[data-color='" + selectedColor + "']").show();
+            });
+        });
         function increaseQuantity() {
           var quantity = document.getElementById("quantity");
           quantity.value = parseInt(quantity.value) + 1;
@@ -173,6 +164,58 @@
             quantity.value = parseInt(quantity.value) - 1;
           }
         }
+
+        function addToCart(productId, productName, productPhoto, productPrice) {
+            var quantity = parseInt(document.getElementById("quantity").value); // 取得目前輸入的數量
+            $.ajax({
+                url: '/AJAX/addToCart',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PType:"女裝",
+                    PCategory:"女裝",
+                    PCount: quantity,// 使用者選擇的數量
+                    PSize: "S",
+                    PColor:"白",
+                    CustomText0:"",
+                    CustomText1: "",
+                    CustomPhoto0: "",
+                    CustomPhoto1: "",
+                    Photo0: productPhoto,
+                    Photo1: "",
+                    PPrice:productPrice,
+                }),
+                success: function(response) {
+                    alert(response); // 顯示伺服器回傳的訊息
+                },
+                error: function(xhr, status, error) {
+                    console.error("加入購物車時發生錯誤: " + error);
+                    alert("加入購物車失敗，請稍後再試！");
+                }
+            });
+        }
+         function addToFavorite(productId, productName, productPhoto, productPrice) {
+            $.ajax({
+                url: '/AJAX/PostFavorite',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PPhoto: productPhoto,
+                    PPrice: productPrice
+                }),
+                success: function(response) {
+                    alert(response);
+                },
+                error: function(xhr, status, error) {
+                    alert(err);
+                }
+            });
+        }
+
     </script>
 }
 

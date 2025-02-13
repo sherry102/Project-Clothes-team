@@ -15,17 +15,13 @@ public partial class Tproduct
 
     public string Pcategory { get; set; } = null!;
 
-    public string Psize { get; set; } = null!;
-
-    public string Pcolor { get; set; } = null!;
-
     public string Pdescription { get; set; } = null!;
 
     public int Pinventory { get; set; }
 
     public DateTime PcreatedDate { get; set; }
 
-    public string? Pphoto { get; set; }
+    public string Pphoto { get; set; } = null!;
 
     public bool PisHided { get; set; }
 }

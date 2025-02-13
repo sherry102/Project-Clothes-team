@@ -16,190 +16,93 @@
     <a asp-action="Create">新增商品</a>
     <a asp-action="Renew" class="ms-3">商品重上架</a>
 </p>
-@if (Model.Any(t => t.Pinventory == 0))
-{
- <h4>缺貨商品</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                序
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pprice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Ptype)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pcategory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Psize)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pcolor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pdescription)
-            </th>
-            <th >
-                @Html.DisplayNameFor(model => model[0].Pinventory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].PcreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pphoto)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @{
-        int count1 = 0;
-        foreach (var item in Model.Where(m => m.Pinventory == 0)){
-        count1++;
-            <tr>
-            <td>
-                @count1
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pprice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ptype)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pcategory)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Psize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pcolor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pdescription)
-            </td>
-            <td class="text-danger">
-                @Html.DisplayFor(modelItem => item.Pinventory)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PcreatedDate)
-            </td>
-            <td>
-                <img src="~/images/@item.Pphoto" height="80" width="90" /><br />
-                      
-            </td>
-            <td>
-                @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }) <br /><br />
-                @Html.ActionLink("商品下架", "Hide", "Product", new { id = item.Pid },
-                                 new { onclick = "return confirm('確定要下架商品嗎?')" })
-            </tr>
-        }
-    }
-    </tbody>
-</table>
-}
-
 
 <h4>架上商品</h4>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                序
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pprice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Ptype)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pcategory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Psize)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pcolor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pdescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pinventory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].PcreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pphoto)
-            </th>
-            <th></th>
+            <th>序</th>
+            <th>@Html.DisplayNameFor(model => model[0].Pphoto)</th>
+            <th>@Html.DisplayNameFor(model => model[0].Pname)</th>
+            <th>@Html.DisplayNameFor(model => model[0].Pprice)</th>
+            <th>@Html.DisplayNameFor(model => model[0].Ptype)</th>
+            <th>@Html.DisplayNameFor(model => model[0].Pcategory)</th>
+            <th>@Html.DisplayNameFor(model => model[0].Pdescription)</th>
+            @*<th>@Html.DisplayNameFor(model => model[0].Pinventory)</th>*@
+            @*<th>@Html.DisplayNameFor(model => model[0].PcreatedDate)</th>*@
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
         @{
-            int count2 = 0;
-            foreach (var item in Model.Where(m => m.Pinventory > 0))
+            int count = 0;
+            foreach (var item in Model)
             {
-                count2++;
+                count++;
                 <tr>
+                    <td>@count</td>
                     <td>
-                        @count2
+                        <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
                     </td>
+                    <td>@Html.DisplayFor(modelItem => item.Pname)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pprice)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Ptype)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
+                   @* <td>@Html.DisplayFor(modelItem => item.Pinventory)</td>*@
+                   @*<td>@Html.DisplayFor(modelItem => item.PcreatedDate)</td>*@
                     <td>
-                        @Html.DisplayFor(modelItem => item.Pname)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pprice)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ptype)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pcategory)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Psize)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pcolor)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pdescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pinventory)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PcreatedDate)
-                    </td>
-                    <td>
-                        <img src="~/images/@item.Pphoto" height="80" width="90" /><br />
+                        @Html.ActionLink("修改", "Edit", new { id = item.Pid }, new { @class = "btn btn btn-outline-dark btn-sm" })
+                        @Html.ActionLink("下架", "Hide", "Product", new { id = item.Pid },
+                             new { @class = "btn btn-outline-dark btn-sm", onclick = "return confirm('確定要下架商品嗎?')" })
 
+                        <!-- 查看庫存明細按鈕 -->
+                        <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-@count" aria-expanded="false"
+                                aria-controls="collapse-@count">
+                            查看庫存
+                        </button>
                     </td>
+                </tr>
 
-                    <td>
-                        @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }) <br /><br />
-                        @Html.ActionLink("商品下架", "Hide", "Product", new { id = item.Pid },
-                             new { onclick = "return confirm('確定要下架商品嗎?')" })
+                <!-- Bootstrap 5 手風琴內容 -->
+                <tr id="collapse-@count" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                    <td colspan="10">
+                        <div class="accordion-body">
+                            @if (item.TproductInventories != null && item.TproductInventories.Any())
+                            {
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>顏色</th>
+                                            <th>尺寸</th>
+                                            <th>庫存</th>
+                                            <th>最後更新時間</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var inventory in item.TproductInventories)
+                                        {
+                                            <tr>
+                                                <td>@inventory.Pcolor</td>
+                                                <td>@inventory.Psize</td>
+                                                <td>@inventory.Pstock</td>
+                                                <td>@inventory.PlastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <p class="text-muted">沒有庫存資訊</p>
+                            }
+                        </div>
                     </td>
-
                 </tr>
             }
         }
     </tbody>
 </table>
+
+

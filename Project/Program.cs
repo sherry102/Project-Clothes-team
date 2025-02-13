@@ -9,6 +9,13 @@ builder.Services.AddControllers().AddNewtonsoftJson(); // ? 確保支援 JObject
 
 builder.Services.AddMemoryCache(); // ? 註冊記憶體快取
 
+// 添加基本的日誌服務，只輸出到控制台和偵錯視窗
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+});
 // Add services to the DI container.
 builder.Services.AddDbContext<DbuniPayContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

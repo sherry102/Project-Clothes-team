@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             @* 商品名稱 *@
-            <div class="form-group"> 
+            <div class="form-group">
                 <label asp-for="Pname" class="control-label"></label>
                 <input asp-for="Pname" class="form-control mb-3" />
                 <span asp-validation-for="Pname" class="text-danger"></span>
@@ -41,20 +41,6 @@
                 <span asp-validation-for="Pcategory" class="text-danger"></span>
             </div>
 
-            @* 商品尺寸 *@
-            <div class="form-group">
-                <label asp-for="Psize" class="control-label"></label>
-                <input asp-for="Psize" class="form-control mb-3" />
-                <span asp-validation-for="Psize" class="text-danger"></span>
-            </div>
-
-            @* 商品顏色 *@
-            <div class="form-group">
-                <label asp-for="Pcolor" class="control-label"></label>
-                <input asp-for="Pcolor" class="form-control  mb-3 " />
-                <span asp-validation-for="Pcolor" class="text-danger"></span>
-            </div>
-
             @* 商品描述 *@
             <div class="form-group">
                 <label asp-for="Pdescription" class="control-label"></label>
@@ -70,10 +56,16 @@
             </div>
 
             <div class="form-group">
-                <input type="file" name="photoPath" class="mb-3"/><br>
-                <span asp-validation-for="photoPath" class="text-danger"></span>
+                <!-- 主圖片上傳 -->
+                <label>主圖片：</label>
+                <input type="file" name="photoPath" class="form-control" />
             </div>
             <div class="form-group">
+                <!-- 多張圖片上傳 -->
+                <label>附加圖片：</label>
+                <input type="file" name="photos" class="form-control" multiple />
+            </div>
+            <div class="form-group mt-4">
                 <input type="submit" value="新增商品" class="btn btn-primary mb-3" />
             </div>
         </form>

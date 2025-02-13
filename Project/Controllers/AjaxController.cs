@@ -184,6 +184,39 @@ namespace Project.Controllers
         }
 
         [HttpPost]
+        public async Task<string> addToCart([FromBody] CustomCartDTO cart)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return "請先登入會員";
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var Cart = new Tcart
+            {
+                Mid = member.Mid,
+                Pid = cart.PId,
+                Pname = cart.PName,
+                Ptype = cart.PType,
+                Pcategory = cart.PCategory,
+                Pcount = cart.PCount,
+                Psize = cart.PSize,
+                Pcolor = cart.PColor,
+                CustomText0 = null,
+                CustomText1 = null,
+                CustomPhoto0 = null,
+                CustomPhoto1 = null,
+                Photo0 = cart.Photo0,
+                Photo1 = null,
+                Pprice = cart.PPrice,
+            };
+
+            _context.Tcarts.Add(Cart);
+            await _context.SaveChangesAsync();
+            return "已加入購物車";
+        }
+
+        [HttpPost]
         public async Task<IActionResult> PostAdvice([FromBody]AdviceDTO Ad)
         {
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);

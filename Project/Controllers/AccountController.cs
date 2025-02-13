@@ -5,16 +5,17 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Linq;
 
-
 namespace Project.Controllers
 {
     public class AccountController : Controller
     {
         private readonly DbuniPayContext _context;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(DbuniPayContext context)
+        public AccountController(DbuniPayContext context, ILogger<AccountController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public IActionResult Login()
@@ -34,7 +35,12 @@ namespace Project.Controllers
                 HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
                 return RedirectToAction("FrontIndex", "FrontHome");
             }
+        }
 
+        // 修改：改進登入邏輯
+        [HttpPost]
+        public IActionResult Login(PersoniconViewModel model)
+        {
             try
             {
                 // 2. 使用更安全的查詢方式
@@ -53,78 +59,52 @@ namespace Project.Controllers
 
                 if (member != null)
                 {
-             
-                    // 5. 使用更安全的序列化方式
-                    var memberInfo = new Dictionary<string, object>
-                    {
-                        { "Mid", member.Mid },
-                        { "Mname", member.Mname },
-                        { "Maccount", member.Maccount }
-                    };
-                                
-                    HttpContext.Session.SetString(
-                        CDictionary.SK_LOGEDIN_USER,
-                        System.Text.Json.JsonSerializer.Serialize(memberInfo)
-                    );
-                    Console.WriteLine($"User {member.Maccount} logged in successfully");
-                 
+                    // 登入成功
+                    string memberJson = JsonSerializer.Serialize(member);
+                    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, memberJson);
 
-                    return Json(new
+                    // AJAX 請求返回 JSON
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        success = true,
-                        message = "登入成功！",
-                        redirectUrl = "/FrontHome/FrontIndex",
-                         memberInfo = new  // 新增會員信息
-                         {
-                             Mname = member.Mname,
-                             Maccount = member.Maccount
-                         }
-                    });
+                        return Json(new
+                        {
+                            success = true,
+                            message = "登入成功",
+                            redirectUrl = Url.Action("FrontIndex", "FrontHome")
+                        });
+                    }
+
+                    // 一般請求進行重定向
+                    return RedirectToAction("FrontIndex", "FrontHome");
                 }
-                else
+
+                // 登入失敗
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     Console.WriteLine($"Login failed for account: {model.Account}");
 
                     return Json(new
                     {
                         success = false,
-                        message = "帳號或密碼錯誤",
-                        debugInfo = new
-                        {
-                            matchedAccountsCount = matchedAccounts.Count
-                        }
+                        message = "帳號或密碼錯誤"
                     });
-                }            
+                }
+
+                // 一般請求返回視圖
+                ViewBag.Error = "true";
+                return View();
             }
             catch (Exception ex)
-            {                
-                Console.WriteLine($"Login error: {ex.Message}");
-
-                return Json(new
+            {
+                _logger.LogError(ex, "登入過程發生錯誤");
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    success = false,
-                    message = "系統發生錯誤，請稍後再試"
-                });
-            }
-        }
-        // 登出方法
-        [HttpPost]
-        public IActionResult SignOut()
-        {
-            HttpContext.Session.Clear();
-            return Json(new
-            {
-                success = true,
-                message = "登出成功"
-            });
-        }
-        // 在這裡加入新的 CheckLoginStatus 方法
-        [HttpGet]
-        public JsonResult CheckLoginStatus()
-        {
-            try
-            {
-                var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                    return Json(new
+                    {
+                        success = false,
+                        message = "登入過程發生錯誤，請稍後再試"
+                    });
+                }
 
         }
 
