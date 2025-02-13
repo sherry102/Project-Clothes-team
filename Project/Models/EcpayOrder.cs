@@ -5,6 +5,8 @@ namespace Project.Models;
 
 public partial class EcpayOrder
 {
+    public int Id { get; set; }
+
     public string MerchantTradeNo { get; set; } = null!;
 
     public string? MemberId { get; set; }

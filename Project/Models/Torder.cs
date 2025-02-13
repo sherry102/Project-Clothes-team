@@ -21,6 +21,8 @@ public partial class Torder
 
     public string Ophone { get; set; } = null!;
 
+    public string Oemail { get; set; } = null!;
+
     public string Ostatus { get; set; } = null!;
 
     public bool Opayment { get; set; }
