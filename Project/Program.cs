@@ -2,6 +2,7 @@
 using Project.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
+using Project.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +60,7 @@ app.UseStaticFiles();
 //¸ó°ì±Ò°Ê
 app.UseCors();
 //¥[¤J Hub
-
+app.MapHub<ChatHub>("/chatroom");
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
