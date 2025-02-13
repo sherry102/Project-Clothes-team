@@ -31,7 +31,7 @@ namespace Project.Controllers
                 .Where(c => c.Mid == member.Mid)
                 .Select(c => new CustomCartDTO
                 {
-                    Id=c.Id,
+                    Id = c.Id,
                     PName = c.Pname,
                     PType = c.Ptype,
                     PCategory = c.Pcategory,
@@ -47,11 +47,11 @@ namespace Project.Controllers
                     PPrice = c.Pprice
                 }).ToListAsync();
 
-            Console.WriteLine($"Found {cartItems.Count} items.");  
+            Console.WriteLine($"Found {cartItems.Count} items.");
 
-            return cartItems;  
-        } 
-         
+            return cartItems;
+        }
+
         [HttpPost]
         public async Task<string> PostFavorite([FromBody] FavoriteDTO favoriteDTO)
         {

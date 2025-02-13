@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 <div id="app">
@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="total-item">
-                    
+
                     <h3 class="price-details">選擇折價券</h3>
                     <h4>COUPONS</h4>
                     <button class="cpns" href="#">使用折價券</button>
@@ -107,7 +107,7 @@
                         return total + (item.pPrice * item.pCount);
                     }, 0);
                 },
-                totalprice(){
+                totalprice() {
                     return (this.price - this.dcprice + 60);
                 }
             },
@@ -189,7 +189,7 @@
                     if (savedTotalPrice) {
                         this.totalprice = parseFloat(savedTotalPrice);
                     }
-                }, 
+                },
                 saveToStorage(key, value) {
                     localStorage.setItem(key, value);
                 },
@@ -202,7 +202,7 @@
                     axios.put(`${_this.baseAddress}/Ajax/UpdateItem/${item.Pid}`, updatedItem)
                         .then(response => {
                             alert("商品數量更新功能有問題..");
-                            localStorage.removeItem('cartItems'); 
+                            localStorage.removeItem('cartItems');
                             _this.getCartItems();
                             window.location.href = '/FrontHome/CartToPay';
                         })

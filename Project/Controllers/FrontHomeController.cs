@@ -65,7 +65,7 @@ namespace Project.Controllers
                 { "MerchantTradeDate",  DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
                 { "TotalAmount",  "100"},
                 { "TradeDesc",  "無"},
-                { "ItemName",  "測試商品"},
+                { "ItemName",  "測試商品#測試商品1"},
                 { "ExpireDate",  "3"},
                 { "CustomField1",  ""},
                 { "CustomField2",  ""},
