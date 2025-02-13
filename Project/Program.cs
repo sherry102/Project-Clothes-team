@@ -3,6 +3,7 @@ using Project.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Project.Models;
 using Project.Hubs;
+using CoreMVC_SignalR_Chat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
