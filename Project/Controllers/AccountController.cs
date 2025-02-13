@@ -39,65 +39,21 @@ namespace Project.Controllers
 
         // 修改：改進登入邏輯
         [HttpPost]
-        public IActionResult Login(PersoniconViewModel model)
+        public IActionResult Login(PersoniconViewModel m)//存入快取
         {
-            try
+            DbuniPayContext db = new DbuniPayContext();
+            Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.faccount && c.Mpassword == m.fpassword);
+            string Error = "false";
+            if (T != null && T.Mpassword == m.fpassword)
             {
-                // 驗證用戶憑證
-                var member = _context.Tmembers.FirstOrDefault(m =>
-                    m.Maccount == model.faccount &&
-                    m.Mpassword == model.fpassword);
-
-                if (member != null)
-                {
-                    // 登入成功
-                    string memberJson = JsonSerializer.Serialize(member);
-                    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, memberJson);
-
-                    // AJAX 請求返回 JSON
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    {
-                        return Json(new
-                        {
-                            success = true,
-                            message = "登入成功",
-                            redirectUrl = Url.Action("FrontIndex", "FrontHome")
-                        });
-                    }
-
-                    // 一般請求進行重定向
-                    return RedirectToAction("FrontIndex", "FrontHome");
-                }
-
-                // 登入失敗
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    _logger.LogWarning("登入失敗：使用者帳號或密碼錯誤");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "帳號或密碼錯誤"
-                    });
-                }
-
-                // 一般請求返回視圖
-                ViewBag.Error = "true";
-                return View();
+                string json = JsonSerializer.Serialize(T);
+                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
+                return RedirectToAction("FrontIndex", "FrontHome");
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "登入過程發生錯誤");
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "登入過程發生錯誤，請稍後再試"
-                    });
-                }
-
-                ViewBag.Error = "true";
-                ViewBag.ErrorMessage = "系統發生錯誤，請稍後再試";
+                Error = "true";
+                ViewBag.Error = Error;
                 return View();
             }
         }
