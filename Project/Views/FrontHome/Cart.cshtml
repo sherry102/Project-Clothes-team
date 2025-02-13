@@ -11,11 +11,11 @@
                     <div class="cart-sec simpleCart_shelfItem">
                         <div class="cart-item cyc">
                             <div class="cart-img-con1">
-                                <img :src="item.photo0" class="img-responsive" alt="" />
+                                <img :src="item.photo0 && item.photo0 !== '' ? `${baseAddress}/images/${item.photo0}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
 
                             </div>
                             <div class="cart-img-con2">
-                                <img :src="item.photo1" class="img-responsive" alt="" />
+                                <img :src="item.photo1 && item.photo1 !== '' ? `${baseAddress}/images/${item.photo1}` : '/images/no_image.jpg'" class="img-responsive" alt="" />
                             </div>
                             <div class="cart-item-info">
                                 <p>{{ item.pType }} </p>
@@ -58,16 +58,16 @@
                     <div class="price-details">
                         <h3>訂單資訊</h3>
                         <span>合計</span>
-                        <span class="total1">NT$ {{ totalPrice }}</span>
+                        <span class="total1">NT$ {{ price }}</span>
                         <span>折價券</span>
-                        <span class="total1">- NT$ 10</span>
+                        <span class="total1">- NT$ {{ dcprice }}</span>
                         <span>運費</span>
                         <span class="total1">+NT$ 60</span>
                         <div class="clearfix"></div>
                     </div>
                     <ul class="total_price">
                         <li class="last_price"><h4>訂單總價</h4></li>
-                        <li class="last_price"><span>NT$ {{ totalPrice + 60 - 10 }}</span></li>
+                        <li class="last_price"><h3>NT$ {{ totalprice }} </h3></li>
                     </ul>
                     <br />
                     <a class="order" v-on:click="UpdateCart">前往結帳</a>
@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="total-item">
-                    href="~/FrontHome/CartToPay"
+                    
                     <h3 class="price-details">選擇折價券</h3>
                     <h4>COUPONS</h4>
                     <button class="cpns" href="#">使用折價券</button>
@@ -97,14 +97,27 @@
             data() {
                 return {
                     baseAddress: "https://localhost:7279",
-                    cartArray: []
+                    cartArray: [],
+                    dcprice: 20,
                 };
             },
             computed: {
-                totalPrice() {
+                price() {
                     return this.cartArray.reduce((total, item) => {
                         return total + (item.pPrice * item.pCount);
                     }, 0);
+                },
+                totalprice(){
+                    return (this.price - this.dcprice + 60);
+                }
+            },
+            watch: {
+                // 監聽 price 和 totalprice 變化，並將其暫存
+                price(newPrice) {
+                    this.saveToStorage('price', newPrice);
+                },
+                totalprice(newTotalPrice) {
+                    this.saveToStorage('totalprice', newTotalPrice);
                 }
             },
             methods: {
@@ -165,17 +178,33 @@
                 updateLocalStorage() {
                     localStorage.setItem('cartItems', JSON.stringify(this.cartArray));
                 },
+                // 從 localStorage 中加載數據
+                loadFromStorage() {
+                    const savedPrice = localStorage.getItem('price');
+                    const savedTotalPrice = localStorage.getItem('totalprice');
+
+                    if (savedPrice) {
+                        this.price = parseFloat(savedPrice);
+                    }
+                    if (savedTotalPrice) {
+                        this.totalprice = parseFloat(savedTotalPrice);
+                    }
+                }, 
+                saveToStorage(key, value) {
+                    localStorage.setItem(key, value);
+                },
                 UpdateCart: function (item) {
                     let _this = this;
                     let updatedItem = {
-                        PCount: item.pCount,
+                        PCount: Number(item.pCount),
                     };
                     console.log(updatedItem);
                     axios.put(`${_this.baseAddress}/Ajax/UpdateItem/${item.Pid}`, updatedItem)
                         .then(response => {
-                            alert("商品更新成功！此功能有問題..");
-                            localStorage.removeItem('cartItems');
+                            alert("商品數量更新功能有問題..");
+                            localStorage.removeItem('cartItems'); 
                             _this.getCartItems();
+                            window.location.href = '/FrontHome/CartToPay';
                         })
                         .catch(error => {
                             alert("更新失敗: " + error.response.data);
@@ -184,6 +213,7 @@
             },
             mounted: function () {
                 this.getCartItems();
+                this.loadFromStorage();
             }
         };
         var app = Vue.createApp(vueApp).mount("#app");
