@@ -42,18 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('檢查登入狀態時發生錯誤:', error);
             return false;
         }
-           },
-           // ���m���ƾ�
-           resetForm() {
-               this.faccount = '';
-               this.fpassword = '';
-               this.errorMessage = '';
-               this.showLoginModal = false;
-           },
-           async doLogin() {
-               if (!this.faccount || !this.fpassword) {
-                   alert('�ж�g���㪺�b���M�K�X�I');
-                   return;
     }
 
     // 處理登入表單提交
@@ -113,10 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST'
             });
             if (response.ok) {
-                window.location.reload();  // �n�X�᭫�s���J����
+                window.location.reload();  // 登出後重新載入頁面
             }
         } catch (error) {
-            console.error('�n�X�ɵo�Ϳ��~:', error);
+            console.error('登出時發生錯誤:', error);
         }
     });
 

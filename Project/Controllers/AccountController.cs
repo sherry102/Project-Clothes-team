@@ -18,22 +18,22 @@ namespace Project.Controllers
             _logger = logger;
         }
 
-        public IActionResult Login()
+        // 新增：檢查登入狀態的端點
+        [HttpGet]
+        public IActionResult CheckLoginStatus()
         {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Login(MemberViewModel m)//存入快取
-        {
-            // 1. 增加詳細的偵錯日誌
-            Console.WriteLine($"Login attempt - Account: {model.Account}, Password: {model.Password}");
-
-            // 1. 首先進行必要欄位驗證
-            if (model == null || string.IsNullOrWhiteSpace(model.Account) || string.IsNullOrWhiteSpace(model.Password))
+            try
             {
-                string json = JsonSerializer.Serialize(T);
-                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-                return RedirectToAction("FrontIndex", "FrontHome");
+                // 從 Session 中獲取用戶信息
+                var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                bool isLoggedIn = !string.IsNullOrEmpty(memberJson);
+
+                return Json(new { isLoggedIn });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "檢查登入狀態時發生錯誤");
+                return Json(new { isLoggedIn = false });
             }
         }
 
@@ -43,19 +43,10 @@ namespace Project.Controllers
         {
             try
             {
-                // 2. 使用更安全的查詢方式
-                var matchedAccounts = _context.Tmembers
-                .Where(m =>
-                    m.Mphone == model.Account.Trim() ||
-                    m.Maccount == model.Account.Trim() ||
-                    m.Memail == model.Account.Trim())
-                .ToList();
-
-                Console.WriteLine($"Matched Accounts count: {matchedAccounts.Count}");
-
-                // 4. 更精確的登入驗證
-                var member = matchedAccounts
-                    .FirstOrDefault(m => m.Mpassword == model.Password);
+                // 驗證用戶憑證
+                var member = _context.Tmembers.FirstOrDefault(m =>
+                    m.Maccount == model.faccount &&
+                    m.Mpassword == model.fpassword);
 
                 if (member != null)
                 {
@@ -81,8 +72,7 @@ namespace Project.Controllers
                 // 登入失敗
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    Console.WriteLine($"Login failed for account: {model.Account}");
-
+                    _logger.LogWarning("登入失敗：使用者帳號或密碼錯誤");
                     return Json(new
                     {
                         success = false,
@@ -106,8 +96,26 @@ namespace Project.Controllers
                     });
                 }
 
+                ViewBag.Error = "true";
+                ViewBag.ErrorMessage = "系統發生錯誤，請稍後再試";
+                return View();
+            }
         }
 
-
+        // 新增：登出端點
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            try
+            {
+                HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "登出過程發生錯誤");
+                return Json(new { success = false, message = "登出過程發生錯誤" });
+            }
+        }
     }
 }
