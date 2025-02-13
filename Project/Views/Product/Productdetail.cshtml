@@ -17,10 +17,10 @@
             border-radius: 10px !important;
         }
 
-            .btn-side:hover {
-                background-color: #8a8282c7 !important;
-                border: 1px solid #8891a3c7 !important;
-            }
+        .btn-side:hover {
+            background-color: #8a8282c7 !important;
+            border: 1px solid #8891a3c7 !important;
+        }
 
         .product-item {
             text-align: center;
@@ -34,9 +34,9 @@
             overflow-y: auto; /* 確保如果內容過長，仍可在內部滾動 */
         }
 
-            .sticky-sidebar::-webkit-scrollbar {
-                display: none;
-            }
+        .sticky-sidebar::-webkit-scrollbar {
+            display: none;
+        }
 
         .product-images img {
             width: 100%;
@@ -65,7 +65,7 @@
         <div class="col-md-8">
             <div class="row product-images">
                 <div class="col-6">
-                    <img src="~/Images/@Html.DisplayFor(model => model.Pphoto)" alt="">
+                    <img src="~/Images/@Model.Pphoto" alt="">
                 </div>
                 @{
                     int count = 0;
@@ -82,6 +82,7 @@
 
         <!-- 右側固定欄 -->
         <div class="col-md-4 sticky-sidebar p-3 ">
+          
             <div class="fs-3 ms-4"> @Html.DisplayFor(model => model.Pname) </div>
             <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice) </div>
             <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription) </div>
@@ -121,7 +122,7 @@
                         <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
                     </div>
                     <button type="button" class="btn btn-outline-secondary mt-2"
-                            onclick="addToCart('@Model.Pid', '@Model.Pname','@Model.Pphoto','@Model.Pprice')">
+                                onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
                         加入購物車
                     </button>
 
@@ -165,7 +166,7 @@
           }
         }
 
-        function addToCart(productId, productName, productPhoto, productPrice) {
+        function addToCart(productId, productName, productType, productCategory, productPhoto, productPrice) {
             var quantity = parseInt(document.getElementById("quantity").value); // 取得目前輸入的數量
             $.ajax({
                 url: '/AJAX/addToCart',
@@ -174,10 +175,10 @@
                 data: JSON.stringify({
                     PId: productId,
                     PName: productName,
-                    PType:"女裝",
-                    PCategory:"女裝",
+                    PType:productType,
+                    PCategory:productCategory,
                     PCount: quantity,// 使用者選擇的數量
-                    PSize: "S",
+                    PSize:"S",
                     PColor:"白",
                     CustomText0:"",
                     CustomText1: "",
