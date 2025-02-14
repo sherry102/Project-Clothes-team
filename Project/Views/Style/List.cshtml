@@ -1,0 +1,27 @@
+﻿@model List<Project.ViewModel.StyleViewModel>
+
+@foreach (var style in Model)
+{
+    <div class="row mb-4">
+        <!-- 左側顯示穿搭圖片 -->
+        <div class="col-md-6">
+            <img src="~/images/@style.SImg" class="img-fluid" alt="穿搭圖">
+        </div>
+
+        <!-- 右側顯示對應的商品 -->
+        <div class="col-md-6">
+            <h4>穿搭單品</h4>
+            @foreach (var product in style.Products)
+            {
+                <div class="d-flex mb-3">
+                    <img src="~/images/@product.PPhoto" class="img-fluid" alt="@product.PName">
+                    <div class="ms-3">
+                        <p>@product.PName</p>
+                        <p class="text-danger">NT$@product.PPrice</p>
+                        <a href="~/Product/ProductDetail/@product.PID" class="btn btn-sm btn-outline-primary">查看商品詳情</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

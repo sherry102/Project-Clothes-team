@@ -79,16 +79,16 @@ namespace Project.Controllers
             string keyword = vm.txtKeyword;
 
             // 取得符合條件的產品 (排除隱藏的)
-            var query = db.Tproducts
+            var datas = db.Tproducts
                           .Where(t => !t.PisHided);
 
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(t => t.Pdescription.Contains(keyword));
+                datas = datas.Where(t => t.Pdescription.Contains(keyword));
             }
 
             // 直接用 LINQ Join 取得產品與庫存
-            var productList = query
+            var productList = datas
                 .Select(t => new CProductWrap
                 {
                     product = t,
