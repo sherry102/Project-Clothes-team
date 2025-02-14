@@ -284,6 +284,7 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("OName");
             entity.Property(e => e.Opayment).HasColumnName("OPayment");
+            entity.Property(e => e.OpaymentDate).HasColumnName("OPaymentDate");
             entity.Property(e => e.Ophone)
                 .HasMaxLength(20)
                 .HasColumnName("OPhone");
@@ -291,6 +292,12 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("OStatus");
             entity.Property(e => e.OtotalPrice).HasColumnName("OTotalPrice");
+            entity.Property(e => e.OtradeDate)
+                .HasMaxLength(50)
+                .HasColumnName("OTradeDate");
+            entity.Property(e => e.OtradeNo)
+                .HasMaxLength(50)
+                .HasColumnName("OTradeNo");
         });
 
         modelBuilder.Entity<TorderDetail>(entity =>

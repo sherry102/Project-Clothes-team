@@ -26,4 +26,10 @@ public partial class Torder
     public string Ostatus { get; set; } = null!;
 
     public bool Opayment { get; set; }
+
+    public string OtradeNo { get; set; } = null!;
+
+    public string OtradeDate { get; set; } = null!;
+
+    public DateTime? OpaymentDate { get; set; }
 }

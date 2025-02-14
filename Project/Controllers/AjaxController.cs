@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.DTO;
@@ -184,12 +185,13 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public async Task<string> SaveToOrder([FromBody] OrderDTO order)
+        public async Task<IActionResult> SaveToOrder([FromBody] OrderDTO order)
         {
+
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(json))
             {
-                return "請先登入會員";
+                return Json(new {message= "請先登入會員" });
             }
             var member = JsonSerializer.Deserialize<Tmember>(json); 
             try
@@ -203,17 +205,21 @@ namespace Project.Controllers
                     Ophone = order.OPhone,
                     Oemail = order.OEmail,
                     Ostatus = order.OStatus,
-                    Opayment = order.OPayment,
+                    Opayment = false,
                     Odate = DateTime.Now,  
                     Mid = member.Mid, 
+                    OtradeNo= order.orderId,
+                    OtradeDate= order.MerchantTradeDate
                 }; 
                 _context.Torders.Add(newOrder);
                 await _context.SaveChangesAsync(); 
-                return "訂單成立";
+
+
+                return Json(new { message= "訂單成立" , order.orderId });
             }
             catch (Exception ex)
-            { 
-                return "訂單成立失敗";
+            {
+                return Json(new { message = "訂單成立失敗" });
             }
         }
          
