@@ -60,12 +60,13 @@ namespace Project.Controllers
             var styles = (from tsi in _context.TstyleImgs
                           join ts in _context.Tstyles on tsi.Sid equals ts.Sid
                           join tp in _context.Tproducts on ts.Pid equals tp.Pid
-                          select new { tsi.Simg, tp.Pid, tp.Pname, tp.Pphoto, tp.Pprice })
+                          select new {tsi.Sid, tsi.Simg, tp.Pid, tp.Pname, tp.Pphoto, tp.Pprice })
                       .ToList()
-                      .GroupBy(x => x.Simg)
+                      .GroupBy(x => x.Sid)
                       .Select(g => new StyleViewModel
                       {
-                          SImg = g.Key,
+                          Sid = g.Key,
+                          SImg = g.Select(x => x.Simg).FirstOrDefault(),
                           Products = g.Select(p => new ProductViewModel
                           {
                               PID = p.Pid,

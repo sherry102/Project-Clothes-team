@@ -64,15 +64,15 @@
     </style>
 }
 <!-- breadcrumb 麵包屑 -->
-@*<nav aria-label="breadcrumb" class="p-3">
+<nav aria-label="breadcrumb" class="p-3">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="~/FrontHome/FrontIndex" class="text-decoration-none">首頁</a></li>
         <li class="breadcrumb-item active" aria-current="page"><a href="~/Product/ProductList" class="text-decoration-none">商品列表</a></li>
         <li class="breadcrumb-item active" aria-current="page">商品介紹</li>
     </ol>
 </nav>
-<div class="container">*@
-    <div class="row">
+<div class="container">
+    <div class="row"> 
         <!-- 左側圖片區-->
         <div class="col-md-8">
             <div class="row product-images">
@@ -84,61 +84,63 @@
                     @foreach (var image in Model.Images)
                     {
                         count++;
-                        <div class="col-6">
-                            <img src="~/Images/@image" alt="商品圖片">
-                        </div>
+                        <div class="col-6"><img src="~/Images/@image" alt="商品圖片"></div>
                     }
                 }
             </div>
         </div>
 
         <!-- 右側固定欄 -->
-        <div class="col-md-4 sticky-sidebar p-3 ">
-            <i class="bi bi-heart favorite mt-6" data-id="@Model.Pid" onclick="addToFavorite('@Model.Pid','@Model.Pname','@Model.Pphoto','@Model.Pprice', this)"></i>
-            <div class="fs-3 mt-5 ms-4 "> @Html.DisplayFor(model => model.Pname) </div>
-            <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice) </div>
-            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription) </div>
-            <div class="fs-5 ms-4">
+        <div class="col-md-4 sticky-sidebar p-3">
+            <i class="bi bi-heart favorite mt-6" data-id="@Model.Pid"
+               onclick="addToFavorite('@Model.Pid','@Model.Pname','@Model.Pphoto','@Model.Pprice', this)">
+            </i>
+            <div class="fs-3 mt-5 ms-4">@Html.DisplayFor(model => model.Pname)</div>
+            <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice)</div>
+            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription)</div>
+            <!-- 顏色選擇 -->
+            <div class="fs-5 ms-4 mt-4">
+                <label class="d-block">顏色:</label>
+                <input type="hidden" id="selectedColor">
+                @foreach (var color in Model.Colors)
+                {
+                    <button type="button" class="btn btn-outline-dark color-btn"
+                            data-color="@color" onclick="selectColor(this)">
+                        @color
+                    </button>
+                }
+            </div>
+            <!-- 尺寸選擇 -->
+            <div class="fs-5 ms-4 mt-3">
+                <label class="d-block">尺寸:</label>
+                <input type="hidden" id="selectedSize">
+                @foreach (var size in Model.Sizes)
+                {
+                    string key = $"{Model.Colors.First()}-{size}";
+                    int stock = Model.StockMap.ContainsKey(key) ? Model.StockMap[key] : 0;
 
-                <div class="my-5">
-                    @foreach (var color in Model.Colors)
+                    if (stock > 0)
                     {
-                        // 計算該顏色的總庫存量
-                        int totalStock = Model.StockMap
-                        .Where(s => s.Key.StartsWith(color + "-")) // 找出這個顏色的所有尺寸
-                        .Sum(s => s.Value); // 加總庫存數量
-
-                        // 如果該顏色總庫存為 0，按鈕禁用
-                        bool isOutOfStock = totalStock == 0;
-
-                        <button type="button" class="btn btn-outline-dark"
-                                value="@color"
-                        @(isOutOfStock ? "disabled" : "")>
-                            @color (@totalStock)
+                        <button type="button" class="btn btn-outline-dark size-btn"
+                                data-size="@size" data-stock="@stock"
+                                onclick="selectSize(this)">
+                            @size
                         </button>
                     }
-                <div class="my-5">
-                        @foreach (var size in Model.Sizes)
-                        {
-                            bool hasStock = Model.StockMap.Any(s => s.Key.EndsWith(size) && s.Value > 0);
-                            if (hasStock)
-                            {
-                                <button type="button" class="btn btn-outline-dark" value="@size">@size</button>
-                            }
-                        }
+                }
+            </div>
+            <!-- 數量選擇 -->
+            <div class="fs-5 ms-4 mt-3">
+                <div class="input-group" style="max-width: 150px;">
+                    <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">-</button>
+                    <input type="text" class="form-control text-center" value="1" id="quantity" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
                 </div>
-                <div class="fs-5 mt-4">
-                    <div class="input-group" style="max-width: 150px;">
-                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">-</button>
-                        <input type="text" class="form-control text-center" value="1" id="quantity">
-                        <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
-                    </div>
-                    <button type="button" class="btn btn-outline-secondary mt-5"
-                                onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
-                        加入購物車
-                    </button>
-                    </div>
-                </div>
+
+                <button type="button" class="btn btn-outline-secondary mt-3"
+                        onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
+                    加入購物車
+                </button>
             </div>
         </div>
     </div>
@@ -148,63 +150,8 @@
 @section Scripts
 {
     <script>
-         $(document).ready(function () {
-            $(".color-btn").click(function () {
-                var selectedColor = $(this).data("color");
-
-                // 高亮選擇的顏色
-                $(".color-btn").removeClass("active");
-                $(this).addClass("active");
-
-                // 顯示對應尺寸按鈕
-                $(".size-btn").hide();
-                $(".size-btn[data-color='" + selectedColor + "']").show();
-            });
-        });
-        function increaseQuantity() {
-          var quantity = document.getElementById("quantity");
-          quantity.value = parseInt(quantity.value) + 1;
-        }
-
-        function decreaseQuantity() {
-          var quantity = document.getElementById("quantity");
-          if (parseInt(quantity.value) > 1) {
-            quantity.value = parseInt(quantity.value) - 1;
-          }
-        }
-
-        function addToCart(productId, productName, productType, productCategory, productPhoto, productPrice) {
-            var quantity = parseInt(document.getElementById("quantity").value); // 取得目前輸入的數量
-            $.ajax({
-                url: '/AJAX/addToCart',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    PId: productId,
-                    PName: productName,
-                    PType:productType,
-                    PCategory:productCategory,
-                    PCount: quantity,// 使用者選擇的數量
-                    PSize:"S",
-                    PColor:"白",
-                    CustomText0:"",
-                    CustomText1: "",
-                    CustomPhoto0: "",
-                    CustomPhoto1: "",
-                    Photo0: productPhoto,
-                    Photo1: "",
-                    PPrice:productPrice,
-                }),
-                success: function(response) {
-                    alert(response); // 顯示伺服器回傳的訊息
-                },
-                error: function(xhr, status, error) {
-                    console.error("加入購物車時發生錯誤: " + error);
-                    alert("加入購物車失敗，請稍後再試！");
-                }
-            });
-        }
-                $(document).ready(function () {
+        //加入最愛
+        $(document).ready(function () {
             // 取得使用者已收藏的商品 ID 並標記紅色
             $.ajax({
                 url: "/Ajax/GetFavoriteID",
@@ -220,7 +167,6 @@
                 }
             });
         });
-
         function addToFavorite(pid, pname, pphoto, pprice, element) {
             $.ajax({
                 url: "/Ajax/PostFavorite",
@@ -247,7 +193,6 @@
                 }
             });
         }
-
         function toggleFavoriteUI(element) {
             let isFavorite = $(element).hasClass("bi-heart-fill");
 
@@ -257,6 +202,117 @@
                 $(element).removeClass("bi-heart").addClass("bi-heart-fill text-danger");
             }
         }
+        
+        //顏色尺寸變換庫存
+               let selectedColor = null;
+        let selectedSize = null;
+        let currentStock = 0;
+
+        function selectColor(button) {
+            selectedColor = button.getAttribute("data-color");
+            document.getElementById("selectedColor").value = selectedColor;
+
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            updateSizes();
+        }
+
+        function selectSize(button) {
+            selectedSize = button.getAttribute("data-size");
+            document.getElementById("selectedSize").value = selectedSize;
+            currentStock = parseInt(button.getAttribute("data-stock"), 10);
+
+            document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            updateColors();
+        }
+
+        function updateSizes() {
+            document.querySelectorAll('.size-btn').forEach(button => {
+                let size = button.getAttribute("data-size");
+                let key = `${selectedColor}-${size}`;
+                let stock = Model.StockMap[key] || 0;
+                if (stock > 0) {
+                    button.style.display = "inline-block";
+                } else {
+                    button.style.display = "none";
+                }
+            });
+        }
+
+        function updateColors() {
+            document.querySelectorAll('.color-btn').forEach(button => {
+                let color = button.getAttribute("data-color");
+                let key = `${color}-${selectedSize}`;
+                let stock = Model.StockMap[key] || 0;
+                if (stock > 0) {
+                    button.style.display = "inline-block";
+                } else {
+                    button.style.display = "none";
+                }
+            });
+        }
+
+        function increaseQuantity() {
+            let quantityInput = document.getElementById("quantity");
+            let quantity = parseInt(quantityInput.value, 10);
+
+            if (selectedSize && quantity < currentStock) {
+                quantityInput.value = quantity + 1;
+            }
+        }
+
+        function decreaseQuantity() {
+            let quantityInput = document.getElementById("quantity");
+            let quantity = parseInt(quantityInput.value, 10);
+
+            if (quantity > 1) {
+                quantityInput.value = quantity - 1;
+            }
+        }
+
+        function addToCart(productId, productName, productType, productCategory, productPhoto, productPrice) {
+            var quantity = parseInt(document.getElementById("quantity").value);
+            var selectedSize = document.getElementById("selectedSize").value;
+            var selectedColor = document.getElementById("selectedColor").value;
+
+            if (!selectedColor || !selectedSize) {
+                alert("請選擇顏色和尺寸！");
+                return;
+            }
+
+            $.ajax({
+                url: '/AJAX/addToCart',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PId: productId,
+                    PName: productName,
+                    PType: productType,
+                    PCategory: productCategory,
+                    PCount: quantity,
+                    PSize: selectedSize,
+                    PColor: selectedColor,
+                    CustomText0: "",
+                    CustomText1: "",
+                    CustomPhoto0: "",
+                    CustomPhoto1: "",
+                    Photo0: productPhoto,
+                    Photo1: "",
+                    PPrice: productPrice,
+                }),
+                success: function(response) {
+                    alert(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("加入購物車時發生錯誤: " + error);
+                    alert("加入購物車失敗，請稍後再試！");
+                }
+            });
+        }
+
     </script>
 }
 
