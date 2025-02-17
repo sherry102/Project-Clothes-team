@@ -19,19 +19,58 @@ namespace Project.Controllers
         }
 
         //前台ProductList
-        public IActionResult ProductList(string keyword, int id)
+        public IActionResult ProductList(string keyword, int id, string sortby = "default" )
         {
-            DbuniPayContext db = new DbuniPayContext();
-            IEnumerable<Tproduct> datas = null;
-            if (string.IsNullOrEmpty(keyword))
-                datas = db.Tproducts
-                        .Where(t => !t.PisHided);  // 過濾已下架的記錄
-            else
-                datas = db.Tproducts.Where(t => t.Pname.Contains(keyword) || t.Ptype.Contains(keyword) || t.Pcategory.Contains(keyword));
-            List<CProductWrap> ProductList = new List<CProductWrap>();
-            foreach (var t in datas)
-                ProductList.Add(new CProductWrap() { product = t });
-            return View(ProductList);
+            using (DbuniPayContext db = new DbuniPayContext())
+            {
+                var datas = db.Tproducts
+                              .Where(t => !t.PisHided) // 過濾已下架產品
+                              .AsQueryable();
+
+                // 關鍵字篩選
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    datas = datas.Where(t => t.Pname.Contains(keyword) ||
+                                             t.Ptype.Contains(keyword) ||
+                                             t.Pcategory.Contains(keyword));
+                }
+
+                // 取得銷售數量 (熱銷產品) - 關聯 Torderdetail 表
+                var salesData = db.TorderDetails
+                                  .GroupBy(o => o.Pid)
+                                  .Select(g => new { Pid = g.Key, TotalSales = g.Sum(o => o.Pcounts) })
+                                  .ToDictionary(x => x.Pid, x => x.TotalSales);
+
+                // 切換到客戶端評估
+                var productList = datas.AsEnumerable();
+
+                // 加入排序方式
+                switch (sortby.ToLower())
+                {
+                    case "price_asc":  // 價格升序 (低到高)
+                        productList = productList.OrderBy(t => t.Pprice);
+                        break;
+                    case "price_desc": // 價格降序 (高到低)
+                        productList = productList.OrderByDescending(t => t.Pprice);
+                        break;
+                    case "hot": // 熱銷排序
+                        productList = productList.OrderByDescending(t => salesData.ContainsKey(t.Pid) ? salesData[t.Pid] : 0);
+                        break;
+                    default:
+                        productList = productList.OrderBy(t => t.Pname); // 預設按名稱排序
+                        break;
+                }
+                
+                // 封裝 CProductWrap
+                List<CProductWrap> ProductList = productList
+                    .Select(t => new CProductWrap() { product = t })
+                    .ToList();
+            
+                ViewBag.Keyword = keyword;
+                ViewBag.SortBy = sortby;
+
+                return View(ProductList);
+            }
         }
 
         //前台Productdetail

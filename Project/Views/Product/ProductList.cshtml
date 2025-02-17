@@ -1,7 +1,11 @@
 ﻿@model List<Project.Models.CProductWrap>
 
+
 @{
     Layout = "~/Views/Shared/Front_Layout.cshtml";
+    var currentSort = Context.Request.Query["sortBy"].ToString().ToLower();
+    var keyword = ViewBag.Keyword as string ?? "";
+
 }
 @section styles {
     <style>
@@ -29,46 +33,51 @@
     </style>
 }
 
-<!-- 麵包屑 -->
+<!-- 麵包屑 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb mt-3">
         <li class="breadcrumb-item"><a href="~/FrontHome/FrontIndex" class="text-decoration-none">首頁</a></li>
         <li class="breadcrumb-item active" aria-current="page">商品列表</li>
     </ol>
-</nav>
+</nav>-->
 <!-- 產品列表 -->
-<div id="app">
-    <div class="container mb-5 text-center">
-        <div class="row">
-            @if (!Model.Any(m => !m.PisHided))
+
+<div class="container">
+    <div class="text-end text-muted my-3">
+        <a href="/Product/ProductList" class="text-reset @(currentSort == "" ? "fw-bold" : "")">全部商品</a> |
+        <a href="/Product/ProductList?sortby=hot&keyword=@keyword" class="text-reset @(currentSort == "hot" ? "fw-bold" : "")">熱銷排序</a> |
+        <a href="/Product/ProductList?sortby=price_asc&keyword=@keyword" class="text-reset @(currentSort == "price_asc" ? "fw-bold" : "")">價格低到高</a> |
+        <a href="/Product/ProductList?sortby=price_desc&keyword=@keyword" class="text-reset @(currentSort == "price_desc" ? "fw-bold" : "")">價格高到低</a>
+    </div>
+    <div class="row mb-5 text-center">
+        @if (!Model.Any(m => !m.PisHided))
+        {
+            <div class="col-12">
+                <p class="text-center mt-5">找不到符合條件的商品。</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model.Where(m => m.Pinventory != 0))
             {
-                <div class="col-12">
-                    <p class="text-center mt-5">找不到符合條件的商品。</p>
-                </div>
-            }
-            else
-            {
-                @foreach (var item in Model.Where(m => m.Pinventory != 0))
-                {
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="card mb-3">
-                            <i class="bi bi-heart favorite" data-id="@item.Pid" onclick="addToFavorite('@item.Pid', '@item.Pname', '@item.Pphoto', '@item.Pprice', this)"></i>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card mb-3">
+                        <i class="bi bi-heart favorite" data-id="@item.Pid" onclick="addToFavorite('@item.Pid', '@item.Pname', '@item.Pphoto', '@item.Pprice', this)"></i>
+                        <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
+
+                            <img src="~/images/@item.Pphoto" alt="" class="card-img-top" />
+                        </a>
+                        <div class="card-body">
                             <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
-                 
-                                <img src="~/images/@item.Pphoto" alt="" class="card-img-top" />
+                                <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">@Html.DisplayFor(modelItem => item.Pname)</div>
                             </a>
-                            <div class="card-body">
-                                <a href="@Url.Action("ProductDetail",new { id = item.Pid })">
-                                    <div class="card-title mt-2 fw-bold ps-2" style="color:dimgray">@Html.DisplayFor(modelItem => item.Pname)</div>
-                                </a>
-                                <div class="card-text mt-1 ps-2 pb-2" style="color:black">NT$ @Html.DisplayFor(modelItem => item.Pprice)</div>
-                                
-                            </div>
+                            <div class="card-text mt-1 ps-2 pb-2" style="color:black">NT$ @Html.DisplayFor(modelItem => item.Pprice)</div>
+
                         </div>
                     </div>
-                }
+                </div>
             }
-        </div>
+        }
     </div>
 </div>
 
