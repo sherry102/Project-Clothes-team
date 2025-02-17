@@ -204,9 +204,10 @@
         }
         
         //顏色尺寸變換庫存
-               let selectedColor = null;
+        let selectedColor = null;
         let selectedSize = null;
         let currentStock = 0;
+        var StockMap = @Html.Raw(Json.Serialize(Model.StockMap));
 
         function selectColor(button) {
             selectedColor = button.getAttribute("data-color");
@@ -219,42 +220,34 @@
         }
 
         function selectSize(button) {
+            if (!selectedColor) {
+                alert("請先選擇顏色");
+                return;
+            }
+
             selectedSize = button.getAttribute("data-size");
             document.getElementById("selectedSize").value = selectedSize;
             currentStock = parseInt(button.getAttribute("data-stock"), 10);
 
             document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-
-            updateColors();
         }
 
         function updateSizes() {
             document.querySelectorAll('.size-btn').forEach(button => {
                 let size = button.getAttribute("data-size");
                 let key = `${selectedColor}-${size}`;
-                let stock = Model.StockMap[key] || 0;
+                let stock = StockMap[key] || 0;
+
                 if (stock > 0) {
                     button.style.display = "inline-block";
+                    button.disabled = false;
                 } else {
                     button.style.display = "none";
+                    button.disabled = true;
                 }
             });
         }
-
-        function updateColors() {
-            document.querySelectorAll('.color-btn').forEach(button => {
-                let color = button.getAttribute("data-color");
-                let key = `${color}-${selectedSize}`;
-                let stock = Model.StockMap[key] || 0;
-                if (stock > 0) {
-                    button.style.display = "inline-block";
-                } else {
-                    button.style.display = "none";
-                }
-            });
-        }
-
         function increaseQuantity() {
             let quantityInput = document.getElementById("quantity");
             let quantity = parseInt(quantityInput.value, 10);
