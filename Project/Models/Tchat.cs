@@ -7,7 +7,7 @@ public partial class Tchat
 {
     public int ChatId { get; set; }
 
-    public int ChatConnectId { get; set; }
+    public string ChatConnectId { get; set; } = null!;
 
     public int Mid { get; set; }
 
