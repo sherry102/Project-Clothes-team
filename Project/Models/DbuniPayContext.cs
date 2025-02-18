@@ -50,7 +50,6 @@ public partial class DbuniPayContext : DbContext
     public virtual DbSet<Tstyle> Tstyles { get; set; }
 
     public virtual DbSet<TstyleImg> TstyleImgs { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EcpayOrder>(entity =>
@@ -261,7 +260,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Torder>(entity =>
         {
-            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B3942FD10A8");
+            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B39657FFED1");
 
             entity.ToTable("TOrder");
 
@@ -270,13 +269,24 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Oaddress)
                 .HasMaxLength(500)
                 .HasColumnName("OAddress");
+            entity.Property(e => e.OcancelDate)
+                .HasColumnType("datetime")
+                .HasColumnName("OCancelDate");
+            entity.Property(e => e.OcancelDescription)
+                .HasMaxLength(255)
+                .HasColumnName("OCancelDescription");
+            entity.Property(e => e.OcancelReason)
+                .HasMaxLength(50)
+                .HasColumnName("OCancelReason");
+            entity.Property(e => e.OcancelStatus)
+                .HasMaxLength(10)
+                .HasDefaultValue("未取消")
+                .HasColumnName("OCancelStatus");
             entity.Property(e => e.Odate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("ODate");
-            entity.Property(e => e.Odiscountedprice)
-                .HasDefaultValue(0)
-                .HasColumnName("ODiscountedprice");
+            entity.Property(e => e.Odiscountedprice).HasColumnName("ODiscountedprice");
             entity.Property(e => e.Oemail)
                 .HasMaxLength(50)
                 .HasColumnName("OEmail");
@@ -284,58 +294,44 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("OName");
             entity.Property(e => e.Opayment).HasColumnName("OPayment");
+            entity.Property(e => e.OpaymentDate).HasColumnName("OPaymentDate");
             entity.Property(e => e.Ophone)
                 .HasMaxLength(20)
                 .HasColumnName("OPhone");
+            entity.Property(e => e.Oprice).HasColumnName("OPrice");
             entity.Property(e => e.Ostatus)
                 .HasMaxLength(20)
                 .HasColumnName("OStatus");
             entity.Property(e => e.OtotalPrice).HasColumnName("OTotalPrice");
+            entity.Property(e => e.OtradeDate)
+                .HasMaxLength(50)
+                .HasColumnName("OTradeDate");
+            entity.Property(e => e.OtradeNo)
+                .HasMaxLength(50)
+                .HasColumnName("OTradeNo");
         });
 
         modelBuilder.Entity<TorderDetail>(entity =>
         {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C155D137235");
+            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C152FC3A3B2");
 
             entity.ToTable("TOrderDetail");
 
             entity.Property(e => e.Odid).HasColumnName("ODID");
-            entity.Property(e => e.Ccounts).HasColumnName("CCounts");
-            entity.Property(e => e.Cfont)
-                .HasMaxLength(20)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("CFont");
-            entity.Property(e => e.CfontSize).HasColumnName("CFontSize");
-            entity.Property(e => e.Cid).HasColumnName("CID");
-            entity.Property(e => e.Cimage)
-                .HasMaxLength(500)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("CImage");
-            entity.Property(e => e.Csize)
-                .HasMaxLength(20)
-                .HasColumnName("CSize");
-            entity.Property(e => e.Ctext)
-                .HasMaxLength(500)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("CText");
+            entity.Property(e => e.CustomText0).HasMaxLength(50);
+            entity.Property(e => e.CustomText1).HasMaxLength(50);
             entity.Property(e => e.Oid).HasColumnName("OID");
             entity.Property(e => e.Pcolor)
-                .HasMaxLength(20)
-                .HasDefaultValueSql("((0))")
+                .HasMaxLength(50)
                 .HasColumnName("PColor");
-            entity.Property(e => e.Pcounts).HasColumnName("PCounts");
+            entity.Property(e => e.Pcount).HasColumnName("PCount");
             entity.Property(e => e.Pid).HasColumnName("PID");
-            entity.Property(e => e.Pimage)
-                .HasMaxLength(500)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("PImage");
             entity.Property(e => e.Pname)
-                .HasMaxLength(20)
+                .HasMaxLength(50)
                 .HasColumnName("PName");
             entity.Property(e => e.Pprice).HasColumnName("PPrice");
             entity.Property(e => e.Psize)
-                .HasMaxLength(20)
-                .HasDefaultValueSql("((0))")
+                .HasMaxLength(50)
                 .HasColumnName("PSize");
         });
 

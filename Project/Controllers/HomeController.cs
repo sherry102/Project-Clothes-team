@@ -39,7 +39,7 @@ namespace Project.Controllers
             List<int> type_sales_count = (from tod in db.TorderDetails
                                           join tp in db.Tproducts on tod.Pid equals tp.Pid
                                           group tod by tp.Pcategory into grouped
-                                          select grouped.Sum(t => t.Pcounts)
+                                          select grouped.Sum(t => t.Pcount)
                                             )
                                             .ToList();
 
@@ -86,10 +86,10 @@ namespace Project.Controllers
                                              select new
                                              {
                                                  pid = grouped.Key,
-                                                 count = grouped.Sum(t => t.Pcounts),
-                                                 image = grouped.FirstOrDefault().Cimage,
+                                                 count = grouped.Sum(t => t.Pcount),
+                                                 image = grouped.FirstOrDefault().Photo0,
                                                  name = grouped.FirstOrDefault().Pname,
-                                                 totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
+                                                 totalprice = grouped.Sum(t => t.Pprice * t.Pcount),
                                                  price = grouped.FirstOrDefault().Pprice
                                              })
                                              .OrderByDescending(x => x.count)
@@ -103,10 +103,10 @@ namespace Project.Controllers
                                              select new
                                              {
                                                  pid = grouped.Key,
-                                                 count = grouped.Sum(t => t.Pcounts),
-                                                 image = grouped.FirstOrDefault().Cimage,
+                                                 count = grouped.Sum(t => t.Pcount),
+                                                 image = grouped.FirstOrDefault().Photo0,
                                                  name = grouped.FirstOrDefault().Pname,
-                                                 totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
+                                                 totalprice = grouped.Sum(t => t.Pprice * t.Pcount),
                                                  price = grouped.FirstOrDefault().Pprice
                                              })
                                              .OrderByDescending(x => x.count)
@@ -120,10 +120,10 @@ namespace Project.Controllers
                                             select new
                                             {
                                                 pid = grouped.Key,
-                                                count = grouped.Sum(t => t.Pcounts),
-                                                image = grouped.FirstOrDefault().Cimage,
+                                                count = grouped.Sum(t => t.Pcount),
+                                                image = grouped.FirstOrDefault().Photo0,
                                                 name = grouped.FirstOrDefault().Pname,
-                                                totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
+                                                totalprice = grouped.Sum(t => t.Pprice * t.Pcount),
                                                 price = grouped.FirstOrDefault().Pprice
                                             })
                                             .OrderByDescending(x => x.count)
@@ -137,7 +137,7 @@ namespace Project.Controllers
                                        group new { tod, tp } by tp.Pcategory into grouped
                                        select new
                                        {
-                                           value = grouped.Sum(g => g.tod.Pcounts),
+                                           value = grouped.Sum(g => g.tod.Pcount),
                                            name = grouped.Key // 分組鍵即為 Pcategory
                                        }
                                         )
@@ -150,7 +150,7 @@ namespace Project.Controllers
                                        group new { tod, tp } by tp.Pcategory into grouped
                                        select new
                                        {
-                                           value = grouped.Sum(g => g.tod.Pcounts),
+                                           value = grouped.Sum(g => g.tod.Pcount),
                                            name = grouped.Key // 分組鍵即為 Pcategory
                                        }
                                         )
@@ -163,7 +163,7 @@ namespace Project.Controllers
                                       group new { tod, tp } by tp.Pcategory into grouped
                                       select new
                                       {
-                                          value = grouped.Sum(g => g.tod.Pcounts),
+                                          value = grouped.Sum(g => g.tod.Pcount),
                                           name = grouped.Key // 分組鍵即為 Pcategory
                                       }
                                         )

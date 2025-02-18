@@ -128,10 +128,10 @@ namespace Project.Controllers
                                    {
                                        id = grouped.Key,
                                        pid = grouped.FirstOrDefault().Pid,
-                                       count = grouped.Sum(t => t.Pcounts),
-                                       pphoto = grouped.FirstOrDefault().Cimage,
+                                       count = grouped.Sum(t => t.Pcount),
+                                       pphoto = grouped.FirstOrDefault().Photo0,
                                        pname = grouped.FirstOrDefault().Pname,
-                                       totalprice = grouped.Sum(t => t.Pprice * t.Pcounts),
+                                       totalprice = grouped.Sum(t => t.Pprice * t.Pcount),
                                        pprice = grouped.FirstOrDefault().Pprice
                                    })
                                    .OrderByDescending(x => x.count)

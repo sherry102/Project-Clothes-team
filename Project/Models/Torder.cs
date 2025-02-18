@@ -9,6 +9,8 @@ public partial class Torder
 
     public string Oname { get; set; } = null!;
 
+    public int Oprice { get; set; }
+
     public int? Odiscountedprice { get; set; }
 
     public int OtotalPrice { get; set; }
@@ -26,4 +28,18 @@ public partial class Torder
     public string Ostatus { get; set; } = null!;
 
     public bool Opayment { get; set; }
+
+    public string OtradeNo { get; set; } = null!;
+
+    public string OtradeDate { get; set; } = null!;
+
+    public DateOnly? OpaymentDate { get; set; }
+
+    public string? OcancelReason { get; set; }
+
+    public string? OcancelDescription { get; set; }
+
+    public DateTime? OcancelDate { get; set; }
+
+    public string OcancelStatus { get; set; } = null!;
 }

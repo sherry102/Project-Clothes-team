@@ -38,7 +38,7 @@ namespace Project.Controllers
                 // 取得銷售數量 (熱銷產品) - 關聯 Torderdetail 表
                 var salesData = db.TorderDetails
                                   .GroupBy(o => o.Pid)
-                                  .Select(g => new { Pid = g.Key, TotalSales = g.Sum(o => o.Pcounts) })
+                                  .Select(g => new { Pid = g.Key, TotalSales = g.Sum(o => o.Pcount) })
                                   .ToDictionary(x => x.Pid, x => x.TotalSales);
 
                 // 切換到客戶端評估
