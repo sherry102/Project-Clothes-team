@@ -11,6 +11,9 @@ builder.Services.AddControllers().AddNewtonsoftJson(); // ? 確保支援 JObject
 
 builder.Services.AddMemoryCache(); // ? 註冊記憶體快取
 
+// 註冊 IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
 // 添加基本的日誌服務，只輸出到控制台和偵錯視窗
 builder.Services.AddLogging(logging =>
 {

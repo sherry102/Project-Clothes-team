@@ -99,6 +99,7 @@
                     baseAddress: "https://localhost:7279",
                     cartArray: [],
                     dcprice: 20,
+                    itemName:""
                 };
             },
             computed: {
@@ -123,18 +124,24 @@
             methods: {
                 getCartItems: function () {
                     let _this = this;
+                    
                     // 先從 LocalStorage 讀取資料
                     const storedCart = localStorage.getItem('cartItems');
                     if (storedCart) {
                         _this.cartArray = JSON.parse(storedCart);
+                        _this.itemName = _this.cartArray.map(item => item.pName).join("#");
                         console.log("從 LocalStorage 載入購物車項目", _this.cartArray);
                     } else {
                         // 如果 LocalStorage 沒有資料，從伺服器抓取
                         axios.post(`${_this.baseAddress}/Ajax/GetCartItems`, {})
                             .then(response => {
                                 console.log(response);
+                                const cartItems = Array.isArray(response.data) ? response.data : [];
+
+                                _this.itemName = cartItems.map(item => item.pName).join("#");
                                 if (response.data) {
                                     _this.cartArray = response.data;
+                                    
                                     // 把資料存到 LocalStorage
                                     localStorage.setItem('cartItems', JSON.stringify(response.data));
                                     console.log(JSON.stringify(response.data, null, 2));
@@ -195,6 +202,7 @@
                 },
                 UpdateCart: function (item) {
                     let _this = this;
+                    
                     let updatedItem = {
                         PCount: Number(item.pCount),
                     };
@@ -204,11 +212,35 @@
                             alert("商品數量更新功能有問題..");
                             localStorage.removeItem('cartItems');
                             _this.getCartItems();
-                            window.location.href = '/FrontHome/CartToPay';
+                            // window.location.href = '/FrontHome/CartToPay';
                         })
                         .catch(error => {
                             alert("更新失敗: " + error.response.data);
                         });
+                    let totalAmount = _this.totalprice;
+                    let itemName = _this.itemName
+                    // 動態建立 `<form>`
+                    let form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "/FrontHome/CartToPay";
+
+                    // 加入 `TotalAmount`
+                    let totalInput = document.createElement("input");
+                    totalInput.type = "hidden";
+                    totalInput.name = "TotalAmount";
+                    totalInput.value = totalAmount;
+                    form.appendChild(totalInput);
+
+                    // 加入 `ItemName`
+                    let itemInput = document.createElement("input");
+                    itemInput.type = "hidden";
+                    itemInput.name = "ItemName";
+                    itemInput.value = itemName;
+                    form.appendChild(itemInput);
+
+                    // 把 `form` 加到 `body`，然後提交
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             },
             mounted: function () {

@@ -627,8 +627,17 @@
 		let monthDays = @Html.Raw(JsonSerializer.Serialize(Model.month_Days))
 		let yearMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 		let chart;
+		let maxValueMonth = Math.max(5, Math.max(...memberCountMonth)); // 至少 5，避免 max = 1 時出現小數
+		let maxValueYear = Math.max(5, Math.max(...memberCountYear));
+		while (maxValueMonth % 5 != 0) {
+			maxValueMonth++;
+		};
+		while (maxValueYear % 5 != 0) {
+			maxValueYear++;
+		};
 
 		function MemberCountMonth() {
+
 			if (chart) chart.destroy();
 			chart=new ApexCharts(document.querySelector("#lineChart"), {
 				series: [{
@@ -659,7 +668,8 @@
 				},
 				yaxis: {
 					min: 0,  // 設置 Y 軸最小值
-					tickAmount: 5, // 設置 Y 軸的刻度數量
+					max: maxValueMonth, // 設定最大值，避免小數刻度
+					tickAmount: 5, // 避免 tickAmount > maxValue
 				}
 			});
 			chart.render();
@@ -696,6 +706,7 @@
 				},
 				yaxis: {
 					min: 0,  // 設置 Y 軸最小值
+					max: maxValueYear,
 					tickAmount: 5, // 設置 Y 軸的刻度數量
 				}
 			});

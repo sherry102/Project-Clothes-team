@@ -34,9 +34,39 @@ namespace Project.Controllers
         {
             return View();
         }
-        public IActionResult CartToPay()
-        { 
-            return View();
+
+        [HttpPost]
+        public IActionResult CartToPay(string TotalAmount, string ItemName)
+        {
+            var orderId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+            //需填入你的網址
+            var website = $"https://localhost:7279";
+            var order = new Dictionary<string, string>
+            {
+                //綠界需要的參數
+                { "MerchantTradeNo",  orderId},
+                { "MerchantTradeDate",  DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
+                { "TotalAmount",  TotalAmount.ToString()},
+                { "TradeDesc",  "無"},
+                { "ItemName", HttpUtility.UrlDecode(ItemName) },
+                { "ExpireDate",  "3"},
+                { "CustomField1",  ""},
+                { "CustomField2",  ""},
+                { "CustomField3",  ""},
+                { "CustomField4",  ""},
+                { "ReturnURL",  $"{website}/api/AddPayInfo"},
+                { "OrderResultURL", $"{website}/FrontHome/PayInfo/{orderId}"},
+                { "PaymentInfoURL",  $"{website}/api/AddAccountInfo"},
+                { "ClientRedirectURL",  $"{website}/FrontHome/AccountInfo/{orderId}"},
+                { "MerchantID",  "2000132"},
+                { "IgnorePayment",  "GooglePay#WebATM#CVS#BARCODE"},
+                { "PaymentType",  "aio"},
+                { "ChoosePayment",  "ALL"},
+                { "EncryptType",  "1"},
+            };
+            //檢查碼
+            order["CheckMacValue"] = GetCheckMacValue(order);
+            return View(order);
         }
 
         public IActionResult Advice() {
@@ -71,7 +101,7 @@ namespace Project.Controllers
                 { "CustomField2",  ""},
                 { "CustomField3",  ""},
                 { "CustomField4",  ""},
-                { "ReturnURL",  $"{website}/AddPayInfo"},
+                { "ReturnURL",  $"{website}/api/AddPayInfo"},
                 { "OrderResultURL", $"{website}/FrontHome/PayInfo/{orderId}"},
                 { "PaymentInfoURL",  $"{website}/api/AddAccountInfo"},
                 { "ClientRedirectURL",  $"{website}/FrontHome/AccountInfo/{orderId}"},
@@ -122,13 +152,11 @@ namespace Project.Controllers
             }
             DbuniPayContext db = new DbuniPayContext();
             string temp = id["MerchantTradeNo"]; //寫在LINQ(下一行)會出錯，
-            var ecpayOrder = db.EcpayOrders.Where(m => m.MerchantTradeNo == temp).FirstOrDefault();
+            var ecpayOrder = db.Torders.Where(m => m.OtradeNo == temp).FirstOrDefault();
             if (ecpayOrder != null)
             {
-                ecpayOrder.RtnCode = int.Parse(id["RtnCode"]);
-                if (id["RtnMsg"] == "Succeeded") ecpayOrder.RtnMsg = "已付款";
-                ecpayOrder.PaymentDate = Convert.ToDateTime(id["PaymentDate"]);
-                ecpayOrder.SimulatePaid = int.Parse(id["SimulatePaid"]);
+                ecpayOrder.Opayment = int.Parse(id["RtnCode"]) == 0 ?  false:true;
+                ecpayOrder.OpaymentDate = Convert.ToDateTime(id["PaymentDate"]);
                 db.SaveChanges();
             }
             return View("EcpayView", data);

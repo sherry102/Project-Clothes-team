@@ -6,7 +6,7 @@
 
         public int Mid { get; set; }
 
-        public int Mgender  { get; set; }
+        public string Mgender  { get; set; }
 
         public string Memail { get; set; }
 

@@ -33,7 +33,7 @@ namespace Project.Controllers
                 Orders.MemberId = json.MerchantID;
                 Orders.MerchantTradeNo = json.MerchantTradeNo;
                 Orders.RtnCode = 0; //未付款
-                Orders.RtnMsg = "訂單成功尚未付款";
+                Orders.RtnMsg = "訂單成功尚未付款"; 
                 Orders.TradeNo = json.MerchantID.ToString();
                 Orders.TradeAmt = json.TotalAmount;
                 Orders.PaymentDate = Convert.ToDateTime(json.MerchantTradeDate);
@@ -91,7 +91,7 @@ namespace Project.Controllers
                 return ResponseError();
             }
         }
-
+        
         private IActionResult ResponseError()
         {
             return Content("0|Error", "text/html");
