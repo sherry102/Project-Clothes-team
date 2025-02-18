@@ -37,6 +37,18 @@ namespace Project.Controllers
         public IActionResult CartToPay()
         { 
             return View();
+        } 
+        public IActionResult CheckOrder()
+        {
+            return View();
+        } 
+        public IActionResult CheckOrderDetail()
+        {
+            return View();
+        }
+        public IActionResult CancelOrder()
+        {
+            return View();
         }
 
         public IActionResult Advice() {

@@ -1,0 +1,221 @@
+﻿@{
+    Layout = "~/Views/Shared/FrontMember_Layoutcshtml.cshtml";
+}
+
+<div id="app">
+    <div class="p-6">
+        <h3 class="text-xl font-bold mb-4">訂單明細</h3>
+        <div class="table-container">
+            <table class="w-full border-collapse border border-gray-300 text-sm">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border p-2 w-32">商品圖片</th> 
+                        <th class="border p-2 w-40">商品名稱</th>
+                        <th class="border p-2 w-24">尺寸</th>
+                        <th class="border p-2 w-24">顏色</th>
+                        <th class="border p-2 w-16">數量</th>
+                        <th class="border p-2 w-32">處理狀態</th>
+                        <th class="border p-2 w-32">出貨單號</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in orderItems" :key="item.id" class="text-center"> 
+                        <td class="border p-2">
+                            <div class="flex flex-col items-center product-images">
+                                <img v-if="item.Photo0" :src="item.Photo0" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300">
+                                <img v-if="item.Photo1" :src="item.Photo1" alt="商品圖2" class="w-20 h-20 object-cover border border-gray-300 mt-2">
+                            </div>
+                        </td>
+                        <td class="border p-2">{{ item.PName }}</td>
+                        <td class="border p-2">{{ item.PSize }}</td>
+                        <td class="border p-2">{{ item.PColor }}</td>
+                        <td class="border p-2">{{ item.PCount }}</td>
+                        <td class="border p-2">{{ item.OStatus }}</td>
+                        <td class="border p-2 text-red-500 font-bold cursor-pointer">
+                            <a :href="'/shipment-tracking/' + item.shipmentNumber">
+                                {{ item.shipmentNumber }}
+                            </a>
+                            <button @@click="trackShipment(item.shipmentNumber)" class="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs">
+                                查看進度
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                <p><strong>配送方式：</strong> {{ shippingMethod }}</p>
+                <p><strong>收件資訊：</strong> {{ recipientInfo }}</p>
+            </div>
+            <div class="flex justify-start mb-4">
+                <a href="javascript:history.back()" class="back-button">
+                    ↩ 回上一頁
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        var vueApp = {
+            data() {
+                return {
+                    orderId: "",
+                    orderItems: [],
+                    baseAddress: "https://localhost:7279",
+                };
+            },
+            methods: {
+                getOrderDetails: function () {
+                    let _this = this;
+                    let urlParams = new URLSearchParams(window.location.search);
+                    _this.orderId = urlParams.get("oid");
+
+                    if (!_this.orderId) {
+                        alert("無效的訂單 ID");
+                        return;
+                    }
+
+                    axios.post(`${_this.baseAddress}/Ajax/GetOrderDetail`, { oid: _this.orderId })
+                        .then(response => {
+                            console.log("訂單細節資料:", response);
+                            if (response.data) {
+                                _this.orderItems = response.data.map(od => ({
+                                    Photo0: od.photo0 ? `${_this.baseAddress}/Images/${od.photo0}` : null,
+                                    Photo1: od.photo1 ? `${_this.baseAddress}/Images/${od.photo1}` : null,
+                                    PName: od.pName,
+                                    PSize: od.pSize,
+                                    PColor: od.pColor,
+                                    PCount: od.pCount,
+                                    OStatus: od.ostatus
+                                }));
+                            } else {
+                                alert("查無訂單細項");
+                            }
+                        })
+                        .catch(err => {
+                            alert("錯誤: " + err.message);
+                        });
+                }
+            },
+            mounted() {
+                this.getOrderDetails();
+            },
+            goBack() {
+                window.history.back();
+            }
+        };
+        Vue.createApp(vueApp).mount("#app");
+    </script>
+}
+
+@section Styles {
+    <style scoped>
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table th, table td {
+                padding: 8px;
+                border: 1px solid #ccc;
+                text-align: center;
+            }
+
+
+                table th:nth-child(1), table td:nth-child(1) {
+                    width: 150px; /* 商品圖片 */
+                }
+
+                table th:nth-child(2), table td:nth-child(2) {
+                    width: 180px; /* 商品名稱 */
+                }
+
+                table th:nth-child(3), table td:nth-child(3) {
+                    width: 100px; /* 尺寸 */
+                }
+
+                table th:nth-child(4), table td:nth-child(4) {
+                    width: 100px; /* 顏色 */
+                }
+
+                table th:nth-child(5), table td:nth-child(5) {
+                    width: 80px; /* 數量 */
+                }
+
+                table th:nth-child(6), table td:nth-child(6) {
+                    width: 120px; /* 處理狀態 */
+                }
+
+                table th:nth-child(7), table td:nth-child(7) {
+                    width: 150px; /* 出貨單號 */
+                }
+
+
+        .product-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .product-images img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin-bottom: 5px;
+            }
+
+
+        .track-btn {
+            margin-left: 10px;
+            padding: 4px 8px;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .track-btn:hover {
+                background-color: #1d4ed8;
+            }
+
+
+        .table-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .back-button {
+            position: absolute;
+            bottom: -20px;
+            right: 0;
+            background-color: white;
+            color: slateblue;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+
+            .back-button:hover {
+                color: darkblue;
+                transform: scale(1.05);
+            }
+    </style>
+}

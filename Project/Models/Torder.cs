@@ -26,4 +26,9 @@ public partial class Torder
     public string Ostatus { get; set; } = null!;
 
     public bool Opayment { get; set; }
+
+    //public string? CancelReason { get; set; } // 取消原因
+    //public string? CancelDescription { get; set; } // 取消說明
+    //public DateTime? CancelDate { get; set; } // 取消時間
+    //public string CancelStatus { get; set; } = "未取消"; // 取消狀態，預設為 "未取消"
 }
