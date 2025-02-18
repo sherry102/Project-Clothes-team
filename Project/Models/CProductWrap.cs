@@ -53,6 +53,9 @@ namespace Project.Models
             get { return _product.Pcategory; }
             set { _product.Pcategory = value; }
         }
+        // 新增 PtypeList 和 PcategoryList
+        public List<string> PtypeList { get; set; } = new List<string>();  // 存系列
+        public List<string> PcategoryList { get; set; } = new List<string>();  // 存分類
 
         [DisplayName("商品描述")]
         public string Pdescription

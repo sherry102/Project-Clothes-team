@@ -158,7 +158,14 @@ namespace Project.Controllers
         //後台新增商品
         public IActionResult Create()
         {
-            return View();
+            DbuniPayContext db = new DbuniPayContext();
+            CProductWrap model = new CProductWrap
+            {
+                PtypeList = db.Tproducts.Select(p => p.Ptype).Distinct().ToList(),
+                PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList()
+            };
+
+            return View(model);
         }
         [HttpPost]
         public IActionResult Create(CProductWrap p, List<IFormFile> photos)
@@ -193,6 +200,26 @@ namespace Project.Controllers
                 // 獲取剛剛插入的產品 ID
                 int productId = p.product.Pid;
 
+                // 新增 TProductInventory 記錄
+                int totalStock = 0;
+                foreach (var stock in p.TproductInventories)
+                {
+                    var inventory = new TproductInventory
+                    {
+                        Pid = productId,
+                        Pcolor = stock.Pcolor,
+                        Psize = stock.Psize,
+                        Pstock = stock.Pstock,
+                        PlastUpdated = DateTime.Now
+                    };
+                    db.TproductInventories.Add(inventory);
+                    totalStock += stock.Pstock;
+                }
+
+                // 更新 Pinventory
+                p.product.Pinventory = totalStock;
+                db.Tproducts.Update(p.product);
+
                 // 處理多張圖片上傳 (存入 Tpimages)
                 if (photos != null && photos.Count > 0)
                 {
@@ -219,14 +246,14 @@ namespace Project.Controllers
                     }
                 }
 
-                db.SaveChanges(); // 儲存所有圖片
+                db.SaveChanges(); // 儲存所有數據
                 transaction.Commit(); // 交易提交
 
                 return RedirectToAction("List");
             }
             catch (Exception ex)
             {
-                transaction.Rollback(); // 發生錯誤，回滾交易
+                transaction.Rollback(); // 發生錯誤，返回交易
                 ModelState.AddModelError("", "發生錯誤：" + ex.Message);
                 return View(p);
             }
