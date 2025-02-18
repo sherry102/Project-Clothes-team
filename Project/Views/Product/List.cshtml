@@ -22,87 +22,95 @@
     <thead>
         <tr>
             <th>序</th>
-            <th>@Html.DisplayNameFor(model => model[0].Pphoto)</th>
-            <th>@Html.DisplayNameFor(model => model[0].Pname)</th>
-            <th>@Html.DisplayNameFor(model => model[0].Pprice)</th>
-            <th>@Html.DisplayNameFor(model => model[0].Ptype)</th>
-            <th>@Html.DisplayNameFor(model => model[0].Pcategory)</th>
-            <th>@Html.DisplayNameFor(model => model[0].Pdescription)</th>
-            @*<th>@Html.DisplayNameFor(model => model[0].Pinventory)</th>*@
-            @*<th>@Html.DisplayNameFor(model => model[0].PcreatedDate)</th>*@
-            <th>操作</th>
+            <th>圖片</th>
+            <th>商品名稱</th>
+            <th>價格</th>
+            <th>類型</th>
+            <th>分類</th>
+            <th>描述</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @{
             int count = 0;
-            foreach (var item in Model)
-            {
-                count++;
-                <tr>
-                    <td>@count</td>
-                    <td>
-                        <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
-                    </td>
-                    <td>@Html.DisplayFor(modelItem => item.Pname)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Pprice)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Ptype)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
-                   @* <td>@Html.DisplayFor(modelItem => item.Pinventory)</td>*@
-                   @*<td>@Html.DisplayFor(modelItem => item.PcreatedDate)</td>*@
-                    <td>
-                        @Html.ActionLink("修改", "Edit", new { id = item.Pid }, new { @class = "btn btn btn-outline-dark btn-sm" })
-                        @Html.ActionLink("下架", "Hide", "Product", new { id = item.Pid },
+        }
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td>@count</td>
+                <td>
+                    <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Pname)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pprice)</td>
+                <td>@Html.DisplayFor(modelItem => item.Ptype)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
+                <td>
+                    @Html.ActionLink("修改", "Edit", new { id = item.Pid }, new { @class = "btn btn-outline-dark btn-sm" })
+                    <!-- 查看庫存明細按鈕 -->
+                    <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="modal"
+                            data-bs-target="#inventoryModal-@count">
+                        查看庫存
+                    </button>
+                    @Html.ActionLink("下架", "Hide", "Product", new { id = item.Pid },
                              new { @class = "btn btn-outline-dark btn-sm", onclick = "return confirm('確定要下架商品嗎?')" })
-
-                        <!-- 查看庫存明細按鈕 -->
-                        <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse-@count" aria-expanded="false"
-                                aria-controls="collapse-@count">
-                            查看庫存
-                        </button>
-                    </td>
-                </tr>
-
-                <!-- Bootstrap 5 手風琴內容 -->
-                <tr id="collapse-@count" class="accordion-collapse collapse" data-bs-parent="#accordion">
-                    <td colspan="10">
-                        <div class="accordion-body">
-                            @if (item.TproductInventories != null && item.TproductInventories.Any())
-                            {
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>顏色</th>
-                                            <th>尺寸</th>
-                                            <th>庫存</th>
-                                            <th>最後更新時間</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var inventory in item.TproductInventories)
-                                        {
-                                            <tr>
-                                                <td>@inventory.Pcolor</td>
-                                                <td>@inventory.Psize</td>
-                                                <td>@inventory.Pstock</td>
-                                                <td>@inventory.PlastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                            else
-                            {
-                                <p class="text-muted">沒有庫存資訊</p>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+
+@foreach (var item in Model)
+{
+    int modalCount = Model.IndexOf(item) + 1;
+    <!-- Bootstrap 5 Modal -->
+    <div class="modal fade" id="inventoryModal-@modalCount" tabindex="-1" aria-labelledby="inventoryModalLabel-@modalCount" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inventoryModalLabel-@modalCount">庫存明細 - @item.Pname</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    @if (item.TproductInventories != null && item.TproductInventories.Any())
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>顏色</th>
+                                    <th>尺寸</th>
+                                    <th>庫存</th>
+                                    <th>最後更新時間</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inventory in item.TproductInventories)
+                                {
+                                    <tr>
+                                        <td>@inventory.Pcolor</td>
+                                        <td>@inventory.Psize</td>
+                                        <td>@inventory.Pstock</td>
+                                        <td>@inventory.PlastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">沒有庫存資訊</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 

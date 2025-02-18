@@ -19,19 +19,58 @@ namespace Project.Controllers
         }
 
         //前台ProductList
-        public IActionResult ProductList(string keyword, int id)
+        public IActionResult ProductList(string keyword, int id, string sortby = "default" )
         {
-            DbuniPayContext db = new DbuniPayContext();
-            IEnumerable<Tproduct> datas = null;
-            if (string.IsNullOrEmpty(keyword))
-                datas = db.Tproducts
-                        .Where(t => !t.PisHided);  // 過濾已下架的記錄
-            else
-                datas = db.Tproducts.Where(t => t.Pname.Contains(keyword) || t.Ptype.Contains(keyword) || t.Pcategory.Contains(keyword));
-            List<CProductWrap> ProductList = new List<CProductWrap>();
-            foreach (var t in datas)
-                ProductList.Add(new CProductWrap() { product = t });
-            return View(ProductList);
+            using (DbuniPayContext db = new DbuniPayContext())
+            {
+                var datas = db.Tproducts
+                              .Where(t => !t.PisHided) // 過濾已下架產品
+                              .AsQueryable();
+
+                // 關鍵字篩選
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    datas = datas.Where(t => t.Pname.Contains(keyword) ||
+                                             t.Ptype.Contains(keyword) ||
+                                             t.Pcategory.Contains(keyword));
+                }
+
+                // 取得銷售數量 (熱銷產品) - 關聯 Torderdetail 表
+                var salesData = db.TorderDetails
+                                  .GroupBy(o => o.Pid)
+                                  .Select(g => new { Pid = g.Key, TotalSales = g.Sum(o => o.Pcounts) })
+                                  .ToDictionary(x => x.Pid, x => x.TotalSales);
+
+                // 切換到客戶端評估
+                var productList = datas.AsEnumerable();
+
+                // 加入排序方式
+                switch (sortby.ToLower())
+                {
+                    case "price_asc":  // 價格升序 (低到高)
+                        productList = productList.OrderBy(t => t.Pprice);
+                        break;
+                    case "price_desc": // 價格降序 (高到低)
+                        productList = productList.OrderByDescending(t => t.Pprice);
+                        break;
+                    case "hot": // 熱銷排序
+                        productList = productList.OrderByDescending(t => salesData.ContainsKey(t.Pid) ? salesData[t.Pid] : 0);
+                        break;
+                    default:
+                        productList = productList.OrderBy(t => t.Pname); // 預設按名稱排序
+                        break;
+                }
+                
+                // 封裝 CProductWrap
+                List<CProductWrap> ProductList = productList
+                    .Select(t => new CProductWrap() { product = t })
+                    .ToList();
+            
+                ViewBag.Keyword = keyword;
+                ViewBag.SortBy = sortby;
+
+                return View(ProductList);
+            }
         }
 
         //前台Productdetail
@@ -79,16 +118,16 @@ namespace Project.Controllers
             string keyword = vm.txtKeyword;
 
             // 取得符合條件的產品 (排除隱藏的)
-            var query = db.Tproducts
+            var datas = db.Tproducts
                           .Where(t => !t.PisHided);
 
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(t => t.Pdescription.Contains(keyword));
+                datas = datas.Where(t => t.Pdescription.Contains(keyword));
             }
 
             // 直接用 LINQ Join 取得產品與庫存
-            var productList = query
+            var productList = datas
                 .Select(t => new CProductWrap
                 {
                     product = t,
@@ -119,7 +158,14 @@ namespace Project.Controllers
         //後台新增商品
         public IActionResult Create()
         {
-            return View();
+            DbuniPayContext db = new DbuniPayContext();
+            CProductWrap model = new CProductWrap
+            {
+                PtypeList = db.Tproducts.Select(p => p.Ptype).Distinct().ToList(),
+                PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList()
+            };
+
+            return View(model);
         }
         [HttpPost]
         public IActionResult Create(CProductWrap p, List<IFormFile> photos)
@@ -154,6 +200,26 @@ namespace Project.Controllers
                 // 獲取剛剛插入的產品 ID
                 int productId = p.product.Pid;
 
+                // 新增 TProductInventory 記錄
+                int totalStock = 0;
+                foreach (var stock in p.TproductInventories)
+                {
+                    var inventory = new TproductInventory
+                    {
+                        Pid = productId,
+                        Pcolor = stock.Pcolor,
+                        Psize = stock.Psize,
+                        Pstock = stock.Pstock,
+                        PlastUpdated = DateTime.Now
+                    };
+                    db.TproductInventories.Add(inventory);
+                    totalStock += stock.Pstock;
+                }
+
+                // 更新 Pinventory
+                p.product.Pinventory = totalStock;
+                db.Tproducts.Update(p.product);
+
                 // 處理多張圖片上傳 (存入 Tpimages)
                 if (photos != null && photos.Count > 0)
                 {
@@ -180,14 +246,14 @@ namespace Project.Controllers
                     }
                 }
 
-                db.SaveChanges(); // 儲存所有圖片
+                db.SaveChanges(); // 儲存所有數據
                 transaction.Commit(); // 交易提交
 
                 return RedirectToAction("List");
             }
             catch (Exception ex)
             {
-                transaction.Rollback(); // 發生錯誤，回滾交易
+                transaction.Rollback(); // 發生錯誤，返回交易
                 ModelState.AddModelError("", "發生錯誤：" + ex.Message);
                 return View(p);
             }
