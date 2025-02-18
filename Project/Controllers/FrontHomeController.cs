@@ -68,6 +68,19 @@ namespace Project.Controllers
             order["CheckMacValue"] = GetCheckMacValue(order);
             return View(order);
         }
+        
+        public IActionResult CheckOrder()
+        {
+            return View();
+        } 
+        public IActionResult CheckOrderDetail()
+        {
+            return View();
+        }
+        public IActionResult CancelOrder()
+        {
+            return View();
+        }
 
         public IActionResult Advice() {
             return View();

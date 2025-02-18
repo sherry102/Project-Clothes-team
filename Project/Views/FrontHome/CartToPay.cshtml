@@ -334,7 +334,7 @@
                             console.log(response);
                             if (response.data) {
                                 _this.cartItems = response.data;
-                                console.log(JSON.stringify(response.data, null, 2));
+                                console.log('购物车数据:', JSON.stringify(response.data, null, 2));
                             } else {
                                 alert("請先登入會員");
                             }
@@ -537,8 +537,8 @@
                         })
                         .then(response => {
                             console.log('訂單提交成功:', response);
-
-                            
+                            console.log('返回的 OrderID:', response.data.orderID);  // 打印 OrderID
+                            _this.SaveToOrderDetail(response.data.orderID);
                             _this.formData = {
                                 price: 0,
                                 dcprice: 0,
@@ -560,6 +560,43 @@
                             console.error('訂單未成功提交:', error);
                         });
                 },
+                SaveToOrderDetail: function (orderID) {
+                    let _this = this;
+
+                    // 创建一个订单详情的数组，准备发送给后端
+                    let orderDetails = _this.cartItems.map(item => {
+                        console.log('订单项:', item);  // 打印每个 item，检查字段值
+                        return {
+                            Oid: orderID,          //传递订单ID
+                            PId: item.pId,          // 商品ID
+                            PName: item.pName,     // 商品名称
+                            PCount: item.pCount,   // 商品数量
+                            PSize: item.pSize,     // 商品尺寸
+                            PColor: item.pColor,   // 商品颜色
+                            CustomText0: item.customText0,  // 自定义文字
+                            CustomText1: item.customText1,  // 自定义文字
+                            CustomPhoto0: item.customPhoto0, // 自定义图片
+                            CustomPhoto1: item.customPhoto1, // 自定义图片
+                            Photo0: item.photo0,   // 商品图片
+                            Photo1: item.photo1,   // 商品图片
+                            PPrice: item.pPrice    // 商品价格
+                        };
+                    });
+                    console.log('发送请求保存订单:', JSON.stringify(orderDetails, null, 2));
+
+                    // 发送请求保存订单详情
+                    axios.post(`${_this.baseAddress}/Ajax/SaveToOrderDetail`, orderDetails)
+                        .then(response => {
+                            console.log('訂單詳情儲存成功:', response);
+                            alert('訂單已成功提交!');
+                        })
+                        .catch(error => {
+                            console.error('訂單詳情儲存失敗:', error);
+                            alert('訂單詳情儲存失敗');
+                        });
+                },
+
+
                 // 從 localStorage 加載數據
                 loadFromStorage() {
                     const savedPrice = localStorage.getItem('price');

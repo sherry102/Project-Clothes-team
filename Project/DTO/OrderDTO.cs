@@ -1,7 +1,8 @@
 ﻿namespace Project.DTO
 {
     public class OrderDTO
-    { 
+    {
+        public int OID { get; set; }
         public string OName { get; set; }  
         public int OTotalPrice { get; set; }  
         public string Odate { get; set; }  
@@ -37,5 +38,11 @@
         public string ChoosePayment { get; set; }
 
         public string EncryptType { get; set; }
+    }
+     
+    public class SearchOrderRequest
+    {
+        public string Condition { get; set; }  // 查詢條件
+        public string OrderNumber { get; set; } // 訂單編號
     }
 }
