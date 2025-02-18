@@ -136,7 +136,9 @@
                         axios.post(`${_this.baseAddress}/Ajax/GetCartItems`, {})
                             .then(response => {
                                 console.log(response);
-                                _this.itemName = response.data.map(item => item.pName).join("#");
+                                const cartItems = Array.isArray(response.data) ? response.data : [];
+
+                                _this.itemName = cartItems.map(item => item.pName).join("#");
                                 if (response.data) {
                                     _this.cartArray = response.data;
                                     

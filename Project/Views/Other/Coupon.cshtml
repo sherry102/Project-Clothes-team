@@ -272,6 +272,10 @@
                         alert("開始時間不得超過結束時間")
                         return
                     }
+                    if (_this.PassWord=="") {
+                        alert("請填寫優惠碼")
+                        return
+                    }
                     if (confirm("確定要新增此優惠券?")) {
 
                         axios.post(`${_this.baseAddress}/Ajax/addCoupon`, request).then(response => {

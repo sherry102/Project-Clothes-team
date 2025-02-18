@@ -239,7 +239,7 @@ namespace Project.Controllers
 			{
 				string json = JsonSerializer.Serialize(T);
 				HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-				return RedirectToAction("FrontIndex","FrontHome");
+				return RedirectToAction("Index","Home");
 			}
 			else
 			{
@@ -268,5 +268,6 @@ namespace Project.Controllers
             bool isSessionCleared = HttpContext.Session.Keys.Count() == 0;
             return Json(new { success = isSessionCleared });
         }
+
     }
 }

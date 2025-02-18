@@ -91,7 +91,7 @@ namespace Project.Controllers
                 return ResponseError();
             }
         }
-
+        
         private IActionResult ResponseError()
         {
             return Content("0|Error", "text/html");

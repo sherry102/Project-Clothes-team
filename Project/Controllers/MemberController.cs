@@ -258,6 +258,9 @@ namespace Project.Controllers
         {
             DbuniPayContext db = new DbuniPayContext();
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (json==null) {
+                return RedirectToAction("Login", "Home");
+            }
             var member = JsonSerializer.Deserialize<Tmember>(json);
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == member.Mid);
             CMemberWrap C = new CMemberWrap() { member = T };
@@ -269,10 +272,11 @@ namespace Project.Controllers
         {
             DbuniPayContext db = new DbuniPayContext();
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == t.Mid);
+            var Mgender= t.Mgender == "男性" ? 0 : 1;
             if (T!=null) 
             {
                 T.Mname = t.Mname;
-                T.Mgender = t.Mgender;
+                T.Mgender = Mgender;
                 T.Memail = t.Memail;
                 T.Maddress = t.Maddress;
                 T.Mbirthday =t.Mbirthdays;
