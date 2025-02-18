@@ -41,7 +41,6 @@ public partial class DbuniPayContext : DbContext
 
     public virtual DbSet<TorderDetail> TorderDetails { get; set; }
 
-    public virtual DbSet<TorderDetail1> TorderDetails1 { get; set; }
 
     public virtual DbSet<Tpimage> Tpimages { get; set; }
 
@@ -356,29 +355,6 @@ public partial class DbuniPayContext : DbContext
                 .HasColumnName("PSize");
         });
 
-        modelBuilder.Entity<TorderDetail1>(entity =>
-        {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C1569B4AFC8");
-
-            entity.ToTable("TOrderDetails");
-
-            entity.Property(e => e.Odid).HasColumnName("ODID");
-            entity.Property(e => e.CustomText0).HasMaxLength(50);
-            entity.Property(e => e.CustomText1).HasMaxLength(50);
-            entity.Property(e => e.Oid).HasColumnName("OID");
-            entity.Property(e => e.Pcolor)
-                .HasMaxLength(50)
-                .HasColumnName("PColor");
-            entity.Property(e => e.Pcount).HasColumnName("PCount");
-            entity.Property(e => e.Pid).HasColumnName("PID");
-            entity.Property(e => e.Pname)
-                .HasMaxLength(50)
-                .HasColumnName("PName");
-            entity.Property(e => e.Pprice).HasColumnName("PPrice");
-            entity.Property(e => e.Psize)
-                .HasMaxLength(50)
-                .HasColumnName("PSize");
-        });
 
         modelBuilder.Entity<Tpimage>(entity =>
         {

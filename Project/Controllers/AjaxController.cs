@@ -241,7 +241,7 @@ namespace Project.Controllers
             {
                 foreach (var detail in orderDetails)
                 {
-                    var orderDetail = new TorderDetail1
+                    var orderDetail = new TorderDetail
                     {
                         Oid = detail.Oid,
                         Pid = detail.PId,
@@ -257,7 +257,7 @@ namespace Project.Controllers
                         Photo1 = detail.Photo1,
                         Pprice = detail.PPrice
                     };
-                    _context.TorderDetails1.Add(orderDetail);
+                    _context.TorderDetails.Add(orderDetail);
                 }
 
                 await _context.SaveChangesAsync();
@@ -575,7 +575,7 @@ namespace Project.Controllers
                 return null;  
             }
              
-            var orderDetails = await _context.TorderDetails1
+            var orderDetails = await _context.TorderDetails
                 .Where(od => od.Oid == oid)
                 .Select(od => new OrderDetailDTO
                 {
