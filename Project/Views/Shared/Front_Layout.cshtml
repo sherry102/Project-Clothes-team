@@ -372,7 +372,7 @@
             <img src="~/Images/unicorn.png" alt="智能助理Unicorn" />
         </button>
         <!-- 聊天小工具：顯示聊天內容和訊息 -->
-        <div class="container">
+        <div class="container" id="chatRoom">
             <div class="chat-widget" v-show="isVisible" ref="chatWidget">
                 <div class="chat-widget-header">
                     <h4>
@@ -403,12 +403,13 @@
                         <!-- 雙向綁定 message -->
                         <!-- 按下 Enter 鍵觸發 SendMessage 方法 -->
                         <input type="text"
+                               id="txtMSG"
                                ref="chatInput"
                                v-model="message"
                                @@keyup.enter="sendMessage"
                                placeholder="輸入訊息..." />
                         <!-- 發送按鈕 -->
-                        <button type="button" @@click="sendMessage"
+                        <button type="button" @@click="sendMessage" id="sent"
                                 :style="{ transform: message.trim() ? 'scale(1.1)' : 'scale(1)' }" title="發送訊息">
                             <i class="fas fa-paper-plane"></i>
                         </button>

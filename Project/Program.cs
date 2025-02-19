@@ -65,6 +65,7 @@ app.UseStaticFiles();
 app.UseCors();
 //¥[¤J Hub
 app.MapHub<ChatHub>("/chatroom");
+
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();

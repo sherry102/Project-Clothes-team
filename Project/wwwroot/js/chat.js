@@ -1,4 +1,10 @@
-﻿
+﻿const chatRoom = document.querySelector("#chatRoom");
+const userName = document.querySelector("#userName");
+const txtMsg = document.querySelector("#txtMSG"); //SR用
+const room = document.querySelector("#room");
+const send = document.querySelector("#send"); //SR用
+const result = document.querySelector("#result"); //SR用
+
 const chatApp = Vue.createApp({
     data() {
         return {
@@ -29,13 +35,14 @@ const chatApp = Vue.createApp({
         };
     },
     mounted() {
-        // 5秒後顯示氣泡
+        // 3秒後顯示氣泡
         setTimeout(() => {
             if (!this.isVisible) {
+                console.log("setTimeout");
                 // 只在聊天視窗未開啟時顯示氣泡
                 this.isBubbleVisible = true;
             }
-        }, 5000);
+        }, 3000);
 
         // 修改點擊事件監聽器
         document.addEventListener("click", (e) => {
@@ -49,11 +56,6 @@ const chatApp = Vue.createApp({
             }
         });
         // 監聽消息變化
-        //this.$watch('messages', () => {
-        //    this.$nextTick(() => {
-        //        this.scrollToBottom();
-        //    });
-        //}, { deep: true });
         this.$watch(
             () => this.messages.length, // 監聽 messages 陣列長度變化
             () => {
@@ -137,23 +139,17 @@ const chatApp = Vue.createApp({
             //延後回覆
             setTimeout(() => {
                 this.isTyping = false;
-                if (isCustomerService) {
+                if (this.isCustomerService) {
                     // 如果包含"客服"關鍵字，顯示帶按鈕的回覆
-                    this.messages.push({
-                        type: "received",
-                        content: "請點擊下方按鈕連接真人客服",
-                        showButton: true
-                    });
-                }
-                else {
-                    // 否則顯示智能回覆                       
-                    const reply = this.getSmartReply(userMessage);
-                    this.messages.push({
-                        type: "received",
-                        content: reply,
-                        showButton: this.showChatButton
-                    });
-                }
+                    return;
+                }               
+                // 否則顯示智能回覆                       
+                const reply = this.getSmartReply(userMessage);
+                this.messages.push({
+                    type: "received",
+                    content: reply,
+                    showButton: this.showChatButton
+                });
                 this.$nextTick(() => this.scrollToBottom());
             }, 1000);
         },
@@ -182,18 +178,17 @@ const chatApp = Vue.createApp({
                 if (result.dismiss === Swal.DismissReason.timer) {
                     // 這裡可以加入真正的客服連接邏輯
                     console.log("真人客服已連接！");
-                    this.addSystemMessage("已進入真人客服！！"); // 新增一條系統訊息
-                    // 例如開啟客服視窗的函數：
-                    // openCustomerServiceChat();                        
+                    this.messages.push({
+                        type: "system",
+                        content: "已進入真人客服！！"           
+                    })  
+                    this.isCustomerService = true; // 正式進入真人客服模式
+                    // 強制在下一個 tick 進行滾動
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
                 }
             });
-        },
-        addSystemMessage(message) {
-            const chatBox = document.querySelector(".chat-widget-context"); // 替換成你的聊天視窗選擇器
-            const systemMsg = document.createElement("div");
-            systemMsg.className = "system-message"; // 可加 CSS 調整樣式
-            systemMsg.innerText = message;
-            chatBox.appendChild(systemMsg);
         },
         scrollToBottom() {
             this.$nextTick(() => {

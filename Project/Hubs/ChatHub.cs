@@ -25,11 +25,6 @@ namespace Project.Hubs
             await Clients.Group(roomName).SendAsync("UpdContent", "新連線 ID: " + Context.ConnectionId + " 進入聊天室: " + roomName);
             await base.OnConnectedAsync();
         }
-        //public override async Task OnConnectedAsync()
-        //{
-        //    await Clients.All.SendAsync("UpdContent", "新連線 ID: " + Context.ConnectionId);
-        //    await base.OnConnectedAsync();
-        //}
 
         /// <summary>
         /// 離線事件
