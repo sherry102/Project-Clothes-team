@@ -1,8 +1,15 @@
 ﻿@model Project.Models.CMemberWrap
 @{
-    Layout = "~/Views/Shared/Front_Layout.cshtml"; 
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<h1>新增會員</h1>
+
+<h4>填寫會員資訊</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div class="auth-wrapper">@* 最外層容器，控制寬度與置中*@ 
     <div id="authForms" class="auth-container">@* 表單切換標籤 *@
         <div class="auth-tabs">
@@ -24,9 +31,7 @@
                     @Html.RadioButtonFor(model => model.Mgender, 0, new { id = "male", @class = "btn-check" })
                     <label class="btn btn-outline-primary" for="male">男性</label>
 
-                    @Html.RadioButtonFor(model => model.Mgender, 1, new { id = "female", @class = "btn-check" })
-                    <label class="btn btn-outline-primary" for="female">女性</label>
-                </div>
+            </div>
                 <span asp-validation-for="Mgender" class="text-danger"></span>
             </div>
             <!--生日-->
@@ -90,7 +95,7 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="remember">
                     <label class="form-check-label" for="remember">記住我</label>
-                </div>
+            </div>
                 <a href="#" class="forgot-link">忘記密碼</a>
             </div>
             <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>
@@ -113,7 +118,7 @@
         justify-content: center;
         margin-bottom: 20px; /* 標籤底部距 */
     }
-
+   
     .tab-btn {
         background-color: transparent; /*背景透明 */
         border: none; /* 移除預設邊框 */
@@ -147,7 +152,7 @@
     .btn-outline-primary:focus,
     .btn-outline-primary:active {
         box-shadow: none !important; /*移除按鈕陰影 */
-    }
+                }
 </style>
 @section Scripts {
     <script>
@@ -164,12 +169,12 @@
                         loginForm.classList.add('hidden');
                         tabBtns[0].classList.add('active');
                         tabBtns[1].classList.remove('active');
-                    } else {
+            } else {
                         registerForm.classList.add('hidden');
                         loginForm.classList.remove('hidden');
                         tabBtns[0].classList.remove('active');
                         tabBtns[1].classList.add('active');
-                    }
+        }
                 });
             });
         });
