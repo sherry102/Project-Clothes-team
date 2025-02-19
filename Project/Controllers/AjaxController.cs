@@ -324,7 +324,7 @@ namespace Project.Controllers
             };
             _context.Tadvices.Add(Advice);
             await _context.SaveChangesAsync();
-            return Json(new { success = true, redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+            return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
         }
 
         [HttpGet]
@@ -654,6 +654,44 @@ namespace Project.Controllers
             return Ok(new { orders });
         }
 
+        [HttpGet("Ajax/getDetails/{id}")]
+
+        public async Task<IActionResult> getDetails(int id)
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return RedirectToAction("FrontIndex","FrontHome");
+            }
+
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+
+            var order = await _context.Torders.Where(c => c.Oid == id && c.Mid == member.Mid).FirstOrDefaultAsync();
+            Console.WriteLine(order);
+            var orderdetail = await _context.TorderDetails.Where(c => c.Oid == id).ToListAsync();
+            Console.WriteLine(orderdetail);
+            if (orderdetail == null)
+            {
+                orderdetail = new List<TorderDetail>();  // 避免回傳 null
+            }
+            if (order==null) {
+                return RedirectToAction("CheckOrder", "FrontHome");
+            }
+            var detail = new AdviceDetailDTO
+            {
+                OName = order.Oname,
+                OPhone = order.Ophone,
+                OEmail=order.Oemail,
+                OAddress=order.Oaddress,
+                OId=id,
+                Odate=order.Odate.ToString("yyyy-MM-dd"),
+                Ostatus=order.Ostatus,
+                OPayment=order.Opayment,
+                orderdetail=orderdetail,
+            };
+
+            return Json(detail);
+        }
 
 
 

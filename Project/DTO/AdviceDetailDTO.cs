@@ -2,17 +2,11 @@
 
 namespace Project.DTO
 {
-    public class AdviceDTO
+    public class AdviceDetailDTO
     {
-
         public int OId { get; set; }
 
-        public string Question { get; set; }
-
-        public string Title { get; set; }
-
-        public string Description { get; set; }
-
+      
         public string OName { get; set; }
 
         public string OPhone { get; set; }
