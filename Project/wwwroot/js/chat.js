@@ -157,6 +157,9 @@ const chatApp = Vue.createApp({
                 try {
                     // 透過SignalR發送訊息,發送訊息到伺服器，使用userId作為user參數
                     await this.hubConnection.invoke("SendMessage", this.userId, messageContent);
+                    //this.hubConnection.invoke("SendMessage", "1", "測試訊息")
+                    //    .then(() => console.log("訊息發送成功"))
+                    //    .catch(err => console.error("發送訊息錯誤:", err));
                 }
                 catch (err) {
                     // 錯誤處理
@@ -175,8 +178,8 @@ const chatApp = Vue.createApp({
             this.$nextTick(() => this.scrollToBottom());                            
             // 清空訊息輸入框
             this.message = "";
-            // 捲動到對話底部
-            this.isTyping = true;
+            // 如果是來自其他使用者的訊息，不顯示正在輸入
+            this.isTyping = false;
         },
         // 新增連接真人客服方法
         async connectToRealService() {
@@ -204,11 +207,9 @@ const chatApp = Vue.createApp({
             })
             .then((result) => {
                 if (result.dismiss === Swal.DismissReason.timer) {
-                    // 這裡可以加入真正的客服連接邏輯
-                    console.log("真人客服已連接！");
                     this.messages.push({
                         type: "system",
-                        content: "已進入真人客服！！"           
+                        content: "排隊進入真人客服！！"           
                     })  
                     this.isCustomerService = true; // 正式進入真人客服模式
                     // 強制在下一個 tick 進行滾動
@@ -237,34 +238,56 @@ const chatApp = Vue.createApp({
         // 初始化SignalR連線的方法
         async initializeSignalRConnection() {
             try {
-                //// 構建新的URL，加入ChatRoom路徑和房間參數
-                //const newUrl = `${window.location.href}/ChatRoom?room=${this.roomName}`;
-                //// 更新瀏覽器URL而不重新載入頁面
-                //window.history.pushState({ path: newUrl }, '', newUrl);
                 // 建立SignalR連線配置
                 this.hubConnection = new signalR.HubConnectionBuilder()
-                    .withUrl(`https://localhost:7279/ChatRoom?room=${this.userId}`)
+                    .withUrl(`https://localhost:7279/ChatRoom?room=${this.userName}`)
                     .withAutomaticReconnect([0, 2000, 5000, 10000, null]) // 自動重連機制
                     .configureLogging(signalR.LogLevel.Debug) // 啟用詳細日誌
                     .build();
                 // 設置接收訊息的處理器
-                this.hubConnection.on("UpdContent", (content) => {
-                    if (typeof content === 'string') {
-                        // 處理系統訊息
-                        this.messages.push({
-                            type: "system",
-                            content: content
-                        });
+                this.hubConnection.on("UpdContent", (msg) => {
+                    //console.log("收到訊息:", content);
+                    //if (typeof content === 'string') {
+                    //    // 處理系統訊息
+                    //    this.messages.push({
+                    //        type: "system",
+                    //        content: content
+                    //    });
+                    //}
+                    //else {
+                    //    // 處理用戶訊息
+                    //    this.messages.push({
+                    //        type: "received",
+                    //        content: content.Message,
+                    //        user: content.User,
+                    //        timestamp: content.Timestamp
+                    //    });
+                    const roomContainer = document.querySelector("#room");
+                    if (msg.user) {
+                        // 自己發送的訊息
+                        console.log("me");
+                        console.log(msg);
+                        const bubble =
+                           `<div class="chat-message.sent">
+                                ${msg.timestamp} 我
+                                <div class="message last">
+                                    ${msg.message}
+                                </div>
+                           </div>`;
+                        roomContainer.innerHTML += bubble;
                     }
-                    else {
-                        // 處理用戶訊息
-                        this.messages.push({
-                            type: "received",
-                            content: content.Message,
-                            user: content.User,
-                            timestamp: content.Timestamp
-                        });
-                    }
+                    else if (msg.user != null) {
+                        // 其他用戶發送的訊息
+                        console.log("your");
+                        const bubble =
+                           `<div class="chat-message.received">
+                               ${msg.timestamp} ${msg.user}
+                               <div class="message last">
+                                    ${msg.message}
+                               </div>
+                           </div>`;
+                        roomContainer.innerHTML += bubble;
+                    }                    
                     this.scrollToBottom();
                 });
                 // 啟動SignalR連線
@@ -273,7 +296,7 @@ const chatApp = Vue.createApp({
                 // 新增系統訊息到訊息列表
                 this.messages.push({
                     type: "system",
-                    content: "已進入真人客服！"
+                    content: "成功輪到您進入真人客服！"
                 });
                 // 設定為客服模式
                 this.isCustomerService = true;

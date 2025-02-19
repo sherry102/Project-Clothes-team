@@ -20,9 +20,9 @@ namespace Project.Hubs
         /// </summary>
         public override async Task OnConnectedAsync()
         {
-            string roomName = Context.GetHttpContext().Request.Query["room"]; // 獲取聊天室名稱
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomName); // 將用戶加入聊天室
-            await Clients.Group(roomName).SendAsync("UpdContent", "新連線 ID: " + Context.ConnectionId + " 進入聊天室: " + roomName);
+            string roomId = Context.GetHttpContext().Request.Query["room"]; // 獲取聊天室名稱
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId); // 將用戶加入聊天室
+            await Clients.Group(roomId).SendAsync("UpdContent", "新連線 ID: " + Context.ConnectionId + " 進入聊天室: " + roomId);
             await base.OnConnectedAsync();
         }
 

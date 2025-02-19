@@ -388,7 +388,8 @@
                 <div class="chat-widget-context" ref="messagesContainer">
                      <div v-for="(msg, index) in messages"
                           :key="index"
-                         :class="['chat-message', msg.type]">
+                          :class="['chat-message', msg.type]" 
+                          id="room">
                           {{ msg.content }}
                           <button type="button" v-if="msg.showButton" class="real-customer-service-btn" @@click ="connectToRealService" title="連線真人客服">
                                 連接真人客服

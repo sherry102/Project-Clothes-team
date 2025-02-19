@@ -40,7 +40,7 @@ builder.Services.AddSignalR();
 //允許跨域請求
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.WithOrigins("http://127.0.0.1:5500") // 指定允許的前端來源
                .AllowAnyHeader()
@@ -62,7 +62,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 //跨域啟動
-app.UseCors();
+app.UseCors("AllowAll");
 //加入 Hub
 app.MapHub<ChatHub>("/chatroom");
 
