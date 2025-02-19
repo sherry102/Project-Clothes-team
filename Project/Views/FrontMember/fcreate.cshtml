@@ -1,0 +1,182 @@
+﻿@model Project.Models.CMemberWrap
+@{
+    Layout = "~/Views/Shared/Front_Layout.cshtml";
+}
+<h1>新增會員</h1>
+
+<h4>填寫會員資訊</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="auth-wrapper">@* 最外層容器，控制寬度與置中*@ 
+    <div id="authForms" class="auth-container">@* 表單切換標籤 *@
+        <div class="auth-tabs">
+            <button class="tab-btn active" data-form="register">註冊</button>
+            <button class="tab-btn" data-form="login">登入</button>
+        </div>
+        <form id="registerForm" class="auth-form" asp-action="fcreate" asp-controller="FrontMember" method="post">
+            @Html.AntiForgeryToken() @* 防止 CSRF 攻擊 *@
+            <!--姓名 -->
+            <div class="form-group mb-3">
+                <label asp-for="Mname" class="mb-1"></label>
+                <input asp-for="Mname" class="form-control" placeholder="請輸入姓名" />
+                <span asp-validation-for="Mname" class="text-danger"></span>
+            </div>
+            <!--性別-->
+            <div class="form-group mb-3">
+                <label asp-for="Mgender" class="mb-1"></label>
+                <div class="btn-group" role="group" aria-label="性別選擇">
+                    @Html.RadioButtonFor(model => model.Mgender, 0, new { id = "male", @class = "btn-check" })
+                    <label class="btn btn-outline-primary" for="male">男性</label>
+
+            </div>
+                <span asp-validation-for="Mgender" class="text-danger"></span>
+            </div>
+            <!--生日-->
+            <div class="form-group mb-3">
+                <label asp-for="Mbirthday" class="mb-1"></label>
+                <input asp-for="Mbirthday"
+                       class="form-control datepicker"
+                       type="text"
+                       autocomplete="off" />
+                <span asp-validation-for="Mbirthday" class="text-danger"></span>
+            </div>
+            <!--電子郵件 -->
+            <div class="form-group mb-3">
+                <label asp-for="Memail" class="mb-1"></label>
+                <input asp-for="Memail" class="form-control" placeholder="請輸入E-mail" />
+                <span asp-validation-for="Memail" class="text-danger"></span>
+            </div>
+            <!--地址 -->
+            <div class="form-group mb-3">
+                <label asp-for="Maddress" class="mb-1"></label>
+                <input asp-for="Maddress" class="form-control" placeholder="請輸入地址" />
+                <span asp-validation-for="Maddress" class="text-danger"></span>
+            </div>
+            <!--手機號碼 -->
+            <div class="form-group mb-3">
+                <label asp-for="Mphone" class="mb-1"></label>
+                <input asp-for="Mphone" class="form-control" placeholder="請輸入手機號碼" />
+                <span asp-validation-for="Mphone" class="text-danger"></span>
+            </div>
+            <!--帳號 -->
+            <div class="form-group mb-3">
+                <label asp-for="Maccount" class="mb-1"></label>
+                <input asp-for="Maccount" class="form-control" placeholder="請輸入帳號" />
+                <span asp-validation-for="Maccount" class="text-danger"></span>
+            </div>
+            <!--密碼 -->
+            <div class="form-group mb-3">
+                <label asp-for="Mpassword" class="mb-1"></label>
+                <input asp-for="Mpassword" class="form-control" placeholder="請輸入密碼" />
+                <span asp-validation-for="Mpassword" class="text-danger"></span>
+            </div>
+            <!--確認密碼 (僅前端處理) -->
+            <div class="form-group mb-3">
+                <label asp-for="ConfirmPassword" class="mb-1"></label>
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="請再次輸入密碼" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">註冊</button>
+        </form>
+        <!-- 登入表單-->
+        <form id="loginForm" class="auth-form hidden">
+            <div class="form-group mb-3">
+                <label class="mb-1">帳號</label>
+                <input type="text" class="form-control" placeholder="請輸入帳號" required>
+            </div>
+            <div class="form-group mb-3">
+                <label class="mb-1">密碼</label>
+                <input type="password" class="form-control" placeholder="請輸入密碼" required>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">記住我</label>
+            </div>
+                <a href="#" class="forgot-link">忘記密碼</a>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>
+        </form>
+    </div>
+</div>
+<style>
+    .auth-wrapper {
+        max-width: 500px; /* 控制容器最大寬度 */
+        margin: 0 auto; /* 水平置中 */
+        padding: 20px; /* 容器內距 */
+    }
+
+    .auth-container {
+        text-align: center; /* 文字置中 */
+    }
+
+    .auth-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px; /* 標籤底部距 */
+    }
+   
+    .tab-btn {
+        background-color: transparent; /*背景透明 */
+        border: none; /* 移除預設邊框 */
+        font-size: 1.2rem; /* 字體大小 */
+        padding: 10px 20px; /* 內邊距 */
+        cursor: pointer; /* 游標為可點擊 */
+        outline: none; /* 移除 focus 外框 */
+    }
+
+        .tab-btn.active {
+            border-bottom: 2px solid #000; /* 當前選項卡底部邊框 */
+        }
+
+    .auth-form {
+        text-align: left; /* 表單內容靠左 */
+        margin-bottom: 20px;
+    }
+
+    .hidden {
+        display: none; /* 隱藏元素 */
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem !important; /*欄位間距 */
+    }
+
+    .mb-1 {
+        margin-bottom: 0.25rem !important; /*label 與 input 間距 */
+    }
+
+    .btn-outline-primary:focus,
+    .btn-outline-primary:active {
+        box-shadow: none !important; /*移除按鈕陰影 */
+                }
+</style>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const registerForm = document.getElementById('registerForm');
+            const loginForm = document.getElementById('loginForm');
+
+            //切換「註冊 / 登入」表單顯示
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.form === 'register') {
+                        registerForm.classList.remove('hidden');
+                        loginForm.classList.add('hidden');
+                        tabBtns[0].classList.add('active');
+                        tabBtns[1].classList.remove('active');
+            } else {
+                        registerForm.classList.add('hidden');
+                        loginForm.classList.remove('hidden');
+                        tabBtns[0].classList.remove('active');
+                        tabBtns[1].classList.add('active');
+        }
+                });
+            });
+        });
+    </script>
+}
