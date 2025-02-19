@@ -1,41 +1,99 @@
-﻿/* icon 容器基本設定 */
-.header-icons {
-    position: absolute;
-    top: 20px;
-    right: 50px;
-    display: flex;
-    align-items: center;
+﻿/*.auth-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
 }
 
-    /* icon 群組設定 */
-    .header-icons .ms-auto {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 1rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .tab-btn.active {
+        color: #000;
+        border-bottom-color: #000;
+        font-weight: 600;
     }
 
-    /* 統一所有 icon 的基本大小 */
-    .header-icons .bi {
-        font-size: 30px !important; /* 固定大小 */
-        width: 24px !important; /* 強制寬度 */
-        height: 24px !important; /* 強制高度 */
-        display: flex;
-        align-items: center;
-        justify-content: center;
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #212529;
     }
 
-    /* 特別針對 person icon 的大小設定 */
-    .header-icons .bi-person {
-        font-size: 35px !important; /* 稍微加大一點 */
-        width: 28px !important;
-        height: 28px !important;
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+    .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
     }
 
-/* icon 連結樣式 */
-.icon-link {
+.captcha-group,
+.sms-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.captcha-img {
+    height: 42px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.refresh-btn,
+.send-btn {
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: #002D5C;
+    border-color: #002D5C;
+}
+
+    .btn-primary:hover {
+        background-color: #001F3F;
+        border-color: #001F3F;
+    }
+
+.form-check-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.forgot-link {
+    font-size: 0.85rem;
+    color: #6c757d;
     text-decoration: none;
-    color: #666;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
+
+    .forgot-link:hover {
+        color: #000;
+        text-decoration: underline;
+    }
+*/

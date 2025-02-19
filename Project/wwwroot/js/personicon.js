@@ -1,113 +1,188 @@
-﻿// 等待 DOM 載入完成後執行所有程式
-document.addEventListener('DOMContentLoaded', function () {
-    // 初始化必要的 DOM 元素
-    const loginModal = new bootstrap.Modal(document.getElementById('loginModal')); // 登入模態框
-    const memberButton = document.getElementById('memberButton');                  // 會員按鈕
-    const memberDropdown = document.getElementById('memberDropdown');             // 會員下拉選單
-    const loginForm = document.getElementById('loginForm');                       // 登入表單
-    const errorMessage = document.getElementById('errorMessage');                 // 錯誤訊息顯示區
-    const togglePasswordBtn = document.getElementById('togglePassword');          // 密碼顯示切換按鈕
-    const passwordInput = document.getElementById('fpassword');                   // 密碼輸入框
-    const logoutButton = document.getElementById('logoutButton');                 // 登出按鈕
+﻿document.addEventListener('DOMContentLoaded', function () {
+    // 
+    // 1. 獲取必要的 DOM 元素
+    //    (English: Get required DOM elements)
+    //
+    const personIcon = document.getElementById('personicon');
+    const authSection = document.getElementById('authSection');
+    const memberDropdown = document.getElementById('memberDropdown');
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const authForms = document.querySelectorAll('.auth-form');
+    const logoutBtn = document.getElementById('logoutButton');
 
-    // 設置密碼輸入框的初始狀態
-    passwordInput.type = 'password';                                             // 確保密碼輸入為隱藏狀態
-    togglePasswordBtn.querySelector('i').className = 'bi bi-eye-slash';          // 設置眼睛圖示為關閉狀態
-
-    // 檢查登入狀態並設置對應的行為
+    //
+    // 2. 檢查登入狀態的函數 - 使用後端 API
+    //    (English: A function to check login status via backend API)
+    //
     async function checkLoginStatus() {
         try {
-            const response = await fetch('/Account/CheckLoginStatus');
+            const response = await fetch('/FrontMember/CheckLoginStatus');
             const data = await response.json();
-
-            if (data.isLoggedIn) {
-                // 已登入狀態：移除模態框觸發器，啟用下拉選單功能
-                memberButton.removeAttribute('data-bs-toggle');
-                memberButton.removeAttribute('data-bs-target');
-                memberButton.onclick = function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    memberDropdown.style.display =
-                        memberDropdown.style.display === 'none' ? 'block' : 'none';
-                };
-            } else {
-                // 未登入狀態：設置模態框觸發器
-                memberButton.setAttribute('data-bs-toggle', 'modal');
-                memberButton.setAttribute('data-bs-target', '#loginModal');
-                memberButton.onclick = null;
-                memberDropdown.style.display = 'none';
-            }
             return data.isLoggedIn;
         } catch (error) {
-            console.error('檢查登入狀態時發生錯誤:', error);
+            console.error('檢查登入狀態失敗:', error);
             return false;
         }
     }
 
-    // 處理登入表單提交
-    loginForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        errorMessage.style.display = 'none';  // 清除之前的錯誤訊息
+    //
+    // 3. 點擊會員圖標處理
+    //    (English: Handle the click event on the person icon)
+    //
+    personIcon.addEventListener('click', async function (e) {
+        // 阻止 <a> 預設行為 (English: Prevent <a>'s default behavior)
+        e.preventDefault();
 
-        // 獲取表單數據
-        const formData = new FormData(loginForm);
+        const isLoggedIn = await checkLoginStatus();
 
-        try {
-            const response = await fetch('/Account/Login', {
-                method: 'POST',
-                body: formData
-            });
+        if (isLoggedIn) {
+            // 
+            // 已登入，顯示/隱藏會員選單
+            // (English: If logged in, toggle the dropdown menu)
+            //
+            memberDropdown.style.display =
+                memberDropdown.style.display === 'none' ? 'block' : 'none';
 
-            if (response.ok) {
-                // 登入成功
-                loginModal.hide();                // 隱藏登入視窗
-                await checkLoginStatus();         // 更新登入狀態
-                window.location.reload();         // 重新載入頁面
-            } else {
-                // 登入失敗
-                const text = await response.text();
-                errorMessage.textContent = '帳號或密碼錯誤';
-                errorMessage.style.display = 'block';
-            }
-        } catch (error) {
-            console.error('登入過程發生錯誤:', error);
-            errorMessage.textContent = '登入過程發生錯誤，請稍後再試';
-            errorMessage.style.display = 'block';
+            // 同時確保 authSection(登入/註冊表單) 隱藏
+            // (English: Also ensure the authSection is hidden)
+            if (authSection) authSection.style.display = 'none';
+
+        } else {
+            // 
+            // 未登入 -> 直接導向到 ~/FrontMember/fcreate (預設行為)
+            // (English: If not logged in, let the link go to ~/FrontMember/fcreate)
+            //
+            // 這裡如果您要顯示前端彈窗，而非跳轉，也可以改寫 
+            // (English: If you want a popup instead of a redirect, handle it differently)
+            //
+            window.location.href = personIcon.getAttribute('href');
         }
     });
 
-    // 密碼顯示切換功能
-    togglePasswordBtn.addEventListener('click', function () {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        // 更新眼睛圖示
-        const icon = togglePasswordBtn.querySelector('i');
-        icon.className = `bi bi-eye${type === 'password' ? '-slash' : ''}`;
-    });
+    //
+    // 4. 註冊/登入表單切換
+    //    (English: Toggle between registration and login forms)
+    //
+    if (authTabs) {
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // 移除所有標籤的 active 狀態
+                // (English: Remove the 'active' class from all tabs)
+                authTabs.forEach(t => t.classList.remove('active'));
 
-    // 點擊頁面其他區域時關閉下拉選單
-    document.addEventListener('click', function (event) {
-        if (!memberButton.contains(event.target) &&
-            !memberDropdown.contains(event.target)) {
+                // 為當前標籤添加 active 狀態
+                // (English: Add 'active' class to the clicked tab)
+                this.classList.add('active');
+
+                // 切換對應的表單顯示
+                // (English: Show the corresponding form based on data-form)
+                const targetForm = this.getAttribute('data-form');
+                authForms.forEach(form => {
+                    if (form.id === `${targetForm}Form`) {
+                        form.style.display = 'block';
+                    } else {
+                        form.style.display = 'none';
+                    }
+                });
+            });
+        });
+    }
+
+    //
+    // 5. 處理註冊表單提交
+    //    (English: Handle the registration form submission)
+    //
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/FrontMember/fcreate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // 註冊成功
+                    // (English: Registration success)
+                    authSection.style.display = 'none';
+                    alert('註冊成功！');
+                } else {
+                    alert(result.message || '註冊失敗，請稍後再試');
+                }
+            } catch (error) {
+                console.error('註冊失敗:', error);
+            }
+        });
+    }
+
+    //
+    // 6. 處理登入表單提交
+    //    (English: Handle the login form submission)
+    //
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/FrontMember/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // 登入成功 -> 隱藏表單並刷新頁面
+                    // (English: On success, hide the form and refresh the page)
+                    authSection.style.display = 'none';
+                    location.reload();
+                } else {
+                    alert(result.message || '登入失敗，請檢查帳號密碼');
+                }
+            } catch (error) {
+                console.error('登入失敗:', error);
+            }
+        });
+    }
+
+    //
+    // 7. 處理登出
+    //    (English: Handle the logout action)
+    //
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            try {
+                const response = await fetch('/FrontMember/logout', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('登出失敗:', error);
+            }
+        });
+    }
+
+    //
+    // 8. 點擊外部關閉下拉選單和登入表單
+    //    (English: Close dropdown and auth forms when clicking outside)
+    //
+    document.addEventListener('click', function (e) {
+        // 如果點擊的不是表單本身且也不是會員 icon
+        // (English: If click is not on authSection nor on the person icon)
+        if (!authSection?.contains(e.target) &&
+            !personIcon.contains(e.target)) {
+            if (authSection) authSection.style.display = 'none';
+        }
+        // 如果點擊的不是下拉選單且也不是會員 icon
+        // (English: If click is not on memberDropdown nor on the person icon)
+        if (!memberDropdown.contains(e.target) &&
+            !personIcon.contains(e.target)) {
             memberDropdown.style.display = 'none';
         }
     });
-
-    // 登出功能
-    logoutButton.addEventListener('click', async function (event) {
-        event.preventDefault();
-        try {
-            const response = await fetch('/Account/Logout', {
-                method: 'POST'
-            });
-            if (response.ok) {
-                window.location.reload();  // 登出後重新載入頁面
-            }
-        } catch (error) {
-            console.error('登出時發生錯誤:', error);
-        }
-    });
-
-    // 頁面載入時檢查登入狀態
-    checkLoginStatus();
 });

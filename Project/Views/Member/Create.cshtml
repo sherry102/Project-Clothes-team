@@ -106,19 +106,19 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        // 初始化日期選擇器 114/01/06 
-            $(document).ready(function () {
-                $('.datepicker').datepicker({
-                    format: 'yyyy-mm-dd', // 設定日期格式為 年-月-日
-                    language: 'zh-TW', // 設定語言為繁體中文
-                    autoclose: true, // 選擇日期後自動關閉日期選擇器
-                    todayHighlight: true, // 高亮顯示今天的日期
-                    clearBtn: true, // 顯示清除按鈕
-                    orientation: "bottom auto",  // 設定日期選擇器的顯示方向
-                    startDate: '1990-01-01', // 設定可選擇的最早日期
-                    endDate: '2100-12-31' // 設定可選擇的最晚日期
-                });
-            });
+        // // 初始化日期選擇器 114/01/06 
+        //     $(document).ready(function () {
+        //         $('.datepicker').datepicker({
+        //             format: 'yyyy-mm-dd', // 設定日期格式為 年-月-日
+        //             language: 'zh-TW', // 設定語言為繁體中文
+        //             autoclose: true, // 選擇日期後自動關閉日期選擇器
+        //             todayHighlight: true, // 高亮顯示今天的日期
+        //             clearBtn: true, // 顯示清除按鈕
+        //             orientation: "bottom auto",  // 設定日期選擇器的顯示方向
+        //             startDate: '1990-01-01', // 設定可選擇的最早日期
+        //             endDate: '2100-12-31' // 設定可選擇的最晚日期
+        //         });
+        //     });
    
         function handleFileSelect(input) {
             const file = input.files[0];

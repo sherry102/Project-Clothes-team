@@ -11,197 +11,81 @@ namespace Project.Controllers
 {
     public class FrontMemberController : Controller
     {
-        IWebHostEnvironment _enviro = null;
+        private readonly IWebHostEnvironment _enviro;
+
         public FrontMemberController(IWebHostEnvironment p)
         {
             _enviro = p;
         }
-
-        public IActionResult List(CKeywordViewModel vm)
+        // 檢查登入狀態的API
+        [HttpGet]
+        public IActionResult CheckLoginStatus()
         {
-            DbuniPayContext db = new DbuniPayContext();
-            string keyword = vm.txtKeyword;
-            IEnumerable<Tmember> datas = null;
-
-            if (string.IsNullOrEmpty(keyword))
-                datas = db.Tmembers.Where(m => m.MisHided == false); // 只顯示未加入黑名單的會員
-            else
-                datas = db.Tmembers.Where
-                    (p => p.MisHided == false &&
-                    (p.Mname.Contains(keyword)
-                || (keyword == "男" && p.Mgender == 0)
-                || (keyword == "女" && p.Mgender == 1)
-                || p.Maccount.Contains(keyword)
-                || p.Memail.Contains(keyword)
-                || p.Maddress.Contains(keyword)
-                || p.Mbirthday.ToString().Contains(keyword)
-                || p.Mphone.Contains(keyword)));
-
-            List<CMemberWrap> list = new List<CMemberWrap>();
-            foreach (var t in datas)
-                list.Add(new CMemberWrap() { member = t });
-            return View(list);
-        }
-                   
-        public IActionResult Edit(int id)
-        {
-            DbuniPayContext db = new DbuniPayContext();
-            var member = db.Tmembers.FirstOrDefault(m => m.Mid == id);
-            if (member == null)
-                return RedirectToAction("List");
-            return View(member);
+            var isLoggedIn = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER) != null;
+            return Json(new { isLoggedIn });
         }
 
-
-        [HttpPost]
-        public IActionResult Edit(Tmember p, IFormFile photo)
+        // 處理個人圖示點擊
+        [HttpGet]
+        public IActionResult HandleProfileClick()
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Tmember x = db.Tmembers.FirstOrDefault(c => c.Mid == p.Mid);
-            if (x != null)
+            var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(userJson))
+            { // 未登入時返回狀態              
+                return Json(new { success = false, redirectUrl = "/Account/Login" });
+            }           
+            return Json(new// 已登入時返回選單項目
             {
-                x.Mname = p.Mname;
-                x.Mgender = p.Mgender;
-                x.Maccount = p.Maccount;
-                x.Mpassword = p.Mpassword;
-                x.Memail = p.Memail;
-                x.Maddress = p.Maddress;
-                x.Mbirthday = p.Mbirthday;
-                x.Mphone = p.Mphone;
-                x.Mpoints = p.Mpoints;
-                x.Mpermissions = p.Mpermissions;
-
-                // 處理照片上傳
-                if (photo != null && photo.Length > 0)
+                success = true,
+                data = new[]
                 {
-                    // 檢查檔案格式
-                    string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-                    string extension = Path.GetExtension(photo.FileName).ToLower();
-
-                    if (!allowedExtensions.Contains(extension))
-                    {
-                        ModelState.AddModelError("photo", "僅允許上傳 jpg, jpeg, png, gif 格式的圖片");
-                        return View(x);
-                    }
-
-                    // 檢查檔案大小 (5MB)
-                    if (photo.Length > 1 * 1024 * 1024)
-                    {
-                        ModelState.AddModelError("photo", "圖片大小不能超過 1MB");
-                        return View(x);
-                    }
-
-                    try
-                    {
-                        // 刪除舊圖片
-                        if (!string.IsNullOrEmpty(x.Mphoto))
-                        {
-                            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", x.Mphoto);
-                            if (System.IO.File.Exists(oldImagePath))
-                            {
-                                System.IO.File.Delete(oldImagePath);
-                            }
-                        }
-
-                        // 上傳新圖片
-                        string fileName = Guid.NewGuid().ToString() + extension;  // 使用 GUID 避免檔名重複
-                        string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            photo.CopyTo(stream);
-                        }
-
-                        x.Mphoto = fileName;
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError("", $"圖片上傳失敗: {ex.Message}");
-                        return View(x);
-                    }
+                new { text = "個人資料", url = "/FrontMember/fprofile" },
+                new { text = "我的訂單", url = "/Member/Orders" },
+                new { text = "優惠券", url = "/Member/Coupons" },
+                new { text = "登出", url = "/Account/Logout" }
                 }
-
-                try
-                {
-                    db.SaveChanges();
-                    return RedirectToAction("List");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"儲存失敗: {ex.Message}");
-                    return View(x);
-                }
-            }
-            return View(x);
+            });
         }
 
-        public IActionResult Create()
+        // 會員註冊頁面
+        public IActionResult fcreate()
         {
-            return View();
+            var model = new CMemberWrap
+            {
+                member = new Tmember()
+                {
+                    Mgender = -1
+                }
+            };
+            return View(model);
         }
         [HttpPost]
-        public IActionResult Create(CMemberWrap memberWrap, IFormFile photo)
-        {
-
-            DbuniPayContext db = new DbuniPayContext();
-            if (photo != null && photo.Length > 0)
-            {
-                // 檢查檔案類型
-                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-                string extension = Path.GetExtension(photo.FileName).ToLower();
-
-                if (!allowedExtensions.Contains(extension))
-                {
-                    ModelState.AddModelError("photo", "只接受 jpg, jpeg, png, gif 格式的圖片");
-                    return View(memberWrap);
-                }
-
-                if (photo.Length > 1 * 1024 * 1024)
-                {
-                    ModelState.AddModelError("photo", "圖片大小不能超過 1MB");
-                    return View(memberWrap);
-                }
-
-                try
-                {
-                    string fileName = Guid.NewGuid().ToString() + extension;
-                    string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
-
-                    // 確保資料夾存在
-                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images"));
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        photo.CopyTo(stream);
-                    }
-
-                    memberWrap.member.Mphoto = fileName;
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("photo", $"圖片上傳失敗: {ex.Message}");
-                    return View(memberWrap);
-                }
-            }
-
-            memberWrap.member.McreatedDate = DateTime.Now;
-            db.Tmembers.Add(memberWrap.member);
-
+        public IActionResult fcreate(CMemberWrap memberWrap)
+        {          
+            if (!ModelState.IsValid) //若模型驗證失敗，返回表單並顯示驗證錯誤訊息
+                return View(memberWrap);                     
+            using var db = new DbuniPayContext();                     
+            memberWrap.member.McreatedDate = DateTime.Now; //設定會員的建立日期為目前時間
             try
             {
-                db.SaveChanges();
-                return RedirectToAction("List");
+                db.Tmembers.Add(memberWrap.member);//將會員資料加入資料庫並儲存變更               
+                db.SaveChanges();//成功後導向到「登入」頁面                         
+                return RedirectToAction("fprofile", "FrontMember");
             }
             catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"儲存失敗: {ex.Message}");
+            {                     
+                ModelState.AddModelError("", $"註冊失敗: {ex.Message}"); // 中文：若發生例外，將錯誤訊息加入 ModelState，並返回表單      
                 return View(memberWrap);
             }
-
-
         }
-
-        public IActionResult Profile()
+        // 登出處理
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
+            return Json(new { success = true });
+        }
+        public IActionResult fprofile()
         {
             DbuniPayContext db = new DbuniPayContext();
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
@@ -212,17 +96,18 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Profile(CMemberWrap t)
+        public IActionResult fprofile(CMemberWrap t)
         {
             DbuniPayContext db = new DbuniPayContext();
             Tmember T = db.Tmembers.FirstOrDefault(c => c.Mid == t.Mid);
+       
             if (T != null)
             {
                 T.Mname = t.Mname;
-                T.Mgender = t.Mgender;
+                T.Mgender = t.Mgender.GetValueOrDefault(-1);
                 T.Memail = t.Memail;
                 T.Maddress = t.Maddress;
-                T.Mbirthday = DateOnly.Parse(t.Mbirthday);
+                T.Mbirthday = DateOnly.Parse(t.Mbirthday);             
                 T.Mphone = t.Mphone;
                 if (t.photoPath != null)
                 {
@@ -235,7 +120,7 @@ namespace Project.Controllers
 
             string json = JsonSerializer.Serialize(T); // 序列化模型数据
             HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json); // 更新 Session
-            return RedirectToAction("Profile"); // 重定向到 Profile 页面
+            return RedirectToAction("fprofile"); // 重定向到 Profile 页面
         }
 
         [HttpPost]
@@ -253,8 +138,6 @@ namespace Project.Controllers
             }
 
             return RedirectToAction("Profile");
-        }
-
+        }   
     }
-
 }
