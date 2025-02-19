@@ -1,104 +1,85 @@
 ﻿@model List<Project.Models.CProductWrap> 
 
+@section Styles {
+    <style>
+        .custom-btn {
+            border: none; /* 預設無邊框 */
+            background-color: none;
+            color: dimgray;
+        }
 
+        .custom-btn:hover {
+            background-color: #808080; /* 顏色稍微變深 */
+            color: white;
+        }
 
-@{
-    ViewData["Title"] = "Renew";
+    </style>
 }
 
-<h1>下架商品一覽表</h1>
-
-
-@using (Html.BeginForm())
-{
-    @:關鍵字 @Html.TextBox("txtKeyword")
-    <input type="submit" value="查詢" />
-}
-
-<div>
-    <a asp-action="List">返回列表</a>
+<!-- 麵包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="~/Home/Index" class="text-decoration-none">首頁</a></li>
+        <li class="breadcrumb-item"><a href="~/Product/List" class="text-decoration-none">商品列表</a></li>
+        <li class="breadcrumb-item active" aria-current="page">未上架商品</li>
+    </ol>
+</nav>
+<h4>下架商品列表</h4>
+<hr />
+<div class="d-flex align-items-center my-2">
+    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("Renew","Product")">
+        <input class="form-control me-2 index-search"
+               type="search"
+               placeholder="請輸入商品關鍵字"
+               aria-label="Search"
+               name="keyword"
+               autocomplete="off" />
+        <button class="btn btn-outline-secondary btn-search" type="submit">
+            <div><i class="bi bi-search"></i></div>
+        </button>
+    </form>
 </div>
-<br>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                序
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pprice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Ptype)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pcategory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pdescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pinventory)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model[0].PcreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].Pphoto)
-            </th>
-            <th></th>
+            <th>序</th>
+            <th>圖片</th>
+            <th>商品名稱</th>
+            <th>價格</th>
+            <th>類型</th>
+            <th>分類</th>
+            <th>商品描述</th>
+            <th>總庫存</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
         @{
-            int count2 = 0;
-            foreach (var item in Model.Where(m => m.Pinventory > 0))
-            {
-                count2++;
-                <tr>
-                    <td>
-                        @count2
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pname)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pprice)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ptype)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pcategory)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pdescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pinventory)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PcreatedDate)
-                    </td>
-                    <td>
-                        <img src="~/images/@item.Pphoto" height="80" width="90" /><br />
-
-                    </td>
-
-                    <td>
-                        @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }) <br /><br />
-                        @Html.ActionLink("商品上架", "Recovery", "Product", new { id = item.Pid },
-                             new { onclick = "return confirm('確定要上架商品嗎?')" })<br /><br />
-                        @Html.ActionLink("刪除商品", "Delete", "Product", new { id = item.Pid },
-                             new { onclick = "return confirm('確定要刪除商品嗎?')" })
-                    </td>
-
-                </tr>
-            }
+            int count = 0;
+        }
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr class="align-middle">
+                <td>@count</td>
+                <td>
+                    <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Pname)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pprice)</td>
+                <td>@Html.DisplayFor(modelItem => item.Ptype)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pinventory)</td>
+                <td>
+                    @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }, new { @class = "btn custom-btn btn-sm" })
+                    @Html.ActionLink("商品上架", "Recovery", "Product", new { id = item.Pid },
+                             new { @class = "btn custom-btn btn-sm", onclick = "return confirm('確定要上架商品嗎?')" })<br /><br />
+                    @Html.ActionLink("刪除商品", "Delete", "Product", new { id = item.Pid },
+                             new { @class = "btn custom-btn btn-sm", onclick = "return confirm('確定要刪除商品嗎?')" })
+                </td>
+            </tr>
         }
     </tbody>
 </table>

@@ -33,17 +33,9 @@
     </style>
 }
 
-<!-- 麵包屑 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb mt-3">
-        <li class="breadcrumb-item"><a href="~/FrontHome/FrontIndex" class="text-decoration-none">首頁</a></li>
-        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
-    </ol>
-</nav>-->
-
 <!-- 產品列表 -->
 <div class="container">
-    <div class="text-end text-muted my-3">
+    <div class="text-end text-muted my-1">
         <a href="/Product/ProductList" class="text-reset @(currentSort == "" ? "fw-bold" : "")">全部商品</a> |
         <a href="/Product/ProductList?sortby=hot&keyword=@keyword" class="text-reset @(currentSort == "hot" ? "fw-bold" : "")">熱銷排序</a> |
         <a href="/Product/ProductList?sortby=price_asc&keyword=@keyword" class="text-reset @(currentSort == "price_asc" ? "fw-bold" : "")">價格低到高</a> |

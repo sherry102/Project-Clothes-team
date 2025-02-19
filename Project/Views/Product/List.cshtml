@@ -1,23 +1,48 @@
 ﻿@model List<Project.Models.CProductWrap> 
+@section Styles{
+    <style>
+        .custom-btn {
+            border: none; /* 預設無邊框 */
+            background-color: none;
+            color: dimgray;
+        }
 
-@{
-    ViewData["Title"] = "List";
+        .custom-btn:hover {
+            background-color: #808080; /* 顏色稍微變深 */
+            color:white;
+        }
+    </style>
 }
 
-<h1>商品資料一覽表</h1>
+<!-- 麵包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="~/Home/Index" class="text-decoration-none">首頁</a></li>
+        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+    </ol>
+</nav>
+<h4>上架商品列表</h4>
+<hr />
+<div class="d-flex align-items-center my-2">
+    <form class="d-flex me-5 form-search input-search"  method="get" action="@Url.Action("List","Product")">
+        <input class="form-control me-2 index-search"
+               type="search"
+               placeholder="請輸入商品關鍵字"
+               aria-label="Search"
+               name="keyword"
+               autocomplete="off" />
+        <button class="btn btn-outline-secondary btn-search" type="submit">
+            <div><i class="bi bi-search"></i></div>
+        </button>
+    </form>
+    <a href="@Url.Action("List", "Product", new { Keyword = "" })" class="btn custom-btn me-3">全部商品</a>
+    <a href="@Url.Action("List", "Product", new { Keyword = "女裝" })" class="btn custom-btn me-3">女裝</a>
+    <a href="@Url.Action("List", "Product", new { Keyword = "男裝" })" class="btn custom-btn me-3">男裝</a>
+    <a href="@Url.Action("List", "Product", new { Keyword = "童裝" })" class="btn custom-btn me-3">童裝</a>
+    <a href="@Url.Action("Renew", "Product")" class="btn custom-btn me-3">未上架</a>
+    <a href="@Url.Action("Create", "Product")" class="btn custom-btn me-3">新增商品</a>
+</div>
 
-@using (Html.BeginForm())
-{
-    @:關鍵字 @Html.TextBox("txtKeyword")
-    <input type="submit" value="查詢" />
-}
-
-<p>
-    <a asp-action="Create">新增商品</a>
-    <a asp-action="Renew" class="ms-3">商品重上架</a>
-</p>
-
-<h4>架上商品</h4>
 <table class="table">
     <thead>
         <tr>
@@ -27,8 +52,9 @@
             <th>價格</th>
             <th>類型</th>
             <th>分類</th>
-            <th>描述</th>
-            <th></th>
+            <th>商品描述</th>
+            <th>總庫存</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +64,7 @@
         @foreach (var item in Model)
         {
             count++;
-            <tr>
+            <tr class="align-middle">
                 <td>@count</td>
                 <td>
                     <img src="~/images/@item.Pphoto" height="80" width="70" class="rounded" />
@@ -48,15 +74,17 @@
                 <td>@Html.DisplayFor(modelItem => item.Ptype)</td>
                 <td>@Html.DisplayFor(modelItem => item.Pcategory)</td>
                 <td>@Html.DisplayFor(modelItem => item.Pdescription)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pinventory)</td>
                 <td>
-                    @Html.ActionLink("修改", "Edit", new { id = item.Pid }, new { @class = "btn btn-outline-dark btn-sm" })
                     <!-- 查看庫存明細按鈕 -->
-                    <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="modal"
+                    <button class="btn custom-btn btn-sm my-2" type="button" data-bs-toggle="modal"
                             data-bs-target="#inventoryModal-@count">
-                        查看庫存
+                        查看商品詳細庫存
                     </button>
-                    @Html.ActionLink("下架", "Hide", "Product", new { id = item.Pid },
-                             new { @class = "btn btn-outline-dark btn-sm", onclick = "return confirm('確定要下架商品嗎?')" })
+                    <div class="w-100"></div>
+                    @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }, new { @class = "btn custom-btn btn-sm my-2" })
+                    @Html.ActionLink("商品下架", "Hide", "Product", new { id = item.Pid },
+                             new { @class = "btn custom-btn btn-sm my-2", onclick = "return confirm('確定要下架商品嗎?')" })
                 </td>
             </tr>
         }

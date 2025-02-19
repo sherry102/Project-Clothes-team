@@ -1,70 +1,151 @@
 ﻿@model Project.Models.CProductWrap
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>修改商品</h1>
-
+<!-- 麵包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-3">
+        <li class="breadcrumb-item"><a href="~/Home/Index" class="text-decoration-none">首頁</a></li>
+        <li class="breadcrumb-item"><a href="~/Product/List" class="text-decoration-none">商品列表</a></li>
+        <li class="breadcrumb-item active" aria-current="page">編輯商品</li>
+    </ol>
+</nav>
+<h4>編輯商品</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="Pid" value="@Model.Pid" />
-            <div class="form-group">
-                <label asp-for="Pname" class="control-label"></label>
-                <input asp-for="Pname" class="form-control" />
-                <span asp-validation-for="Pname" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pprice" class="control-label"></label>
-                <input asp-for="Pprice" class="form-control" />
-                <span asp-validation-for="Pprice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ptype" class="control-label"></label>
-                <input asp-for="Ptype" class="form-control" />
-                <span asp-validation-for="Ptype" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pcategory" class="control-label"></label>
-                <input asp-for="Pcategory" class="form-control" />
-                <span asp-validation-for="Pcategory" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pdescription" class="control-label"></label>
-                <input asp-for="Pdescription" class="form-control" />
-                <span asp-validation-for="Pdescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pinventory" class="control-label"></label>
-                <input asp-for="Pinventory" class="form-control" />
-                <span asp-validation-for="Pinventory" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <!-- 主圖片上傳 -->
-                <label>主圖片：</label>
-                <input type="file" name="photoPath" class="form-control" />
-            </div>
-            <div class="form-group">
-                <!-- 多張圖片上傳 -->
-                <label>附加圖片：</label>
-                <input type="file" name="photos" class="form-control" multiple />
 
+<form asp-action="Edit" enctype="multipart/form-data">
+    <input type="hidden" name="Pid" value="@Model.Pid" />
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="photo">主圖片：</label>
+            <input type="file" id="photo" name="photoPath" accept="image/*">
+            <br>
+            <img id="mainPreview" src="~/images/@Model.Pphoto" style="max-width:200px; margin:10px auto; display:@(string.IsNullOrEmpty(Model.Pphoto) ? "none" : "block");">
+        </div>
+        <div class="form-group col-md-8">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Pname" class="control-label"></label>
+                    <input asp-for="Pname" class="form-control mb-3" />
+                    <span asp-validation-for="Pname" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Pprice" class="control-label"></label>
+                    <input asp-for="Pprice" class="form-control mb-3" />
+                    <span asp-validation-for="Pprice" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Ptype" class="control-label"></label>
+                    <select asp-for="Ptype" asp-items="@(new SelectList(Model.PtypeList))" class="form-control mb-3">
+                        <option value="">請選擇類型</option>
+                    </select>
+                    <span asp-validation-for="Ptype" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Pcategory" class="control-label"></label>
+                    <select asp-for="Pcategory" asp-items="@(new SelectList(Model.PcategoryList))" class="form-control mb-3">
+                        <option value="">請選擇分類</option>
+                    </select>
+                    <span asp-validation-for="Pcategory" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Pdescription" class="control-label"></label>
+                    <textarea asp-for="Pdescription" class="form-control mb-3" rows="4"></textarea>
+                    <span asp-validation-for="Pdescription" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="送出修改" class="btn btn-primary" />
+        </div>
+        <div class="form-group mt-4">
+            <label for="photos">多張圖片：</label>
+            <input type="file" id="photos" name="Photos" multiple accept="image/*">
+            <br>
+            <div id="multiplePreview">
+                @foreach (var image in Model.Images)
+                {
+                   <img src="~/Images/@image" style="max-width:100px; margin:5px;">
+                }
             </div>
-        </form>
+        </div>
+        <div class="form-group">
+            <label class="control-label my-3">修改商品規格 (顏色 / 尺寸 / 庫存)</label>
+            <div id="inventoryContainer">
+                @if (Model.TproductInventories != null && Model.TproductInventories.Count > 0)
+                {
+                    for (int i = 0; i < Model.TproductInventories.Count; i++)
+                    {
+                        <div class="inventory-group mb-2">
+                            <input type="hidden" name="TproductInventories[@i].Piid" value="@Model.TproductInventories[i].Piid" />
+                            <input type="text" name="TproductInventories[@i].Pcolor" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Pcolor" placeholder="顏色">
+                            <input type="text" name="TproductInventories[@i].Psize" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Psize" placeholder="尺寸">
+                            <input type="number" name="TproductInventories[@i].Pstock" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Pstock" placeholder="庫存">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
+                        </div>
+                    }
+                }
+            </div>
+            <button type="button" class="btn btn-success btn-sm mt-2" onclick="addInventory()">+ 新增規格</button>
+        </div>
+        <div class="form-group mt-4 text-center">
+            <input type="submit" value="修改商品" class="btn btn-outline-secondary btn-sm mb-3" />
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="List">返回列表</a>
-</div>
+</form>
 
 @section Scripts {
-    
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("photo").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const output = document.getElementById('mainPreview');
+                    output.src = reader.result;
+                    output.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById("photos").addEventListener("change", function (e) {
+            const files = e.target.files;
+            const previewDiv = document.getElementById("multiplePreview");
+            previewDiv.innerHTML = ""; // 清空舊的預覽圖
+
+            for (const file of files) {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement("img");
+                        img.src = event.target.result;
+                        img.style.maxWidth = "100px";
+                        img.style.margin = "5px";
+                        previewDiv.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+        let inventoryIndex = @Model.TproductInventories.Count; // 記錄目前的索引值
+
+        function addInventory() {
+            let container = document.getElementById("inventoryContainer");
+
+            let newGroup = document.createElement("div");
+            newGroup.classList.add("inventory-group", "mb-2");
+            newGroup.innerHTML = `
+                <input type="hidden" name="TproductInventories[${inventoryIndex}].Id" value="0" />
+                <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25" placeholder="顏色">
+                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25" placeholder="尺寸">
+                <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25" placeholder="庫存">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
+            `;
+            container.appendChild(newGroup);
+            inventoryIndex++; // 增加索引，確保 name 屬性不重複
+        }
+
+        function removeInventory(button) {
+            button.parentElement.remove();
+        }
+    </script>
 }

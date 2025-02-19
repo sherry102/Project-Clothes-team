@@ -1,62 +1,57 @@
 ﻿@model Project.Models.CProductWrap
 
-@{
-    ViewData["Title"] = "Create";
-}
-
+<!-- 麵包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-3">
+        <li class="breadcrumb-item"><a href="~/Home/Index" class="text-decoration-none">首頁</a></li>
+        <li class="breadcrumb-item"><a href="~/Product/List" class="text-decoration-none">商品列表</a></li>
+        <li class="breadcrumb-item active" aria-current="page">新增商品</li>
+    </ol>
+</nav>
 <h4>新增商品</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Pname" class="control-label"></label>
-                <input asp-for="Pname" class="form-control mb-3" />
-                <span asp-validation-for="Pname" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pprice" class="control-label"></label>
-                <input asp-for="Pprice" class="form-control mb-3" />
-                <span asp-validation-for="Pprice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ptype" class="control-label"></label>
-                <select asp-for="Ptype" asp-items="@(new SelectList(Model.PtypeList))" class="form-control mb-3">
-                    <option value="">請選擇類型</option>
-                </select>
-                <span asp-validation-for="Ptype" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Pcategory" class="control-label"></label>
-                <select asp-for="Pcategory" asp-items="@(new SelectList(Model.PcategoryList))" class="form-control mb-3">
-                    <option value="">請選擇分類</option>
-                </select>
-                <span asp-validation-for="Pcategory" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Pdescription" class="control-label"></label>
-                <input asp-for="Pdescription" class="form-control mb-3" />
-                <span asp-validation-for="Pdescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pinventory" class="control-label"></label>
-                <input asp-for="Pinventory" class="form-control mb-3" />
-                <span asp-validation-for="Pinventory" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-4">
-                <input type="submit" value="新增商品" class="btn btn-primary mb-3" />
-            </div>
-        </form>
-    </div>
-    <div class="col-md-8">
-        <div class="form-group mt-4">
+ <form asp-action="Create" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="form-group col-md-4">
             <label for="photo">主圖片：</label>
             <input type="file" id="photo" name="photoPath" accept="image/*">
             <br>
-            <img id="mainPreview" src="#" style="display:none; max-width:200px; margin-top:10px;">
+            <img id="mainPreview" src="#" style="display:none; max-width:200px; margin:10px auto;">
+        </div>
+        <div class="form-group col-md-8">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Pname" class="control-label"></label>
+                    <input asp-for="Pname" class="form-control mb-3" />
+                    <span asp-validation-for="Pname" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Pprice" class="control-label"></label>
+                    <input asp-for="Pprice" class="form-control mb-3" />
+                    <span asp-validation-for="Pprice" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Ptype" class="control-label"></label>
+                    <select asp-for="Ptype" asp-items="@(new SelectList(Model.PtypeList))" class="form-control mb-3">
+                        <option value="">請選擇類型</option>
+                    </select>
+                    <span asp-validation-for="Ptype" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Pcategory" class="control-label"></label>
+                    <select asp-for="Pcategory" asp-items="@(new SelectList(Model.PcategoryList))" class="form-control mb-3">
+                        <option value="">請選擇分類</option>
+                    </select>
+                    <span asp-validation-for="Pcategory" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="Pdescription" class="control-label"></label>
+                    <textarea asp-for="Pdescription" class="form-control mb-3" rows="4"></textarea>
+                    <span asp-validation-for="Pdescription" class="text-danger"></span>
+                </div>
+            </div>
         </div>
         <div class="form-group mt-4">
             <label for="photos">多張圖片：</label>
@@ -66,23 +61,23 @@
         </div>
         <!-- 商品庫存動態新增區塊 -->
         <div class="form-group">
-            <label class="control-label my-3">商品規格 (顏色 / 尺寸 / 庫存)</label>
+            <label class="control-label my-3">新增商品規格 (顏色 / 尺寸 / 庫存)</label>
             <div id="inventoryContainer">
                 <!-- 預設第一組 -->
                 <div class="inventory-group mb-2">
                     <input type="text" name="TproductInventories[0].Pcolor" class="form-control d-inline w-25" placeholder="顏色">
                     <input type="text" name="TproductInventories[0].Psize" class="form-control d-inline w-25" placeholder="尺寸">
                     <input type="number" name="TproductInventories[0].Pstock" class="form-control d-inline w-25" placeholder="庫存">
-                    <button type="button" class="btn btn-success btn-sm" onclick="addInventory()">+</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm mb-3" onclick="addInventory()">+</button>
                 </div>
             </div>
         </div>
+        <div class="form-group mt-4 text-center">
+            <input type="submit" value="新增商品" class="btn custom-btn mb-3" />
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="List">取消</a>
-</div>
 
 @section Scripts {
     @{
@@ -106,10 +101,10 @@
             container.appendChild(newInventory);
             inventoryIndex++; // 增加索引值
         }
-
         function removeInventory(button) {
             button.parentElement.remove();
         }
+
         document.getElementById("photo").addEventListener("change", function (e) {
             const file = e.target.files[0];
             if (file) {
