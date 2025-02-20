@@ -13,21 +13,21 @@
             @Html.AntiForgeryToken() @* 防止 CSRF 攻擊 *@
             <!--姓名 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mname" class="mb-1"></label>
-                <input asp-for="member.Mname" class="form-control" placeholder="請輸入姓名"/>
-                <span asp-validation-for="member.Mname" class="text-danger"></span>
+                <label asp-for="Mname" class="mb-1"></label>
+                <input asp-for="Mname" class="form-control" placeholder="請輸入姓名"/>
+                <span asp-validation-for="Mname" class="text-danger"></span>
             </div>
             <!--性別-->
             <div class="form-group mb-3">
-                <label asp-for="member.Mgender" class="mb-1"></label>
+                <label asp-for="Mgender" class="mb-1"></label>
                 <div class="btn-group" role="group" aria-label="性別選擇">
-                    @Html.RadioButtonFor(model => model.member.Mgender, 0, new { id = "male", @class = "btn-check" })
+                    @Html.RadioButtonFor(model => model.Mgender, 0, new { id = "male", @class = "btn-check" })
                     <label class="btn btn-outline-primary" for="male">男性</label>
 
-                    @Html.RadioButtonFor(model => model.member.Mgender, 1, new { id = "female", @class = "btn-check" })
+                    @Html.RadioButtonFor(model => model.Mgender, 1, new { id = "female", @class = "btn-check" })
                     <label class="btn btn-outline-primary" for="female">女性</label>
                 </div>
-                <span asp-validation-for="member.Mgender" class="text-danger"></span>
+                <span asp-validation-for="Mgender" class="text-danger"></span>
             </div>
             <!--生日-->
             <div class="form-group mb-3">
@@ -41,33 +41,33 @@
             </div>
             <!--電子郵件 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Memail" class="mb-1"></label>
-                <input asp-for="member.Memail" class="form-control" placeholder="請輸入E-mail" />
-                <span asp-validation-for="member.Memail" class="text-danger"></span>
+                <label asp-for="Memail" class="mb-1"></label>
+                <input asp-for="Memail" class="form-control" placeholder="請輸入E-mail" />
+                <span asp-validation-for="Memail" class="text-danger"></span>
             </div>
             <!--地址 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Maddress" class="mb-1"></label>
-                <input asp-for="member.Maddress" class="form-control" placeholder="請輸入地址" />
-                <span asp-validation-for="member.Maddress" class="text-danger"></span>
+                <label asp-for="Maddress" class="mb-1"></label>
+                <input asp-for="Maddress" class="form-control" placeholder="請輸入地址" />
+                <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
             <!--手機號碼 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mphone" class="mb-1"></label>
-                <input asp-for="member.Mphone" class="form-control" placeholder="請輸入手機號碼"/>
-                <span asp-validation-for="member.Mphone" class="text-danger"></span>
+                <label asp-for="Mphone" class="mb-1"></label>
+                <input asp-for="Mphone" class="form-control" placeholder="請輸入手機號碼"/>
+                <span asp-validation-for="Mphone" class="text-danger"></span>
             </div>
             <!--帳號 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Maccount" class="mb-1"></label>
-                <input asp-for="member.Maccount" class="form-control" placeholder="請輸入帳號"  />
-                <span asp-validation-for="member.Maccount" class="text-danger"></span>
+                <label asp-for="Maccount" class="mb-1"></label>
+                <input asp-for="Maccount" class="form-control" placeholder="請輸入帳號"  />
+                <span asp-validation-for="Maccount" class="text-danger"></span>
             </div>
             <!--密碼 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mpassword" class="mb-1"></label>
-                <input asp-for="member.Mpassword" class="form-control" placeholder="請輸入密碼" type="password" />
-                <span asp-validation-for="member.Mpassword" class="text-danger"></span>
+                <label asp-for="Mpassword" class="mb-1"></label>
+                <input asp-for="Mpassword" class="form-control" placeholder="請輸入密碼" type="password" />
+                <span asp-validation-for="Mpassword" class="text-danger"></span>
             </div>
             <!--確認密碼 (僅前端處理) -->
             <div class="form-group mb-3">
