@@ -81,7 +81,7 @@ namespace Project.Controllers
 
             ViewBag.SalesCount_TOP5_Today = (from tod in db.TorderDetails
                                              join td in db.Torders on tod.Oid equals td.Oid
-                                             where td.Odate.Date == today
+                                             where td.Odate.Date == today && tod.Pid != 0
                                              group tod by tod.Pid into grouped
                                              select new
                                              {
@@ -98,8 +98,8 @@ namespace Project.Controllers
 
             ViewBag.SalesCount_TOP5_Month = (from tod in db.TorderDetails
                                              join td in db.Torders on tod.Oid equals td.Oid
-                                             where td.Odate.Month == currentMonth && td.Odate.Year == currentYear
-                                             group tod by tod.Pid into grouped
+                                             where td.Odate.Month == currentMonth && td.Odate.Year == currentYear && tod.Pid != 0
+											 group tod by tod.Pid into grouped
                                              select new
                                              {
                                                  pid = grouped.Key,
@@ -115,8 +115,8 @@ namespace Project.Controllers
 
             ViewBag.SalesCount_TOP5_Year = (from tod in db.TorderDetails
                                             join td in db.Torders on tod.Oid equals td.Oid
-                                            where td.Odate >= new DateTime(2024, 1, 1) && td.Odate <= new DateTime(2024, 12, 31)
-                                            group tod by tod.Pid into grouped
+                                            where td.Odate >= new DateTime(2025, 1, 1) && td.Odate <= new DateTime(2025, 12, 31) && tod.Pid != 0
+											group tod by tod.Pid into grouped
                                             select new
                                             {
                                                 pid = grouped.Key,
