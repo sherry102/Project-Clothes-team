@@ -4,6 +4,7 @@ using Project.Models;               // 引用專案中 Models 資料夾的類別
 using Project.ViewModel;            // 引用專案中 ViewModel 資料夾的類別
 using System;                       // 基本系統功能，包含DateTime等
 using System.Collections.Generic;   // 提供集合 (List、Dictionary) 等相關功能
+using System.Globalization;
 using System.Text.Json;             // 提供 JSON 序列化/反序列化功能
 
 namespace Project.Controllers
@@ -29,9 +30,9 @@ namespace Project.Controllers
                 data = new[]
                 {
                 new { text = "個人資料", url = "/FrontMember/fprofile" },
-                new { text = "我的訂單", url = "/Member/Orders" },
-                new { text = "優惠券", url = "/Member/Coupons" },
-                new { text = "後檯", url= "Home/Index" },
+                new { text = "我的訂單", url = "/FrontHome/CheckOrder" },
+                new { text = "優惠券", url = "/FrontHome/Coupon" },
+                new { text = "後檯", url= "/Home/Index" },
                 new { text = "登出", url = "/Account/Logout" }
                 }
             });
@@ -99,9 +100,17 @@ namespace Project.Controllers
                 T.Mname = t.Mname;
                 T.Mgender = t.Mgender.GetValueOrDefault(-1);
                 T.Memail = t.Memail;
-                T.Maddress = t.Maddress;
-                T.Mbirthday = DateOnly.Parse(t.Mbirthday);             
+                T.Maddress = t.Maddress;               
                 T.Mphone = t.Mphone;
+
+                if (!string.IsNullOrEmpty(t.Mbirthday))
+                {
+                    T.Mbirthday = DateOnly.ParseExact(
+                        t.Mbirthday,
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture
+                    );
+                }
                 if (t.photoPath != null)
                 {
                     string photoName = Guid.NewGuid().ToString() + ".jpg";
