@@ -31,6 +31,7 @@ namespace Project.Controllers
                 new { text = "個人資料", url = "/FrontMember/fprofile" },
                 new { text = "我的訂單", url = "/Member/Orders" },
                 new { text = "優惠券", url = "/Member/Coupons" },
+                new { text = "後檯", url= "Home/Index" },
                 new { text = "登出", url = "/Account/Logout" }
                 }
             });
@@ -62,6 +63,14 @@ namespace Project.Controllers
                 ModelState.AddModelError("", $"註冊失敗: {ex.Message}"); // 中文：若發生例外，將錯誤訊息加入 ModelState，並返回表單
                 return View(memberWrap);
             }
+        }
+        public IActionResult Edit(int id)
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            var member = db.Tmembers.FirstOrDefault(m => m.Mid == id);
+            if (member == null)
+                return RedirectToAction("List");
+            return View(member);
         }
         [HttpPost]
         public IActionResult Logout()
