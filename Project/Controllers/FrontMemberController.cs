@@ -15,28 +15,36 @@ namespace Project.Controllers
         public FrontMemberController(IWebHostEnvironment p)// 建構函式，注入環境變數
         {
             _enviro = p;
-        }       
-        [HttpGet]// 處理個人圖示點擊
+        }
+        [HttpGet]
         public IActionResult HandleProfileClick()
-        { // 從 Session 取得使用者 JSON 字串
+        {// 中文：從 Session 取得用戶 JSON         
             var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(userJson))
-            { // 未登入時返回狀態              
+            {// 中文：若未登入，回傳 false 與重定向                
                 return Json(new { success = false, redirectUrl = "/FrontMember/fcreate" });
             }           
-            return Json(new// 已登入時返回選單項目
+            var member = JsonSerializer.Deserialize<Tmember>(userJson); // 反序列化為 Tmember 物件，取得 Mpermissions
+            int perm = member.Mpermissions; // perm 即會員權限數字                    
+            var menuList = new List<object>//建立一個清單來裝選單項目
             {
-                success = true,
-                data = new[]
-                {
                 new { text = "個人資料", url = "/FrontMember/fprofile" },
                 new { text = "我的訂單", url = "/FrontHome/CheckOrder" },
-                new { text = "優惠券", url = "/FrontHome/Coupon" },
-                new { text = "後檯", url= "/Home/Index" },
-                new { text = "登出", url = "/Account/Logout" }
-                }
+                new { text = "優惠券",   url = "/FrontHome/Coupon" }
+            };                     
+            var validPerms = new int[] { 11, 21, 31, 51, 61, 71, 81, 91 };//如果權限在 [11,21,31,51,61,71,81,91]，則顯示「後檯」
+            if (validPerms.Contains(perm))
+            {
+                menuList.Add(new { text = "後檯", url = "/Home/Index" });
+            }            
+            menuList.Add(new { text = "登出", url = "/Account/Logout" });//最後一定都有「登出」          
+            return Json(new //回傳 JSON，success = true，data = menuList
+            {
+                success = true,
+                data = menuList.ToArray()
             });
-        }               
+        }
+
         public IActionResult fcreate()// 會員註冊頁面
         {
             var model = new CMemberWrap
