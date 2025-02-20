@@ -28,6 +28,12 @@ namespace Project.Models
             get { return _order.Oname; }
             set { _order.Oname = value; }
         }
+        [DisplayName("訂單價格")]
+        public int Oprice
+        {
+            get { return _order.Oprice; }
+            set { _order.Oprice = value; }
+        }
         [DisplayName("訂單折扣價")]
         public int? Odiscountedprice
         {
@@ -75,6 +81,25 @@ namespace Project.Models
         {
             get { return _order.Opayment; }
             set { _order.Opayment = value; }
+        }
+        [DisplayName("訂單取消原因")]
+        public string? OcancelReason
+        {
+            get { return _order.OcancelReason; }
+            set { _order.OcancelReason = value; }
+        }
+
+        [DisplayName("訂單取消描述")]
+        public string? OcancelDescription
+        {
+            get { return _order.OcancelDescription; }
+            set { _order.OcancelDescription = value; }
+        }
+        [DisplayName("訂單取消")]
+        public string OcancelStatus
+        {
+            get { return _order.OcancelStatus; }
+            set { _order.OcancelStatus = value; }
         }
     }
 }

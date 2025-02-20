@@ -47,6 +47,7 @@
                 <tr class="bg-gray-200">
                     <th class="border p-1">訂單查詢</th>
                     <th class="border p-1">訂購時間</th>
+                    <th class="border p-1">金額</th>
                     <th class="border p-1">折價券</th>
                     <th class="border p-1">運送地址</th>
                     <th class="border p-1">運費</th>
@@ -65,15 +66,22 @@
                         </a>
                     </td>
                     <td class="border p-1">{{ order.odate }}</td>
+                    <td class="border p-1">{{ order.oPrice }}元</td>
                     <td class="border p-1">{{ order.oDiscountedprice }}元</td>
                     <td class="border p-1">{{ order.oAddress }}</td>
                     <td class="border p-1">60元</td>
                     <td class="border p-1">{{ order.oTotalPrice }}元</td>
                     <td class="border p-1">{{ order.oStatus }}</td>
                     <td class="border p-1">{{ order.oPayment ? '已付款' : '未付款' }}</td>
-                    <td class="border p-1"> 
-                        <a v-if="order.oStatus === '待出貨'" :href="`CancelOrder?oid=${order.oid}`" class="feedback-link">取消</a>
+                    <td class="border p-1">  
+                        <span v-if="order.oCancelStatus === '已取消'" class="feedback-links">已取消</span>
+                        <span v-if="order.oCancelStatus === '訂單無法取消'" class="feedback-links">訂單無法取消</span>
+                        <span v-if="order.oCancelStatus === '申請中'" class="feedback-link text-gray-500">申請中</span>
+                        <a v-if="order.oStatus === '待出貨' && order.oCancelStatus !== '申請中' && order.oCancelStatus !== '已取消' && order.oCancelStatus !== '訂單無法取消' "
+                           :href="`CancelOrder?oid=${order.oid}`"
+                           class="feedback-link">取消</a> 
                     </td>
+
                     <td class="border p-1">
                         <a href="~/FrontHome/Advice" class="feedback-link">問題反應</a>
                     </td>
@@ -88,8 +96,7 @@
     </div>
 </div>
 
-
-
+ 
 @section Scripts {
     <script type="text/javascript"
             src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -214,6 +221,10 @@
                 color: #9b1d2f;
             }
 
+        .feedback-links{
+            color: #A52A2A;
+        }
+
         .items-start label {
             margin-right: 10px;
         }
@@ -241,39 +252,43 @@
         }
 
         table th:nth-child(2), table td:nth-child(2) {
-            width: 150px; /* For Order Date */
+            width: 110px; /* For Order Date */
         }
 
         table th:nth-child(3), table td:nth-child(3) {
-            width: 100px; /* For Discounted Price */
+            width: 100px; /* For Order Price */
         }
 
         table th:nth-child(4), table td:nth-child(4) {
-            width: 350px; /* For Shipping Address */
+            width: 90px; /* For Discounted Price */
         }
 
         table th:nth-child(5), table td:nth-child(5) {
-            width: 70px; /* For Shipping Cost */
+            width: 350px; /* For Shipping Address */
         }
 
         table th:nth-child(6), table td:nth-child(6) {
-            width: 110px; /* For Total Price */
+            width: 80px; /* For Shipping Cost */
         }
 
         table th:nth-child(7), table td:nth-child(7) {
-            width: 120px; /* For Order Status */
+            width: 110px; /* For Total Price */
         }
 
         table th:nth-child(8), table td:nth-child(8) {
-            width: 120px; /* For Payment Status */
+            width: 120px; /* For Order Status */
         }
 
         table th:nth-child(9), table td:nth-child(9) {
-            width: 120px; /* For Cancel Order Button */
+            width: 120px; /* For Payment Status */
         }
 
         table th:nth-child(10), table td:nth-child(10) {
-            width: 120px; /* For Feedback Button */
+            width: 120px; /* For Cancel Order Button */
+        }
+
+        table th:nth-child(11), table td:nth-child(11) {
+            width: 80px; /* For Feedback Button */
         }
     </style> 
 }

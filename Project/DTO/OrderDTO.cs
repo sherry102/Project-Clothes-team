@@ -4,6 +4,7 @@
     {
         public int OID { get; set; }
         public string OName { get; set; }  
+        public int OPrice { get; set; }
         public int OTotalPrice { get; set; }  
         public string Odate { get; set; }  
         public string OAddress { get; set; }  
@@ -38,8 +39,15 @@
         public string ChoosePayment { get; set; }
 
         public string EncryptType { get; set; }
+
+        public string OCancelStatus { get; set; }
     }
-     
+
+    public class OrderRequest
+    {
+        public int Oid { get; set; }
+    }
+
     public class SearchOrderRequest
     {
         public string Condition { get; set; }  // 查詢條件

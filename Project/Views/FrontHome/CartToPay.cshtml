@@ -12,6 +12,7 @@
                     <p></p>
                     <div @@submit.prevent="submitForm">
                         <div class="first-row form-group">
+
                             <div class="controls">
                                 <label class="control-label">
                                     訂購人姓名 <span class="required">*</span>
@@ -89,6 +90,12 @@
                                 <span v-if="errors.email">請輸入有效的電子郵件。</span>
                             </div>
                         </div>
+                        <div class="controls">
+                            <label class="control-label">
+                                <input type="checkbox" v-model="useMemberData" @@change="fillMemberData" />
+                                同會員資料
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -139,7 +146,7 @@
                             </ul>
                             <ul class="qty">
                                 <li>
-                                    <p>價格 : {{ item.pPrice * item.pCount }}</p>
+                                    <p>價格 : {{ item.pPrice }}</p>
                                 </li>
                             </ul>
                         </div>
@@ -170,12 +177,7 @@
                             <label class="payment-option">
                                 <input type="radio" name="payment" value="CreditCard" v-model="formData.payment" />
                                 信用卡付款
-                            </label>
-                            <br />
-                            <label class="payment-option">
-                                <input type="radio" name="payment" value="LinePay" v-model="formData.payment" />
-                                貨到付款
-                            </label>
+                            </label> 
                         </div>
                         <div>
                             <p></p>
@@ -198,7 +200,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
 </div>
 
@@ -224,6 +226,8 @@
                         phone: "",
                         email: "",
                         terms: false,
+                        useMemberData: false,  
+                        memberId: "",  
                     },
                     cities: [
                         '臺北市', '新北市', '基隆市', '桃園市', '新竹縣', '新竹市', '苗栗縣', '臺中市',
@@ -324,17 +328,16 @@
             mounted: function () {
                 this.getCartItems();
                 this.loadFromStorage();
+                this.getMemberId(); 
             },
             methods: {
                 getCartItems: function () {
                     let _this = this;
-                    console.log(_this.ItemName);
+                     
                     axios.post(`${_this.baseAddress}/Ajax/GetCartItems`, {})
-                        .then(response => {
-                            console.log(response);
+                        .then(response => { 
                             if (response.data) {
-                                _this.cartItems = response.data;
-                                console.log('购物车数据:', JSON.stringify(response.data, null, 2));
+                                _this.cartItems = response.data; 
                             } else {
                                 alert("請先登入會員");
                             }
@@ -347,6 +350,40 @@
                     const selectedCity = this.formData.city;
                     this.townships = this.townshipsData[selectedCity] || [];
                     this.formData.township = "";
+                },
+                getMemberId() {
+                    let _this = this;
+                    axios.get(`${_this.baseAddress}/Ajax/GetCurrentMemberId`)
+                        .then(response => {
+                            console.log("當前會員 ID:", response.data.MemberId);
+                        })
+                        .catch(error => {
+                            console.error("Session 已過期或未登入", error);
+                        }); 
+                },
+                fillMemberData() {
+                    let _this = this;
+                     
+                    if (this.useMemberData) {
+                        axios.get(`${_this.baseAddress}/Ajax/GetMemberInfo`, {
+                            // params: { memberId: _this.memberId }
+                            params: { memberId: 1 }
+                        })
+                            .then(response => {
+                                if (response.data) {
+                                    _this.formData.name = response.data.name;
+                                    _this.formData.phone = response.data.phone;
+                                    _this.formData.email = response.data.email;
+                                }
+                            })
+                            .catch(error => {
+                                console.error("獲取會員資料失敗", error);
+                            });
+                    } else { 
+                        _this.formData.name = "";
+                        _this.formData.phone = "";
+                        _this.formData.email = "";
+                    }
                 },
                 Privacy(event) {
                     event.preventDefault();
@@ -420,7 +457,7 @@
                     this.submitForm();
 
                     if (Object.keys(this.errors).length === 0) {
-                        this.SaveToOrder();  // 如果表單驗證通過，再執行 SaveToOrder
+                        this.SaveToOrder();   
                     }
                 },
                 submitForm() {
@@ -479,11 +516,8 @@
                     this.cartVisible = !this.cartVisible;
                 },
                 SaveToOrder: function () {
-
                     let _this = this;
-                    let form = document.createElement("form");
-                    form.method = "POST";
-                    form.action = "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5";
+                     
                     let orderData = {
                         MerchantTradeNo: _this.MerchantTradeNo,
                         MerchantTradeDate: _this.MerchantTradeDate,
@@ -491,10 +525,7 @@
                         TradeDesc: "無",
                         ItemName: _this.ItemName,
                         ExpireDate: _this.ExpireDate,
-                        CustomField1:"",
-                        CustomField2:"",
-                        CustomField3: "",
-                        CustomField4: "",
+                        CustomField1: "", CustomField2: "", CustomField3: "", CustomField4: "",
                         ReturnURL: _this.ReturnURL,
                         OrderResultURL: _this.OrderResultURL,
                         PaymentInfoURL: _this.PaymentInfoURL,
@@ -506,17 +537,7 @@
                         EncryptType: _this.EncryptType,
                         CheckMacValue: _this.CheckMacValue,
                     };
-
-                    Object.keys(orderData).forEach(key => {
-                        let input = document.createElement("input");
-                        input.type = "hidden";
-                        input.name = key;
-                        input.value = orderData[key];
-                        form.appendChild(input);
-                    });
-
-                    document.body.appendChild(form);
-                    form.submit();
+                     
                     let request = {
                         ODiscountedprice: _this.formData.dcprice,
                         OTotalPrice: _this.totalprice,
@@ -529,16 +550,66 @@
                         orderId: _this.MerchantTradeNo,
                         MerchantTradeDate: _this.MerchantTradeDate,
                     };
+
                     console.log(request);
-                    axios.post(`${_this.baseAddress}/Ajax/SaveToOrder`, request,{
-                            headers: {
-                                "Content-Type": "application/json; charset=utf-8"
-                            }
+
+                    axios.post(`${_this.baseAddress}/Ajax/SaveToOrder`, request, {
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        }
+                    })
+                        .then(response => { 
+                             
+                            _this.SaveToOrderDetail(response.data.orderID)
+                                .then(() => { 
+                                    return _this.RemoveCartItems();
+                                })
+                                .then(() => { 
+                                    let form = document.createElement("form");
+                                    form.method = "POST";
+                                    form.action = "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5";
+
+                                    Object.keys(orderData).forEach(key => {
+                                        let input = document.createElement("input");
+                                        input.type = "hidden";
+                                        input.name = key;
+                                        input.value = orderData[key];
+                                        form.appendChild(input);
+                                    });
+
+                                    document.body.appendChild(form);
+                                    form.submit();
+                                })
+                                .catch(error => { 
+                                    alert('訂單處理失敗');
+                                });
                         })
-                        .then(response => {
-                            console.log('訂單提交成功:', response);
-                            console.log('返回的 OrderID:', response.data.orderID);  // 打印 OrderID
-                            _this.SaveToOrderDetail(response.data.orderID);
+                        .catch(error => {
+                            alert('訂單未成功提交');
+                        });
+                },
+                SaveToOrderDetail: function (orderID) {
+                    let _this = this;
+                    let orderDetails = _this.cartItems.map(item => {
+                        return {
+                            Oid: orderID,
+                            PId: item.pId,
+                            PName: item.pName,
+                            PCount: item.pCount,
+                            PSize: item.pSize,
+                            PColor: item.pColor,
+                            CustomText0: item.customText0,
+                            CustomText1: item.customText1,
+                            CustomPhoto0: item.customPhoto0,
+                            CustomPhoto1: item.customPhoto1,
+                            Photo0: item.photo0,
+                            Photo1: item.photo1,
+                            PPrice: item.pPrice
+                        };
+                    });
+                     
+                    return axios.post(`${_this.baseAddress}/Ajax/SaveToOrderDetail`, orderDetails)
+                        .then(response => {  
                             _this.formData = {
                                 price: 0,
                                 dcprice: 0,
@@ -552,51 +623,28 @@
                                 terms: false,
                             };
                             _this.errors = {};
-                            _this.cartItems = [];
                             localStorage.removeItem('price');
                             localStorage.removeItem('totalprice');
-                        })
-                        .catch(error => {
-                            console.error('訂單未成功提交:', error);
-                        });
-                },
-                SaveToOrderDetail: function (orderID) {
-                    let _this = this;
-
-                    // 创建一个订单详情的数组，准备发送给后端
-                    let orderDetails = _this.cartItems.map(item => {
-                        console.log('订单项:', item);  // 打印每个 item，检查字段值
-                        return {
-                            Oid: orderID,          //传递订单ID
-                            PId: item.pId,          // 商品ID
-                            PName: item.pName,     // 商品名称
-                            PCount: item.pCount,   // 商品数量
-                            PSize: item.pSize,     // 商品尺寸
-                            PColor: item.pColor,   // 商品颜色
-                            CustomText0: item.customText0,  // 自定义文字
-                            CustomText1: item.customText1,  // 自定义文字
-                            CustomPhoto0: item.customPhoto0, // 自定义图片
-                            CustomPhoto1: item.customPhoto1, // 自定义图片
-                            Photo0: item.photo0,   // 商品图片
-                            Photo1: item.photo1,   // 商品图片
-                            PPrice: item.pPrice    // 商品价格
-                        };
-                    });
-                    console.log('发送请求保存订单:', JSON.stringify(orderDetails, null, 2));
-
-                    // 发送请求保存订单详情
-                    axios.post(`${_this.baseAddress}/Ajax/SaveToOrderDetail`, orderDetails)
-                        .then(response => {
-                            console.log('訂單詳情儲存成功:', response);
                             alert('訂單已成功提交!');
                         })
-                        .catch(error => {
-                            console.error('訂單詳情儲存失敗:', error);
+                        .catch(error => { 
                             alert('訂單詳情儲存失敗');
+                            throw error;
                         });
                 },
-
-
+                RemoveCartItems: function () {
+                    let _this = this;
+                    let cartItemIds = _this.cartItems.map(item => item.id);
+                    console.log('指定購物車資料:', cartItemIds);
+                    
+                    return axios.post(`${_this.baseAddress}/Ajax/RemoveCartItems`, cartItemIds)
+                        .then(response => { 
+                            _this.cartItems = [];
+                        })
+                        .catch(error => { 
+                            throw error;
+                        });
+                }, 
                 // 從 localStorage 加載數據
                 loadFromStorage() {
                     const savedPrice = localStorage.getItem('price');
@@ -609,8 +657,7 @@
                     if (savedTotalPrice) {
                         this.totalprice = parseFloat(savedTotalPrice);
                     }
-                },
-
+                } 
             }
         }
         var app = Vue.createApp(vueApp).mount("#app");

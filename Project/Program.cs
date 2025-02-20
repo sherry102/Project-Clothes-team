@@ -14,6 +14,15 @@ builder.Services.AddMemoryCache(); // ? 註冊記憶體快取
 // 註冊 IHttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
+// 啟用 Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(45); // 45 分鐘不操作自動清除
+    options.Cookie.HttpOnly = true; // 只能透過 HTTP 存取，防止 XSS 攻擊
+    options.Cookie.IsEssential = true; // 確保 Session 在 GDPR 下仍然有效
+});
+
 // 添加基本的日誌服務，只輸出到控制台和偵錯視窗
 builder.Services.AddLogging(logging =>
 {

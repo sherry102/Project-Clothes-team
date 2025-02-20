@@ -8,19 +8,24 @@
 
 <h4>訂單內容</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-md-6">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Oid" class="control-label"></label>
-                <input asp-for="Oid" class="form-control" readonly="readonly"/>
+                <input asp-for="Oid" class="form-control" readonly="readonly" />
                 <span asp-validation-for="Oid" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Oname" class="control-label"></label>
                 <input asp-for="Oname" class="form-control" />
                 <span asp-validation-for="Oname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Oprice" class="control-label"></label>
+                <input asp-for="Oprice" class="form-control" />
+                <span asp-validation-for="Oprice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Odiscountedprice" class="control-label"></label>
@@ -39,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mid" class="control-label"></label>
-                <input asp-for="Mid" class="form-control" readonly="readonly"/>
+                <input asp-for="Mid" class="form-control" readonly="readonly" />
                 <span asp-validation-for="Mid" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -65,17 +70,46 @@
                     <input class="form-check-input" asp-for="Opayment" /> @Html.DisplayNameFor(model => model.Opayment)
                 </label>
             </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="OcancelReason" class="control-label">訂單取消原因</label>
+                <textarea asp-for="OcancelReason" class="form-control" rows="1" readonly></textarea>
+                <span asp-validation-for="OcancelReason" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OcancelDescription" class="control-label">訂單取消描述</label>
+                <textarea asp-for="OcancelDescription" class="form-control" style="height: 98px;" readonly></textarea>
+                <span asp-validation-for="OcancelDescription" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OcancelStatus" class="control-label">訂單取消狀態</label>
+                <select asp-for="OcancelStatus" class="form-control">
+                    <option value="未取消">未取消</option>
+                    <option value="申請中">申請中</option>
+                    <option value="訂單無法取消">訂單無法取消</option>
+                    <option value="已取消">已取消</option>
+                </select>
+                <span asp-validation-for="OcancelStatus" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="送出修改" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
-</div>
-<p>
-<div>
-    <a asp-action="List">取消</a>
-</div>
+</form>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
+<p>
+    <div>
+        <a asp-action="List">取消</a>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }

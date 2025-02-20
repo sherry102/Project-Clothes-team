@@ -239,7 +239,8 @@ namespace Project.Controllers
 			{
 				string json = JsonSerializer.Serialize(T);
 				HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-				return RedirectToAction("Index","Home");
+                //HttpContext.Session.SetInt32("MemberId", T.Mid);
+                return RedirectToAction("Index","Home");
 			}
 			else
 			{
