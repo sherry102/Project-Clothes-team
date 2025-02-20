@@ -78,7 +78,7 @@
 
 					</div>
 				</div><!-- End 收入 -->
-				<!-- 客服 -->
+				<!-- 意見 -->
 				<div class="col-xxl-4 col-xl-12">
 
 					<div class="card info-card customers-card">
@@ -97,7 +97,7 @@
 						</div>
 
 						<div class="card-body">
-							<h5 class="card-title fs-5 fw-bold">客服 <span id="service_date">| 今天</span></h5>
+							<h5 class="card-title fs-5 fw-bold">意見 <span id="service_date">| 今天</span></h5>
 
 							<div class="d-flex align-items-center">
 								<div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -113,7 +113,7 @@
 						</div>
 					</div>
 
-				</div><!-- End 客服 -->
+				</div><!-- End 意見 -->
 				<!-- 會員人數 -->
 				<div class="col-12">
 					<div class="card">
@@ -415,12 +415,18 @@
 
 	</script>
 
-	<!--客服計算-->
+	<!--意見計算-->
 	<script>
 		$(function () {
-			let Service_Percentage_Today = Math.abs(((@Model.CustService_today - @Model.CustService_yesterday) / @Model.CustService_yesterday) * 100).toFixed(1) + `%`;
-			let Service_Percentage_Month = Math.abs(((@Model.CustService_month - @Model.CustService_lastmonth) / @Model.CustService_lastmonth) * 100).toFixed(1) + `%`;
-			let Service_Percentage_Year = Math.abs(((@Model.CustService_year - @Model.CustService_lastyear) / @Model.CustService_lastyear) * 100).toFixed(1) + `%`;
+			const TotalPrice_Today = @Model.Advice_today;
+			const TotalPrice_Month = @Model.Advice_month;
+			const TotalPrice_Year = @Model.Advice_year;
+			const TotalPrice_Yesterday = @Model.Advice_yesterday;
+			const TotalPrice_LastMonth = @Model.Advice_lastmonth;
+			const TotalPrice_LastYear = @Model.Advice_lastyear;
+			let Service_Percentage_Today = Math.abs(((@Model.Advice_today - @Model.Advice_yesterday) / @Model.Advice_yesterday) * 100).toFixed(1) + `%`;
+			let Service_Percentage_Month = Math.abs(((@Model.Advice_month - @Model.Advice_lastmonth) / @Model.Advice_lastmonth) * 100).toFixed(1) + `%`;
+			let Service_Percentage_Year = Math.abs(((@Model.Advice_year - @Model.Advice_lastyear) / @Model.Advice_lastyear) * 100).toFixed(1) + `%`;
 			function setCustService(percntage, color, compare) {
 				$("#Service_Percentage").text(percntage);
 				$("#Service_Percentage").removeClass("text-success", "text-secondary", "text-danger");
@@ -430,17 +436,17 @@
 				$("#Service_Compare").addClass(color);
 			};
 
-			if (@Model.CustService_yesterday == 0) {
+			if (@Model.Advice_yesterday == 0) {
 				setCustService("100%", "text-secondary", "-");
-			} else if (@Model.CustService_today == @Model.CustService_yesterday) {
+			} else if (@Model.Advice_today == @Model.Advice_yesterday) {
 				setCustService("0%", "text-secondary", "-");
-			} else if (@Model.CustService_today > @Model.CustService_yesterday) {
+			} else if (@Model.Advice_today > @Model.Advice_yesterday) {
 				setCustService(Service_Percentage_Today, "text-success", "increase");
 			} else {
 				setCustService(Service_Percentage_Today, "text-danger", "decrease");
 			};
 
-			$("#service").text(@Model.CustService_today);
+			$("#service").text(@Model.Advice_today);
 
 			$("#service_filter").on("click", (e) => { 
 				e.preventDefault();
@@ -449,37 +455,37 @@
 				
 				switch (Custservice_date) {
 					case "今天":
-							$("#service").text(@Model.CustService_today);
-							if (@Model.CustService_yesterday == 0) {
+						$("#service").text(@Model.Advice_today);
+							if (@Model.Advice_yesterday == 0) {
 								setCustService("100%", "text-secondary", "-");
-							} else if (@Model.CustService_today == @Model.CustService_yesterday) {
+							} else if (@Model.Advice_today == @Model.Advice_yesterday) {
 								setCustService("0%", "text-secondary", "-");
-							} else if (@Model.CustService_today > @Model.CustService_yesterday) {
+							} else if (@Model.Advice_today > @Model.Advice_yesterday) {
 								setCustService(Service_Percentage_Today, "text-success", "increase");
 							} else {
 								setCustService(Service_Percentage_Today, "text-danger", "decrease");
 							};
 						break;
 						case "這個月":
-							$("#service").text(@Model.CustService_month);
-							if (@Model.CustService_lastmonth == 0) {
+							$("#service").text(@Model.Advice_month);
+							if (@Model.Advice_lastmonth == 0) {
 								setCustService("100%", "text-secondary", "-");
-							} else if (@Model.CustService_month == @Model.CustService_lastmonth) {
+							} else if (@Model.Advice_month == @Model.Advice_lastmonth) {
 								setCustService("0%", "text-secondary", "-");
-							} else if (@Model.CustService_month > @Model.CustService_lastmonth) {
+							} else if (@Model.Advice_month > @Model.Advice_lastmonth) {
 								setCustService(Service_Percentage_Month, "text-success", "increase");
 							} else {
 								setCustService(Service_Percentage_Month, "text-danger", "decrease");
 							};
 						break;
 					case "今年":
-						$("#service").text(@Model.CustService_year);
-						$("#service").text(@Model.CustService_month);
-							if (@Model.CustService_lastyear == 0) {
+						$("#service").text(@Model.Advice_year);
+						$("#service").text(@Model.Advice_month);
+							if (@Model.Advice_lastyear == 0) {
 								setCustService("100%", "text-secondary", "-");
-							} else if (@Model.CustService_year == @Model.CustService_lastyear) {
+							} else if (@Model.Advice_year == @Model.Advice_lastyear) {
 								setCustService("0%", "text-secondary", "-");
-							} else if (@Model.CustService_year > @Model.CustService_lastyear) {
+							} else if (@Model.Advice_year > @Model.Advice_lastyear) {
 								setCustService(Service_Percentage_Year, "text-success", "increase");
 							} else {
 								setCustService(Service_Percentage_Year, "text-danger", "decrease");

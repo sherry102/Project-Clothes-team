@@ -75,7 +75,7 @@
                         <a v-if="order.oStatus === '待出貨'" :href="`CancelOrder?oid=${order.oid}`" class="feedback-link">取消</a>
                     </td>
                     <td class="border p-1">
-                        <a href="~/FrontHome/Advice" class="feedback-link">問題反應</a>
+                        <a :href="`/FrontHome/Advice/${order.oid}`" class="feedback-link">問題反應</a>
                     </td>
                 </tr>
             </tbody>
