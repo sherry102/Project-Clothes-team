@@ -1,7 +1,7 @@
 ﻿const chatRoom = document.querySelector("#chatRoom");
-const userName = document.querySelector("#userName");
+//const userName = document.querySelector("#userName");
 const txtMsg = document.querySelector("#txtMSG"); //SR用
-const room = document.querySelector("#room");
+//const room = document.querySelector("#room");
 const send = document.querySelector("#send"); //SR用
 const result = document.querySelector("#result"); //SR用
 
@@ -34,6 +34,8 @@ const chatApp = Vue.createApp({
             showChatButton: false,
             // 是否進入真人客服模式
             isRealCustomerVisible: false,
+            // 加入此狀態來追踪是否在客服模式
+            isCustomerService: false,
             // SignalR連線物件
             hubConnection: null,
             // 預設房間名稱
@@ -246,45 +248,27 @@ const chatApp = Vue.createApp({
                     .build();
                 // 設置接收訊息的處理器
                 this.hubConnection.on("UpdContent", (msg) => {
+                    // 過濾空訊息
+                    if (!msg.message || msg.message.trim() === "") return;
                     //console.log("收到訊息:", content);                   
-                    const roomContainer = document.querySelector("#room");
+                    //const roomContainer = document.querySelector("#room");
                     if (msg.user === this.userId) {
-                        // 自己發送的訊息
-                        //console.log("自己發送的訊息", msg);
-                        const bubble =
-                           `<div class="chat-message.sent">
-                                ${msg.timestamp} 我
-                                <div class="message last">
-                                    ${msg.message}
-                                </div>
-                           </div>`;                      
+                        return;                     
                     }
-                    else if (typeof content === 'string') {
-                        // 處理系統訊息
+                    else if (msg.user === "System") {
                         this.messages.push({
                             type: "system",
-                            content: content
+                            content: msg.message,
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
                         });
-                    }
+                    } 
                     else{
-                        // 其他用戶發送的訊息
-                        //console.log("收到對方的訊息", msg);
-                        // 建立接收到的訊息氣泡HTML
-                        const bubble =
-                           `<div class="chat-message.received">
-                               ${msg.timestamp} ${msg.user}
-                               <div class="message last">
-                                    ${msg.message}
-                               </div>
-                           </div>`;
-                        // 將訊息加入聊天室
-                        roomContainer.innerHTML += bubble;
                         // 將訊息加入Vue數據中
                         this.messages.push({
                             type: "received",
                             content: msg.message,
                             user: msg.user,
-                            timestamp: msg.timestamp
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
                         });
                     }                    
                     this.scrollToBottom();

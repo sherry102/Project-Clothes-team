@@ -22,7 +22,14 @@ namespace Project.Hubs
         {
             string roomId = Context.GetHttpContext().Request.Query["room"]; // 獲取聊天室名稱
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId); // 將用戶加入聊天室
-            await Clients.Group(roomId).SendAsync("UpdContent", "新連線 ID: " + Context.ConnectionId + " 進入聊天室: " + roomId);
+            var msg = new
+            {
+                User = "System",
+                Message = $"新連線 ID: {Context.ConnectionId} 進入聊天室 {roomId}",
+                Timestamp = DateTime.Now.ToString("HH:mm"),
+                SystemMessage = true
+            };
+            await Clients.Group(roomId).SendAsync("UpdContent", msg);
             await base.OnConnectedAsync();
         }
 
@@ -33,7 +40,14 @@ namespace Project.Hubs
         /// <returns></returns>
         public override async Task OnDisconnectedAsync(Exception ex)
         {
-            await Clients.All.SendAsync("UpdContent", "已離線 ID: " + Context.ConnectionId);
+            var msg = new
+            {
+                User = "System",
+                Message = $"已離線 ID: {Context.ConnectionId}",
+                Timestamp = DateTime.Now.ToString("HH:mm"),
+                SystemMessage = true
+            };
+            await Clients.All.SendAsync("UpdContent", msg);
             await base.OnDisconnectedAsync(ex);
         }
 
