@@ -811,7 +811,7 @@ namespace Project.Controllers
             return Json(detail); 
         }
 
-			[HttpPost]
+		[HttpPost]
         public IActionResult CancelOrder([FromBody] Torder cancelRequest)
         {
             using (var db = new DbuniPayContext())
@@ -821,21 +821,19 @@ namespace Project.Controllers
                 {
                     return Json(new { success = false, message = "訂單不存在" });
                 }
+				order.OcancelReason = cancelRequest.OcancelReason;
+				order.OcancelDescription = cancelRequest.OcancelDescription;
+				order.OcancelDate = DateTime.UtcNow;
+				order.OcancelStatus = "申請中";
 
-        }
+				db.SaveChanges();
+				return Json(new { success = true, message = "訂單已成功取消" });
+			}
+		}
+
+	}
 
 
-                order.OcancelReason = cancelRequest.OcancelReason;
-                order.OcancelDescription = cancelRequest.OcancelDescription;
-                order.OcancelDate = DateTime.UtcNow;
-                order.OcancelStatus = "申請中";
 
-                db.SaveChanges();
-            }
-
-            return Json(new { success = true, message = "訂單已成功取消" });
-        }
-
-         
-    }
 }
+
