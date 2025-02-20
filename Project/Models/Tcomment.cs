@@ -11,7 +11,7 @@ public partial class Tcomment
 
     public string Mname { get; set; } = null!;
 
-    public string ComDepiction { get; set; } = null!;
+    public string ComDescription { get; set; } = null!;
 
     public DateTime ComCreateDate { get; set; }
 
