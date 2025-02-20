@@ -41,21 +41,16 @@
                         .catch(error => {
                             console.error('Error fetching menu:', error);
                         });
-                } else {
-                    // 未登入，導向 fcreate (原本是 /Account/Login)
-                    // 修改：改成 /FrontMember/fcreate
+                } else {                 
                     window.location.href = '/FrontMember/fcreate';
                 }
             })
             .catch(error => {
-                console.error('Error checking login status:', error);
-                // 發生錯誤時，導向 fcreate
-                window.location.href = '/FrontMember/fcreate';
+                console.error('Error checking login status:', error);                
+                window.location.href = '/FrontMember/fcreate';// 發生錯誤時，導向 fcreate
             });
-    });
-
-    // 根據選單文字取得對應圖示
-    function getIconForMenuItem(text) {
+    });  
+    function getIconForMenuItem(text) {// 根據選單文字取得對應圖示
         switch (text) {
             case '個人資料': return 'person';
             case '我的訂單': return 'bag';
@@ -63,19 +58,16 @@
             case '登出': return 'box-arrow-right';
             default: return 'chevron-right';
         }
-    }
-
-    // 處理登出
-    function handleLogout(e) {
+    } 
+    function handleLogout(e) {// 處理登出
         e.preventDefault();
         fetch('/Account/Logout', {
             method: 'POST'
         })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    // 修改：登出成功後也導向 /FrontMember/fcreate
-                    window.location.href = '/FrontMember/fcreate';
+                if (data.success) {                    
+                    window.location.href = '/FrontHome/FrontIndex';
                 } else {
                     console.error('Logout failed:', data.message);
                 }
