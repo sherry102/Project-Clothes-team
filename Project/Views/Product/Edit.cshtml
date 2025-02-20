@@ -53,18 +53,20 @@
                 </div>
             </div>
         </div>
-        <div class="form-group mt-4">
+    </div>
+    <div class="row">
+        <div class="form-group mt-4 col-md-4">
             <label for="photos">多張圖片：</label>
             <input type="file" id="photos" name="Photos" multiple accept="image/*">
             <br>
             <div id="multiplePreview">
                 @foreach (var image in Model.Images)
                 {
-                   <img src="~/Images/@image" style="max-width:100px; margin:5px;">
+                   <img src="~/Images/@image" style="max-width:175px; margin:5px;">
                 }
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group col-md-8">
             <label class="control-label my-3">修改商品規格 (顏色 / 尺寸 / 庫存)</label>
             <div id="inventoryContainer">
                 @if (Model.TproductInventories != null && Model.TproductInventories.Count > 0)
@@ -73,9 +75,9 @@
                     {
                         <div class="inventory-group mb-2">
                             <input type="hidden" name="TproductInventories[@i].Piid" value="@Model.TproductInventories[i].Piid" />
-                            <input type="text" name="TproductInventories[@i].Pcolor" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Pcolor" placeholder="顏色">
-                            <input type="text" name="TproductInventories[@i].Psize" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Psize" placeholder="尺寸">
-                            <input type="number" name="TproductInventories[@i].Pstock" class="form-control d-inline w-25" value="@Model.TproductInventories[i].Pstock" placeholder="庫存">
+                            <input type="text" name="TproductInventories[@i].Pcolor" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Pcolor" placeholder="顏色">
+                            <input type="text" name="TproductInventories[@i].Psize" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Psize" placeholder="尺寸">
+                            <input type="number" name="TproductInventories[@i].Pstock" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Pstock" placeholder="庫存">
                             <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
                         </div>
                     }
@@ -118,7 +120,7 @@
                     reader.onload = function (event) {
                         const img = document.createElement("img");
                         img.src = event.target.result;
-                        img.style.maxWidth = "100px";
+                        img.style.maxWidth = "175px";
                         img.style.margin = "5px";
                         previewDiv.appendChild(img);
                     }

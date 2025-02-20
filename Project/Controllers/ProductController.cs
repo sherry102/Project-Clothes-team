@@ -379,7 +379,7 @@ namespace Project.Controllers
                     x.Pdescription = p.Pdescription;
                     x.Pcategory = p.Pcategory;
 
-                    // 更新主圖片
+                    // **更新主圖片**
                     if (p.photoPath != null)
                     {
                         string photoName = Guid.NewGuid().ToString() + ".jpg";
@@ -389,21 +389,22 @@ namespace Project.Controllers
                             p.photoPath.CopyTo(stream);
                         }
                     }
-                    // **刪除舊的 Tpimages**
-                    var oldImages = db.Tpimages.Where(img => img.Pid == p.Pid).ToList();
-                    foreach (var oldImg in oldImages)
-                    {
-                        string oldImagePath = Path.Combine(_enviro.WebRootPath, "images", oldImg.Piname);
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-                    db.Tpimages.RemoveRange(oldImages);
 
-                    // 編輯多張圖片 (存入 Tpimages)
+                    // **只有當有上傳新圖片時，才刪除舊的 Tpimages**
                     if (photos != null && photos.Count > 0)
                     {
+                        var oldImages = db.Tpimages.Where(img => img.Pid == p.Pid).ToList();
+                        foreach (var oldImg in oldImages)
+                        {
+                            string oldImagePath = Path.Combine(_enviro.WebRootPath, "images", oldImg.Piname);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+                        db.Tpimages.RemoveRange(oldImages);
+
+                        // **儲存新圖片**
                         foreach (var photo in photos)
                         {
                             if (photo.Length > 0)
@@ -415,7 +416,7 @@ namespace Project.Controllers
                                 {
                                     photo.CopyTo(stream);
                                 }
-                                // 存入 Tpimage 表
+                                // **存入 Tpimage 表**
                                 Tpimage img = new Tpimage()
                                 {
                                     Pid = p.Pid,   // 關聯產品 ID
@@ -426,7 +427,7 @@ namespace Project.Controllers
                         }
                     }
 
-                    // 更新商品規格 (TproductInventories)
+                    // **更新商品規格 (TproductInventories)**
                     db.TproductInventories.RemoveRange(db.TproductInventories.Where(i => i.Pid == p.Pid));
                     if (p.TproductInventories != null && p.TproductInventories.Count > 0)
                     {
@@ -440,7 +441,7 @@ namespace Project.Controllers
 
                     db.SaveChanges();
 
-                    // 計算並更新總庫存
+                    // **計算並更新總庫存**
                     x.Pinventory = db.TproductInventories.Where(i => i.Pid == x.Pid).Sum(i => i.Pstock);
                     db.SaveChanges();
                 }

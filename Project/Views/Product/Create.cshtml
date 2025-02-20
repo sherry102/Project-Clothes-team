@@ -53,27 +53,29 @@
                 </div>
             </div>
         </div>
-        <div class="form-group mt-4">
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4 mt-4">
             <label for="photos">多張圖片：</label>
             <input type="file" id="photos" name="photos" multiple accept="image/*">
             <br>
             <div id="multiplePreview"></div>
         </div>
         <!-- 商品庫存動態新增區塊 -->
-        <div class="form-group">
+        <div class="form-group col-md-8">
             <label class="control-label my-3">新增商品規格 (顏色 / 尺寸 / 庫存)</label>
             <div id="inventoryContainer">
                 <!-- 預設第一組 -->
                 <div class="inventory-group mb-2">
-                    <input type="text" name="TproductInventories[0].Pcolor" class="form-control d-inline w-25" placeholder="顏色">
-                    <input type="text" name="TproductInventories[0].Psize" class="form-control d-inline w-25" placeholder="尺寸">
-                    <input type="number" name="TproductInventories[0].Pstock" class="form-control d-inline w-25" placeholder="庫存">
-                    <button type="button" class="btn btn-outline-secondary btn-sm mb-3" onclick="addInventory()">+</button>
+                    <input type="text" name="TproductInventories[0].Pcolor" class="form-control d-inline w-25 me-4" placeholder="顏色">
+                    <input type="text" name="TproductInventories[0].Psize" class="form-control d-inline w-25 me-4" placeholder="尺寸">
+                    <input type="number" name="TproductInventories[0].Pstock" class="form-control d-inline w-25 me-4" placeholder="庫存">
+                    <button type="button" class="btn btn-success btn-sm mb-3" onclick="addInventory()">+</button>
                 </div>
             </div>
         </div>
         <div class="form-group mt-4 text-center">
-            <input type="submit" value="新增商品" class="btn custom-btn mb-3" />
+            <input type="submit" value="新增商品" class="btn btn-outline-secondary mb-3" />
         </div>
     </div>
 </form>
@@ -92,9 +94,9 @@
             let newInventory = document.createElement("div");
             newInventory.classList.add("inventory-group", "mb-2");
             newInventory.innerHTML = `
-                <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25" placeholder="顏色">
-                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25" placeholder="尺寸">
-                <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25" placeholder="庫存">
+                <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25 me-4" placeholder="顏色">
+                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25 me-4" placeholder="尺寸">
+                <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25 me-4" placeholder="庫存">
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
             `;
 
@@ -129,7 +131,7 @@
                     reader.onload = function (event) {
                         const img = document.createElement("img");
                         img.src = event.target.result;
-                        img.style.maxWidth = "100px";
+                        img.style.maxWidth = "175px";
                         img.style.margin = "5px";
                         previewDiv.appendChild(img);
                     }
