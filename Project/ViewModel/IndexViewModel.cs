@@ -47,17 +47,17 @@ namespace Project.ViewModel
 
 		public int TotalSales_LastYear { get; set; }
 
-		public int CustService_today { get; set; }
+		public int Advice_today { get; set; }
 
-		public int CustService_month { get; set; }
+		public int Advice_month { get; set; }
 
-		public int CustService_year { get; set; }
+		public int Advice_year { get; set; }
 
-		public int CustService_yesterday { get; set; }
+		public int Advice_yesterday { get; set; }
 
-		public int CustService_lastmonth { get; set; }
+		public int Advice_lastmonth { get; set; }
 
-		public int CustService_lastyear { get; set; }
+		public int Advice_lastyear { get; set; }
 
 	}
 }

@@ -184,9 +184,9 @@ namespace Project.Controllers
             int totalsales_lastyear = db.Torders.Where(t => t.Odate.Year == currentYear - 1).Count();
 
 
-            int CustService_today = db.Tchats.Where(t => t.ChatCreateTime.Date == today).Count();
-            int CustSercive_month = db.Tchats.Where(t => t.ChatCreateTime.Month == currentMonth && t.ChatCreateTime.Year == currentYear).Count();
-            int CustSercive_year = db.Tchats.Where(t => t.ChatCreateTime.Year == currentYear).Count();
+            int Advice_today = db.Tadvices.Where(t => t.DateTime.Date == today).Count();
+            int Advice_month = db.Tadvices.Where(t => t.DateTime.Month == currentMonth && t.DateTime.Year == currentYear).Count();
+            int Advice_year = db.Tadvices.Where(t => t.DateTime.Year == currentYear).Count();
             int CustService_yesterday = db.Tchats.Where(t => t.ChatCreateTime.Date == today.AddDays(-1)).Count();
             int CustSercive_lastmonth = db.Tchats.Where(t => t.ChatCreateTime.Month == currentMonth - 1 && t.ChatCreateTime.Year == currentYear).Count();
             int CustSercive_lastyear = db.Tchats.Where(t => t.ChatCreateTime.Year == currentYear - 1).Count();
@@ -215,12 +215,12 @@ namespace Project.Controllers
                 month_Days = month_Days,
                 product_inventory = product_inventory,
                 product_name = product_name,
-                CustService_today = CustService_today,
-                CustService_month = CustSercive_month,
-                CustService_year = CustSercive_year,
-                CustService_yesterday = CustService_yesterday,
-                CustService_lastmonth = CustSercive_lastmonth,
-                CustService_lastyear = CustSercive_lastyear,
+				Advice_today = Advice_today,
+				Advice_month = Advice_month,
+				Advice_year = Advice_year,
+				Advice_yesterday = CustService_yesterday,
+				Advice_lastmonth = CustSercive_lastmonth,
+				Advice_lastyear = CustSercive_lastyear,
             };
             return View(viewModel);
         }
