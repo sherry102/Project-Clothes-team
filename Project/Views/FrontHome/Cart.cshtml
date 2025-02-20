@@ -133,8 +133,8 @@
                         console.log(response);
                         const cartItems = Array.isArray(response.data) ? response.data : [];
                          
-                        _this.cartArray = cartItems; 
-
+                        _this.cartArray = cartItems;
+                        _this.itemName = _this.cartArray.map(item => item.pName).join("#");
                         if (response.data) { 
 
                         } else {
