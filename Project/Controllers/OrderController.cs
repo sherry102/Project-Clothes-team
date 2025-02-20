@@ -54,6 +54,7 @@ namespace Project.Controllers
                     {
                         Oid = order.Oid,
                         Oname = order.Oname,
+                        Oprice = order.Oprice,
                         Odiscountedprice = order.Odiscountedprice,
                         OtotalPrice = order.OtotalPrice,
                         Odate = order.Odate,
@@ -61,7 +62,8 @@ namespace Project.Controllers
                         Oaddress = order.Oaddress,
                         Ophone = order.Ophone,
                         Ostatus = order.Ostatus,
-                        Opayment = order.Opayment
+                        Opayment = order.Opayment,
+                        OcancelStatus = order.OcancelStatus
                     });
                 }
             } 
@@ -86,7 +88,8 @@ namespace Project.Controllers
 			if (x != null)
 			{
 				x.Oname = p.Oname;
-				x.Odiscountedprice = p.Odiscountedprice;
+                x.Oprice = p.Oprice;
+                x.Odiscountedprice = p.Odiscountedprice;
 				x.OtotalPrice = p.OtotalPrice;
 				x.Odate = p.Odate;
 				x.Mid = p.Mid;
@@ -94,7 +97,8 @@ namespace Project.Controllers
 				x.Ophone = p.Ophone;
 				x.Ostatus = p.Ostatus;
 				x.Opayment = p.Opayment;
-				db.SaveChanges();
+                x.OcancelStatus = p.OcancelStatus; 
+                db.SaveChanges();
 			}
 			return RedirectToAction("List");
 		}
