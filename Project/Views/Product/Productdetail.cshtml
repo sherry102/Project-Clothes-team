@@ -26,7 +26,6 @@
             text-align: center;
         }
 
-
         .sticky-sidebar {
             position: sticky;
             top: 0;
@@ -61,20 +60,17 @@
         .bi-heart-fill {
             color: indianred !important;
         }
+        .pdes{
+            font-size:12px;
+            color:grey;
+        }
     </style>
 }
-<!-- breadcrumb 麵包屑 -->
-<nav aria-label="breadcrumb" class="p-3">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="~/FrontHome/FrontIndex" class="text-decoration-none">首頁</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a href="~/Product/ProductList" class="text-decoration-none">商品列表</a></li>
-        <li class="breadcrumb-item active" aria-current="page">商品介紹</li>
-    </ol>
-</nav>
+
 <div class="container">
     <div class="row"> 
         <!-- 左側圖片區-->
-        <div class="col-md-8">
+        <div class="col-md-8 mt-4">
             <div class="row product-images">
                 <div class="col-6">
                     <img src="~/Images/@Model.Pphoto" alt="">
@@ -91,29 +87,30 @@
         </div>
 
         <!-- 右側固定欄 -->
-        <div class="col-md-4 sticky-sidebar p-3">
-            <i class="bi bi-heart favorite mt-6" data-id="@Model.Pid"
+        <div class="col-md-4 sticky-sidebar p-5">
+            <i class="bi bi-heart favorite p-4" data-id="@Model.Pid"
                onclick="addToFavorite('@Model.Pid','@Model.Pname','@Model.Pphoto','@Model.Pprice', this)">
             </i>
-            <div class="fs-3 mt-5 ms-4">@Html.DisplayFor(model => model.Pname)</div>
-            <div class="fs-3 mt-5 ms-4">NT$ @Html.DisplayFor(model => model.Pprice)</div>
-            <div class="fs-5 mt-5 ms-4">@Html.DisplayFor(model => model.Pdescription)</div>
+            <div class="fs-4">@Html.DisplayFor(model => model.Pname)</div> 
+            <div class="pdes">@Html.DisplayFor(model => model.Pdescription)</div>
+            <div class="fs-5 my-3 text-danger">NT$ @Html.DisplayFor(model => model.Pprice)</div>
+           
             <!-- 顏色選擇 -->
-            <div class="fs-5 ms-4 mt-4">
-                <label class="d-block">顏色:</label>
+            <div class="my-3">
                 <input type="hidden" id="selectedColor">
+                <label class="d-block my-2">COLOR:</label>
                 @foreach (var color in Model.Colors)
                 {
-                    <button type="button" class="btn btn-outline-dark color-btn"
+                    <button type="button" class="btn btn-outline-secondary btn-sm color-btn me-2"
                             data-color="@color" onclick="selectColor(this)">
                         @color
                     </button>
                 }
             </div>
             <!-- 尺寸選擇 -->
-            <div class="fs-5 ms-4 mt-3">
-                <label class="d-block">尺寸:</label>
+            <div class="my-3">
                 <input type="hidden" id="selectedSize">
+                <label class="d-block my-2">SIZE:</label>
                 @foreach (var size in Model.Sizes)
                 {
                     string key = $"{Model.Colors.First()}-{size}";
@@ -121,7 +118,7 @@
 
                     if (stock > 0)
                     {
-                        <button type="button" class="btn btn-outline-dark size-btn"
+                        <button type="button" class="btn btn-outline-secondary btn-sm size-btn me-2"
                                 data-size="@size" data-stock="@stock"
                                 onclick="selectSize(this)">
                             @size
@@ -130,18 +127,18 @@
                 }
             </div>
             <!-- 數量選擇 -->
-            <div class="fs-5 ms-4 mt-3">
-                <div class="input-group" style="max-width: 150px;">
-                    <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">-</button>
-                    <input type="text" class="form-control text-center" value="1" id="quantity" readonly>
-                    <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
+            <div class="my-3">
+                <label class="d-block my-2">QTY:</label>
+                <div class="input-group" style="max-width: 125px;">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQuantity()">-</button>
+                    <input type="text" class="form-control text-center bg-white" style="height:32px;" value="1" id="quantity" readonly>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQuantity()">+</button>
                 </div>
-
-                <button type="button" class="btn btn-outline-secondary mt-3"
-                        onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
-                    加入購物車
-                </button>
             </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm my-3 w-50"
+                    onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
+                加入購物車
+            </button>
         </div>
     </div>
 </div>

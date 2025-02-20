@@ -112,18 +112,19 @@ namespace Project.Controllers
         }
 
         //後台List
-        public IActionResult List(ProductViewModel vm, int id)
+        public IActionResult List(string keyword, int id)
         {
             DbuniPayContext db = new DbuniPayContext();
-            string keyword = vm.txtKeyword;
-
-            // 取得符合條件的產品 (排除隱藏的)
+           
+            // 取得符合條件的產品 (排除下架的)
             var datas = db.Tproducts
                           .Where(t => !t.PisHided);
 
             if (!string.IsNullOrEmpty(keyword))
             {
-                datas = datas.Where(t => t.Pdescription.Contains(keyword));
+                datas = datas.Where(t => t.Pname.Contains(keyword) ||
+                                         t.Ptype.Contains(keyword) ||
+                                         t.Pcategory.Contains(keyword));
             }
 
             // 直接用 LINQ Join 取得產品與庫存
@@ -155,6 +156,86 @@ namespace Project.Controllers
             }
             return RedirectToAction("List");
         }
+
+        // 後台重新上架頁面
+        public IActionResult Renew(string keyword)
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            var datas = db.Tproducts
+                          .Where(t => t.PisHided);
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                datas = datas.Where(t => t.Pname.Contains(keyword) ||
+                                         t.Ptype.Contains(keyword) ||
+                                         t.Pcategory.Contains(keyword));
+            }
+            List<CProductWrap> list = new List<CProductWrap>();
+            foreach (var t in datas)
+                list.Add(new CProductWrap() { product = t });
+            return View(list);
+        }
+
+        // 後台重新上架
+        public IActionResult Recovery(int id)
+        {
+            if (id != null)
+            {
+                DbuniPayContext db = new DbuniPayContext();
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x != null)
+                {
+                    x.PisHided = false;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("List");
+        }
+
+        // 後台刪除商品
+        public IActionResult Delete(int? id)
+        {
+            if (id != null)
+            {
+                using (DbuniPayContext db = new DbuniPayContext())
+                {
+                    Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                    if (x != null)
+                    {
+                        // 刪除對應的 Tpimages 及其圖片檔案
+                        var images = db.Tpimages.Where(img => img.Pid == id).ToList();
+                        foreach (var img in images)
+                        {
+                            string imagePath = Path.Combine(_enviro.WebRootPath, "images", img.Piname);
+                            if (System.IO.File.Exists(imagePath))
+                            {
+                                System.IO.File.Delete(imagePath);
+                            }
+                        }
+                        db.Tpimages.RemoveRange(images);
+
+                        // 刪除對應的 TproductInventories
+                        db.TproductInventories.RemoveRange(db.TproductInventories.Where(i => i.Pid == id));
+
+                        // 刪除主圖片
+                        if (!string.IsNullOrEmpty(x.Pphoto))
+                        {
+                            string mainPhotoPath = Path.Combine(_enviro.WebRootPath, "images", x.Pphoto);
+                            if (System.IO.File.Exists(mainPhotoPath))
+                            {
+                                System.IO.File.Delete(mainPhotoPath);
+                            }
+                        }
+
+                        // 刪除 Tproduct
+                        db.Tproducts.Remove(x);
+
+                        db.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("Renew");
+        }
         //後台新增商品
         public IActionResult Create()
         {
@@ -167,6 +248,7 @@ namespace Project.Controllers
 
             return View(model);
         }
+
         [HttpPost]
         public IActionResult Create(CProductWrap p, List<IFormFile> photos)
         {
@@ -265,117 +347,106 @@ namespace Project.Controllers
             if (id == null)
                 return RedirectToAction("List");
 
-            DbuniPayContext db = new DbuniPayContext();
-            Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
-            if (x == null)
-                return RedirectToAction("List");
+            using (DbuniPayContext db = new DbuniPayContext())
+            {
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
+                if (x == null)
+                    return RedirectToAction("List");
 
-            return View(new CProductWrap() { product = x });
+                var productWrap = new CProductWrap()
+                {
+                    product = x,
+                    PtypeList = db.Tproducts.Select(p => p.Ptype).Distinct().ToList(),
+                    PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList(),
+                    TproductInventories = db.TproductInventories.Where(i => i.Pid == x.Pid).ToList(), // 加入庫存清單
+                    Images = db.Tpimages.Where(img => img.Pid == x.Pid).Select(img => img.Piname).ToList() // 加入圖片清單
+                };
+                return View(productWrap);
+            }
         }
+
         [HttpPost]
         public IActionResult Edit(CProductWrap p, List<IFormFile> photos)
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
-            if (x != null)
+            using (DbuniPayContext db = new DbuniPayContext())
             {
-                x.Pname = p.Pname;
-                x.Pprice = p.Pprice;
-                x.Ptype = p.Ptype;
-                x.Pdescription = p.Pdescription;
-                x.Pcategory = p.Pcategory;
-                x.PcreatedDate = DateTime.Now;
-                x.Pinventory = p.Pinventory;
-
-                //存首圖
-                if (p.photoPath != null)
+                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == p.Pid);
+                if (x != null)
                 {
-                    string photoName = Guid.NewGuid().ToString() + ".jpg";
-                    x.Pphoto = photoName;
-                    p.photoPath.CopyTo(new FileStream(_enviro.WebRootPath + "/images/" + photoName, FileMode.Create));
-                }
+                    x.Pname = p.Pname;
+                    x.Pprice = p.Pprice;
+                    x.Ptype = p.Ptype;
+                    x.Pdescription = p.Pdescription;
+                    x.Pcategory = p.Pcategory;
 
-                // 編輯多張圖片上傳 (存入 Tpimages)
-                if (photos != null && photos.Count > 0)
-                {
-                    foreach (var photo in photos)
+                    // **更新主圖片**
+                    if (p.photoPath != null)
                     {
-                        if (photo.Length > 0)
+                        string photoName = Guid.NewGuid().ToString() + ".jpg";
+                        x.Pphoto = photoName;
+                        using (var stream = new FileStream(Path.Combine(_enviro.WebRootPath, "images", photoName), FileMode.Create))
                         {
-                            string imageName = Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName);
-                            string imagePath = Path.Combine(_enviro.WebRootPath, "images", imageName);
-
-                            using (var stream = new FileStream(imagePath, FileMode.Create))
-                            {
-                                photo.CopyTo(stream);
-                            }
-                            // 存入 Tpimage 表
-                            Tpimage img = new Tpimage()
-                            {
-                                Pid = p.Pid,   // 關聯產品 ID
-                                Piname = imageName // 存圖片名稱
-                            };
-                            db.Tpimages.Add(img);
+                            p.photoPath.CopyTo(stream);
                         }
                     }
-                }
-                db.SaveChanges();
-            }
-            return RedirectToAction("List");
-        }
 
-        // 後台重新上架頁面
-        public IActionResult Renew(ProductViewModel vm)
-        {
-            DbuniPayContext db = new DbuniPayContext();
-            string keyword = vm.txtKeyword;
-            IEnumerable<Tproduct> datas = null;
-            if (string.IsNullOrEmpty(keyword))
-                datas = db.Tproducts
-                        .Where(t => t.PisHided);  // 已刪除的記錄
-            else
-                datas = db.Tproducts.Where(t => t.Pdescription.Contains(keyword));
-            List<CProductWrap> list = new List<CProductWrap>();
-            foreach (var t in datas)
-                list.Add(new CProductWrap() { product = t });
-            return View(list);
-        }
+                    // **只有當有上傳新圖片時，才刪除舊的 Tpimages**
+                    if (photos != null && photos.Count > 0)
+                    {
+                        var oldImages = db.Tpimages.Where(img => img.Pid == p.Pid).ToList();
+                        foreach (var oldImg in oldImages)
+                        {
+                            string oldImagePath = Path.Combine(_enviro.WebRootPath, "images", oldImg.Piname);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+                        db.Tpimages.RemoveRange(oldImages);
 
-        // 後台重新上架
-        public IActionResult Recovery(int id)
-        {
-            if (id != null)
-            {
-                DbuniPayContext db = new DbuniPayContext();
-                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
-                if (x != null)
-                {
-                    x.PisHided = false;
+                        // **儲存新圖片**
+                        foreach (var photo in photos)
+                        {
+                            if (photo.Length > 0)
+                            {
+                                string imageName = Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName);
+                                string imagePath = Path.Combine(_enviro.WebRootPath, "images", imageName);
+
+                                using (var stream = new FileStream(imagePath, FileMode.Create))
+                                {
+                                    photo.CopyTo(stream);
+                                }
+                                // **存入 Tpimage 表**
+                                Tpimage img = new Tpimage()
+                                {
+                                    Pid = p.Pid,   // 關聯產品 ID
+                                    Piname = imageName // 存圖片名稱
+                                };
+                                db.Tpimages.Add(img);
+                            }
+                        }
+                    }
+
+                    // **更新商品規格 (TproductInventories)**
+                    db.TproductInventories.RemoveRange(db.TproductInventories.Where(i => i.Pid == p.Pid));
+                    if (p.TproductInventories != null && p.TproductInventories.Count > 0)
+                    {
+                        foreach (var inv in p.TproductInventories)
+                        {
+                            inv.Pid = p.Pid;
+                            inv.PlastUpdated = DateTime.Now;
+                            db.TproductInventories.Add(inv);
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    // **計算並更新總庫存**
+                    x.Pinventory = db.TproductInventories.Where(i => i.Pid == x.Pid).Sum(i => i.Pstock);
                     db.SaveChanges();
                 }
             }
             return RedirectToAction("List");
-        }
-
-        // 後台刪除商品
-        public IActionResult Delete(int? id)
-        {
-            if (id != null)
-            {
-                DbuniPayContext db = new DbuniPayContext();
-                Tproduct x = db.Tproducts.FirstOrDefault(c => c.Pid == id);
-                if (x != null)
-                {
-                    db.Tproducts.Remove(x);
-                    db.SaveChanges();
-                }
-            }
-            return RedirectToAction("Renew");
-        }
-
-        public IActionResult Style()
-        {
-            return View();
         }
     }
 }

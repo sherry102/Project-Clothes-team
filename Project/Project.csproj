@@ -8,9 +8,13 @@
 
 	<ItemGroup>
 		<Compile Remove="Views\Torders\**" />
+		<Compile Remove="wwwroot\Images\product\**" />
 		<Content Remove="Views\Torders\**" />
+		<Content Remove="wwwroot\Images\product\**" />
 		<EmbeddedResource Remove="Views\Torders\**" />
+		<EmbeddedResource Remove="wwwroot\Images\product\**" />
 		<None Remove="Views\Torders\**" />
+		<None Remove="wwwroot\Images\product\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,10 +29,6 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
 		<PackageReference Include="PagedList.Mvc" Version="4.5.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="wwwroot\Images\product\" />
 	</ItemGroup>
 
 </Project>
