@@ -81,7 +81,6 @@
     document.addEventListener('click', function (event) {
         const dropdown = document.getElementById('memberDropdown');
         const personIcon = document.getElementById('personicon');
-
         if (dropdown.style.display === 'block' &&
             !dropdown.contains(event.target) &&
             !personIcon.contains(event.target)) {

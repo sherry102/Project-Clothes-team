@@ -29,8 +29,8 @@ namespace Project.Controllers
                 data = new[]
                 {
                 new { text = "個人資料", url = "/FrontMember/fprofile" },
-                new { text = "我的訂單", url = "/Member/Orders" },
-                new { text = "優惠券", url = "/Member/Coupons" },
+                new { text = "我的訂單", url = "/FrontHome/CheckOrder" },
+                new { text = "優惠券", url = "/FrontHome/Coupon" },
                 new { text = "登出", url = "/Account/Logout" }
                 }
             });

@@ -124,7 +124,7 @@ namespace Project.Controllers
         {
             var Top4Sales = await (from tod in _context.TorderDetails
                                    join td in _context.Torders on tod.Oid equals td.Oid
-                                   where td.Odate >= new DateTime(2024, 1, 1) && td.Odate <= new DateTime(2024, 12, 31)
+                                   where td.Odate >= new DateTime(2025, 1, 1) && td.Odate <= new DateTime(2025, 12, 31) && tod.Pid!=0
                                    group tod by tod.Pid into grouped
                                    select new
                                    {
