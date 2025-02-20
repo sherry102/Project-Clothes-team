@@ -15,19 +15,13 @@ namespace Project.Controllers
         {
             _enviro = p;
         }       
-        [HttpGet]// 檢查登入狀態的API
-        public IActionResult CheckLoginStatus()
-        {// 檢查 Session 中是否有使用者資料
-            var isLoggedIn = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER) != null;
-            return Json(new { isLoggedIn });//回傳 JSON 結果，包含布林值 isLoggedIn
-        }      
         [HttpGet]// 處理個人圖示點擊
         public IActionResult HandleProfileClick()
         { // 從 Session 取得使用者 JSON 字串
             var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(userJson))
             { // 未登入時返回狀態              
-                return Json(new { success = false, redirectUrl = "/Account/Login" });
+                return Json(new { success = false, redirectUrl = "/FrontMember/fcreate" });
             }           
             return Json(new// 已登入時返回選單項目
             {

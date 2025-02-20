@@ -1,5 +1,6 @@
 ﻿﻿@{
     bool isFullWidth = ViewBag.IsFullWidth ?? false; // 預設為 false
+    bool isLoggedIn = Context.Session.GetString(CDictionary.SK_LOGEDIN_USER) != null;
 }
 <!DOCTYPE html>
 <html lang="en" class="h-100">
@@ -57,8 +58,8 @@
                     <div class="ms-auto">
                         <!-- 會員區域 -->
                         <div class="member-area position-relative">
-                            <a id="personicon" href="~/FrontMember/fcreate" class="icon-link">
-                                <i class="bi bi-person "></i>
+                            <a id="personicon" href="@(isLoggedIn ? "#" : "/FrontMember/fcreate")" class="icon-link">
+                                <i class="bi bi-person @(isLoggedIn ? "text-primary" : "")"></i>
                             </a>
                             <!-- 僅登入後顯示會員下拉選單 -->
                             <div id="memberDropdown"
@@ -70,43 +71,7 @@
                                 margin-top: 0;
                                 border-radius: 4px;
                                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                                z-index: 1000;">
-                                <!-- 選單項目 -->
-                                <a href="FrontMember/fprofile" class="dropdown-item py-2" data-item="profile">
-                                    <div class="d-flex align-items-center" style="gap: 12px;">
-                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-person" style="font-size: 1rem;"></i>
-                                        </div>
-                                        <span>我的帳戶</span>
-                                    </div>
-                                </a>
-                                <a href="/Member/Orders" class="dropdown-item py-2" data-item="orders">
-                                    <div class="d-flex align-items-center" style="gap: 12px;">
-                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-bag" style="font-size: 1rem;"></i>
-                                        </div>
-                                        <span>我的訂單</span>
-                                    </div>
-                                </a>
-                                <a herf="/Member/Coupons" class="dropdown-item py-2" data-item="coupons">
-                                    <div class="d-flex align-items-center" style="gap: 12px;">
-                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-ticket-perforated" style="font-size: 1rem;"></i>
-                                        </div>
-                                        <span>優惠券</span>
-                                    </div>
-                                </a>
-                                <!-- 分隔線 -->
-                                <div class="dropdown-divider"></div>
-
-                                <a href="#" class="dropdown-item py-2" id="logoutButton" data-item="logout">
-                                    <div class="d-flex align-items-center" style="gap: 12px;">
-                                        <div style="width: 24px; height: 24px;" class="d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-box-arrow-right" style="font-size: 1rem;"></i>
-                                        </div>
-                                        <span>退出登錄</span>
-                                    </div>
-                                </a>
+                                z-index: 1000;">                           
                             </div>
                         </div>
                     </div>
@@ -398,6 +363,7 @@
     <script src="~/js/Fvalidation.js"></script>
     <script src="~/assets/js/main.js"></script>
     <script src="~/js/datepicker.js"></script>
+    <script src="~/js/personicon.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

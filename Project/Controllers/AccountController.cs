@@ -22,40 +22,76 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult CheckLoginStatus()
         {
-            try
+            // 從 Session 中獲取用戶信息                                       
+            var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            bool isLoggedIn = !string.IsNullOrEmpty(memberJson);
+            if (isLoggedIn) // 可以在這裡添加更多檢查，例如檢查 Session 是否過期
             {
-                // 從 Session 中獲取用戶信息
-                var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-                bool isLoggedIn = !string.IsNullOrEmpty(memberJson);
-
-                return Json(new { isLoggedIn });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "檢查登入狀態時發生錯誤");
-                return Json(new { isLoggedIn = false });
-            }
+                try
+                {
+                    // 修正：添加null忽略運算符，避免編譯警告
+                    var member = JsonSerializer.Deserialize<Tmember>(memberJson!);
+                    return Json(new
+                    {
+                        isLoggedIn = true,
+                        username = member.Mname,
+                        // 修正：添加重定向URL供前端使用
+                        redirectUrl = "/FrontMember/fprofile"
+                    });
+                }
+                catch
+                {
+                    // Session數據損壞，清除並視為未登入
+                    HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
+                    return Json(new
+                    {
+                        isLoggedIn = false,
+                        redirectUrl = "/FrontMember/fcreate"
+                    });
+                }
+            }              
+                return Json(new // 用戶未登入
+                {
+                    isLoggedIn = false,
+                    redirectUrl = "/FrontMember/fcreate"
+                });
         }
 
         // 修改：改進登入邏輯
         [HttpPost]
         public IActionResult Login(PersoniconViewModel m)//存入快取
         {
-            DbuniPayContext db = new DbuniPayContext();
-            Tmember T = db.Tmembers.FirstOrDefault(c => c.Maccount == m.faccount && c.Mpassword == m.fpassword);
-            string Error = "false";
-            if (T != null && T.Mpassword == m.fpassword)
+            Tmember? member = _context.Tmembers.FirstOrDefault(
+               c => c.Maccount == m.faccount && c.Mpassword == m.fpassword
+           );
+
+            if (member != null)
             {
-                string json = JsonSerializer.Serialize(T);
+                // 登入成功，將用戶資料存入Session
+                string json = JsonSerializer.Serialize(member);
                 HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
                 return RedirectToAction("FrontIndex", "FrontHome");
             }
             else
             {
-                Error = "true";
-                ViewBag.Error = Error;
-                return View();
+                // 登入失敗，設置錯誤訊息
+                ViewBag.Error = "帳號或密碼錯誤";
+                return View("fcreate", "FrontMember");
             }
+        }
+   
+       [HttpGet]
+        public IActionResult Login()
+        {
+            // 檢查是否已經登入
+            if (HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER) != null)
+            {
+                // 已登入則重定向到首頁
+                return RedirectToAction("FrontIndex", "FrontHome");
+            }
+
+            // 顯示登入表單
+            return View("fcreate", "FrontMember");
         }
 
         // 新增：登出端點
@@ -64,13 +100,23 @@ namespace Project.Controllers
         {
             try
             {
+                // 清除Session中的用戶資料
                 HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
-                return Json(new { success = true });
+                return Json(new
+                {
+                    success = true,
+                    redirectUrl = "FrontIndex/FrontHome" // 添加重定向URL
+                });
             }
             catch (Exception ex)
             {
+                // 記錄錯誤並返回錯誤訊息
                 _logger.LogError(ex, "登出過程發生錯誤");
-                return Json(new { success = false, message = "登出過程發生錯誤" });
+                return Json(new
+                {
+                    success = false,
+                    message = "登出過程發生錯誤"
+                });
             }
         }
     }
