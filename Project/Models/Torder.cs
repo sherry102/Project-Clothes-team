@@ -33,7 +33,7 @@ public partial class Torder
 
     public string OtradeDate { get; set; } = null!;
 
-    public DateOnly? OpaymentDate { get; set; }
+    public DateTime? OpaymentDate { get; set; }
 
     public string? OcancelReason { get; set; }
 
