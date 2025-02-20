@@ -136,7 +136,7 @@ const chatApp = Vue.createApp({
         async sendMessage() {
             // 檢查訊息是否為空
             if (!this.message.trim()) return;
-             console.log(this.messages);
+            //console.log(this.messages);
             // 檢查是否包含"客服"關鍵字
             const isCustomerService = this.message.includes("客服");
             console.log("發送訊息:", this.messages);
@@ -246,39 +246,30 @@ const chatApp = Vue.createApp({
                     .build();
                 // 設置接收訊息的處理器
                 this.hubConnection.on("UpdContent", (msg) => {
-                    //console.log("收到訊息:", content);
-                    //if (typeof content === 'string') {
-                    //    // 處理系統訊息
-                    //    this.messages.push({
-                    //        type: "system",
-                    //        content: content
-                    //    });
-                    //}
-                    //else {
-                    //    // 處理用戶訊息
-                    //    this.messages.push({
-                    //        type: "received",
-                    //        content: content.Message,
-                    //        user: content.User,
-                    //        timestamp: content.Timestamp
-                    //    });
+                    //console.log("收到訊息:", content);                   
                     const roomContainer = document.querySelector("#room");
-                    if (msg.user) {
+                    if (msg.user === this.userId) {
                         // 自己發送的訊息
-                        console.log("me");
-                        console.log(msg);
+                        //console.log("自己發送的訊息", msg);
                         const bubble =
                            `<div class="chat-message.sent">
                                 ${msg.timestamp} 我
                                 <div class="message last">
                                     ${msg.message}
                                 </div>
-                           </div>`;
-                        roomContainer.innerHTML += bubble;
+                           </div>`;                      
                     }
-                    else if (msg.user != null) {
+                    else if (typeof content === 'string') {
+                        // 處理系統訊息
+                        this.messages.push({
+                            type: "system",
+                            content: content
+                        });
+                    }
+                    else{
                         // 其他用戶發送的訊息
-                        console.log("your");
+                        //console.log("收到對方的訊息", msg);
+                        // 建立接收到的訊息氣泡HTML
                         const bubble =
                            `<div class="chat-message.received">
                                ${msg.timestamp} ${msg.user}
@@ -286,13 +277,21 @@ const chatApp = Vue.createApp({
                                     ${msg.message}
                                </div>
                            </div>`;
+                        // 將訊息加入聊天室
                         roomContainer.innerHTML += bubble;
+                        // 將訊息加入Vue數據中
+                        this.messages.push({
+                            type: "received",
+                            content: msg.message,
+                            user: msg.user,
+                            timestamp: msg.timestamp
+                        });
                     }                    
                     this.scrollToBottom();
                 });
                 // 啟動SignalR連線
                 await this.hubConnection.start();
-                console.log("Hub 連線完成");
+                //console.log("Hub 連線完成");
                 // 新增系統訊息到訊息列表
                 this.messages.push({
                     type: "system",
@@ -304,6 +303,7 @@ const chatApp = Vue.createApp({
             catch (err) {
                 // 錯誤處理
                 console.error("連線錯誤:", err);
+                // 將錯誤訊息加入聊天室
                 this.messages.push({
                     type: "system",
                     content: "無法連接到客服系統，請稍後再試"
