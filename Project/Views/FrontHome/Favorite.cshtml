@@ -32,7 +32,7 @@
 		<div class="row">
 			<div class="col-3 mt-3 mb-5" v-for="item in favorite">
 				<div class="TopSales">
-					<a href="#" class="text-decoration-none">
+					<a v-bind:href="'/Product/Productdetail/' + item.pid" class="text-decoration-none">
 						<i v-bind:class="item.isFavorite? 'bi bi-heart-fill':'bi bi-heart'" class="favorite" v-on:click.prevent="Favorite(item)"></i>
 						<img v-bind:src="'/Images/'+ item.pphoto" class="w-100" />
 						<div class="mt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
