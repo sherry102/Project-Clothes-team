@@ -307,7 +307,8 @@ namespace Project.Controllers
                     T.Mpassword = C.Mpassword;
                     db.SaveChanges();
             }
-
+            string json2 = JsonSerializer.Serialize(T); // 序列化模型数据
+            HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json2); // 更新 Session
             return RedirectToAction("Profile");
         }
 
