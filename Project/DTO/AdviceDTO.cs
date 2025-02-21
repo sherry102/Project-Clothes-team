@@ -13,6 +13,7 @@ namespace Project.DTO
 
         public string Description { get; set; }
 
-       
+        public DateTime DateTime { get; set; }
+
     }
 }

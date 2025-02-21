@@ -351,27 +351,34 @@ namespace Project.Controllers
             return "已加入購物車";
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostAdvice([FromBody] AdviceDTO Ad)
-        {
-            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-            if (string.IsNullOrEmpty(json))
+            [HttpPost]
+            public async Task<IActionResult> PostAdvice([FromBody] AdviceDTO Ad)
             {
-                return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+                string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                if (string.IsNullOrEmpty(json))
+                {
+                    return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+                }
+                var member = JsonSerializer.Deserialize<Tmember>(json);
+  
+                    if (Ad == null)
+                    {
+                        return Json(new { success = false, message = "請求內容無效" });
+                    }
+
+                    var Advice = new Tadvice
+                {
+                    Mid = member.Mid,
+                    Oid = Ad.OId,
+                    Question = Ad.Question,
+                    Title = Ad.Title,
+                    Description = Ad.Description,
+                    DateTime = DateTime.Now
+                };
+                _context.Tadvices.Add(Advice);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
             }
-            var member = JsonSerializer.Deserialize<Tmember>(json);
-            var Advice = new Tadvice
-            {
-                Mid = member.Mid,
-                Oid = Ad.OId,
-                Question = Ad.Question,
-                Title = Ad.Title,
-                Description = Ad.Description,
-            };
-            _context.Tadvices.Add(Advice);
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
-        }
 
         [HttpGet]
 
@@ -787,11 +794,18 @@ namespace Project.Controllers
 
             var order = await _context.Torders.Where(c => c.Oid == id && c.Mid == member.Mid).FirstOrDefaultAsync();
             Console.WriteLine(order);
-            var orderdetail = await _context.TorderDetails.Where(c => c.Oid == id).ToListAsync();
+            var orderdetail = await _context.TorderDetails.Where(c => c.Oid == id).Select(c => new AdviceOrderDetailDTO
+            {
+                Pname = c.Pname,
+                Psize = c.Psize,
+                Pcolor = c.Pcolor,
+                Pcount = c.Pcount,
+                Pprice = c.Pprice
+            }).ToListAsync();
             Console.WriteLine(orderdetail);
             if (orderdetail == null)
             {
-                orderdetail = new List<TorderDetail>();  // 避免回傳 null
+                orderdetail = new List<AdviceOrderDetailDTO>();  // 避免回傳 null
             }
             if (order == null) {
                 return RedirectToAction("CheckOrder", "FrontHome");

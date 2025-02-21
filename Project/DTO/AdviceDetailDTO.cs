@@ -21,7 +21,7 @@ namespace Project.DTO
 
         public bool OPayment { get; set; }
 
-        public List<TorderDetail> orderdetail { get; set; }
+        public List<AdviceOrderDetailDTO> orderdetail { get; set; }
 
 
     }

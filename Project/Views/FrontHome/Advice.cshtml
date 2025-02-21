@@ -80,7 +80,7 @@
                         <label class="form-label  mb-2">簡述 <span style="font-size:14px; color:darkred">(150字以內)</span></label>
                         <textarea class="form-control" style="height:150px;overflow-y: scroll; resize: none;" maxlength="150" v-model="Description"></textarea>
                     </div>
-                    <button type="button" class="btn btn-send" v-on:click="send">送出</button>
+                    <button type="button" class="btn btn-send" v-on:click="sendAdvice">送出</button>
                 </form>
             </div>
         </div>
@@ -89,7 +89,6 @@
 </div>
 
 @section Scripts{
-    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <script>
@@ -134,7 +133,7 @@
                         alert(err.message);
                     });
                 },
-                send: function () {
+                sendAdvice: function () {
                     let _this = this;
                     let request = {
                         OId:_this.OId,
@@ -142,6 +141,7 @@
                         Title:_this.Title,
                         Description:_this.Description
                     }
+                    console.log(request);
                     if (confirm("確定要送出嗎")) {
                         axios.post(`${_this.baseAddress}/Ajax/PostAdvice`, request).then(response => {
                             if (response.data.success) {
