@@ -270,10 +270,14 @@
                           :key="index"
                           :class="['chat-message', msg.type]" 
                           id="room">
-                          {{ msg.content }}
-                          <button type="button" v-if="msg.showButton" class="real-customer-service-btn" @@click ="connectToRealService" title="連線真人客服">
+                        {{msg.content}}
+                        <button type="button"
+                                v-if="msg.showButton && !isCustomerService"
+                                class="real-customer-service-btn"
+                                @@click ="connectToRealService"
+                                title="連線真人客服">
                                 連接真人客服
-                          </button>
+                        </button>
                      </div>                   
                     <!-- 顯示「正在輸入」的訊息提示 -->
                     <div v-if="isTyping" class="chat-message received">正在輸入...</div>

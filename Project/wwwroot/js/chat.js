@@ -22,6 +22,7 @@ const chatApp = Vue.createApp({
                     content: "請問有什麼我可以協助您的嗎？",
                 },
             ],
+            // 預設回覆字典，用於智能客服回應
             defaultReplies: {
                 你好: "您好！很高興為您服務。",
                 hi: "Hi！有什麼我可以幫您的嗎？",
@@ -45,6 +46,17 @@ const chatApp = Vue.createApp({
         };
     },
     mounted() {
+        // 從 sessionStorage 讀取之前儲存的聊天記錄
+        const savedMessages = sessionStorage.getItem("chatMessages");
+        if (savedMessages) {
+            this.messages = JSON.parse(savedMessages);
+            // 檢查是否之前在真人客服模式
+            const wasInCustomerService = sessionStorage.getItem("isCustomerService") === "true";
+            if (wasInCustomerService) {
+                this.isCustomerService = true;
+                this.initializeSignalRConnection();
+            }
+        }
         // 3秒後顯示氣泡
         setTimeout(() => {
             if (!this.isVisible) {
@@ -56,28 +68,33 @@ const chatApp = Vue.createApp({
 
         // 修改點擊事件監聽器
         document.addEventListener("click", (e) => {
-            if (this.$refs.chatWidget && this.$refs.chatToggle) {
-                if (this.isVisible &&
-                    !this.$refs.chatWidget.contains(e.target) &&
-                    !this.$refs.chatToggle.contains(e.target) &&
-                    !e.target.closest('.chat-bubble')) {
-                    this.closeChat();
-                }
+            // 檢查點擊是否發生在聊天視窗外部
+            const isClickedOutside = this.$refs.chatWidget &&
+                !this.$refs.chatWidget.contains(e.target) &&
+                !this.$refs.chatToggle.contains(e.target) &&
+                !e.target.closest('.chat-bubble');
+            // 只有當聊天視窗是開啟狀態，且點擊在外部時才關閉
+            if (this.isVisible && isClickedOutside) {
+                this.closeChat();
             }
         });
         // 監聽消息變化
         this.$watch(
             () => this.messages.length, // 監聽 messages 陣列長度變化
-            () => {
-                this.$nextTick(() => this.scrollToBottom());
-            }
-        );
+            () => this.$nextTick(() => this.scrollToBottom())
+        )
+        // 頁面關閉前儲存聊天記錄和客服模式狀態
+        window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
+            sessionStorage.setItem("isCustomerService", this.isCustomerService);
+        });
     },
     beforeUnmount() {
         document.removeEventListener("click", this.handleOutsideClick);
     },
     methods: {
         toggleChat() {
+            // 切換聊天窗口顯示狀態
             this.isVisible = !this.isVisible;
             if (this.isVisible) {
                 this.isBubbleVisible = false;
@@ -85,9 +102,11 @@ const chatApp = Vue.createApp({
                 this.$nextTick(() => this.scrollToBottom());
             }
         },
+        // 關閉聊天窗口
         closeChat() {
             this.isVisible = false;
-            if (this.hubConnection) {
+            // 如果在真人客服模式，關閉SignalR連線
+            if (this.hubConnection && this.isCustomerService) {
                 this.hubConnection.stop();
             }
             // 關閉時重置所有狀態
@@ -103,6 +122,7 @@ const chatApp = Vue.createApp({
         },
         getSmartReply(message) {
             const lowerMsg = message.toLowerCase();
+            // 根據關鍵字返回相應回覆
             if (lowerMsg.includes("會員")) {
                 this.showChatButton = true;
                 return "您是否需要會員相關協助？請點擊下方按鈕與真人客服聯繫。";
@@ -131,6 +151,7 @@ const chatApp = Vue.createApp({
                 this.showChatButton = true;
                 return "請點擊下方按鈕連接真人客服";
             }
+            // 檢查預設回覆
             for (let key in this.defaultReplies) {
                 if (lowerMsg.includes(key)) {
                     return this.defaultReplies[key];
@@ -138,33 +159,41 @@ const chatApp = Vue.createApp({
             }
             return "抱歉，我可能沒有完全理解您的問題。您可以換個方式描述，或直接聯繫我們的客服人員。";
         },
+        // 發送訊息
         async sendMessage() {
             // 檢查訊息是否為空
             if (!this.message.trim()) return;
-            //console.log(this.messages);
-            // 檢查是否包含"客服"關鍵字
-            const isCustomerService = this.message.includes("客服");
-            console.log("發送訊息:", this.messages);
+            console.log(this.messages);
             // 儲存訊息內容
             const messageContent = this.message;   
             // 添加用戶訊息
-            this.messages.push({
-                type: "sent",
-                content: messageContent,
-                timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
-            });         
+            // 先添加用戶訊息到列表
+            if (this.isCustomerService) {
+                // 真人客服模式下的訊息格式
+                this.messages.push({
+                    type: "sent",
+                    content: messageContent,
+                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                });
+            }
+            else {
+                // 智能客服模式下的訊息格式
+                this.messages.push({
+                    type: "sent",
+                    content: messageContent,
+                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                });
+            }         
             // 立即滾動到底部
             await this.$nextTick();
             this.scrollToBottom();
             this.isTyping = false;
+            this.saveMessages();
             // 判斷是否為客服模式且已建立連線
             if (this.isCustomerService && this.hubConnection) {
                 try {
                     // 透過SignalR發送訊息,發送訊息到伺服器，使用userId作為user參數
                     await this.hubConnection.invoke("SendMessage", this.userId, messageContent);
-                    //this.hubConnection.invoke("SendMessage", "1", "測試訊息")
-                    //    .then(() => console.log("訊息發送成功"))
-                    //    .catch(err => console.error("發送訊息錯誤:", err));
                 }
                 catch (err) {
                     // 錯誤處理
@@ -179,8 +208,7 @@ const chatApp = Vue.createApp({
             else {
                 // 如果不是客服模式，使用機器人回覆
                 this.handleBotResponse(messageContent);
-            }
-            this.$nextTick(() => this.scrollToBottom());                            
+            }                         
             // 清空訊息輸入框
             this.message = "";
             // 如果是來自其他使用者的訊息，不顯示正在輸入
@@ -188,7 +216,7 @@ const chatApp = Vue.createApp({
         },
         // 新增連接真人客服方法
         async connectToRealService() {
-            // alert("正在為您連接真人客服...");
+            // 顯示連接中的提示
             let timerInterval;
             // 顯示Sweet Alert loading畫面
             Swal.fire({
@@ -212,27 +240,19 @@ const chatApp = Vue.createApp({
             })
             .then((result) => {
                 if (result.dismiss === Swal.DismissReason.timer) {
+                    // 切換到真人客服模式
+                    this.isCustomerService = true;
+                    sessionStorage.setItem("isCustomerService", "true");
                     this.messages.push({
                         type: "system",
                         content: "排隊進入真人客服！！"           
-                    })  
-                    this.isCustomerService = true; // 正式進入真人客服模式
-                    // 強制在下一個 tick 進行滾動
-                    this.$nextTick(() => {
-                        this.scrollToBottom();                       
-                    });
+                    }) 
                     // 初始化SignalR連線
                     this.initializeSignalRConnection();
-                }
-            });
-        },
-        scrollToBottom() {
-            this.$nextTick(() => {
-                const container = this.$refs.messagesContainer;
-                if (container) {
-                    setTimeout(() => {
-                        container.scrollTop = container.scrollHeight;
-                    }, 200); // 給予一個小延遲確保 DOM 已更新
+                    // 強制在下一個 tick 進行滾動
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
                 }
             });
         },
@@ -245,7 +265,7 @@ const chatApp = Vue.createApp({
             try {
                 // 建立SignalR連線配置
                 this.hubConnection = new signalR.HubConnectionBuilder()
-                    .withUrl(`https://localhost:7279/ChatRoom?room=${this.userName}`)
+                    .withUrl(`https://localhost:7279/ChatRoom?room=${this.userId}`)
                     .withAutomaticReconnect([0, 2000, 5000, 10000, null]) // 自動重連機制
                     .configureLogging(signalR.LogLevel.Debug) // 啟用詳細日誌
                     .build();
@@ -253,8 +273,7 @@ const chatApp = Vue.createApp({
                 this.hubConnection.on("UpdContent", (msg) => {
                     // 過濾空訊息
                     if (!msg.message || msg.message.trim() === "") return;
-                    //console.log("收到訊息:", content);                   
-                    //const roomContainer = document.querySelector("#room");
+                    //console.log("收到訊息:", contentmsg.message);
                     if (msg.user === this.userId) {
                         return;                     
                     }
@@ -273,17 +292,13 @@ const chatApp = Vue.createApp({
                             user: msg.user,
                             timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
                         });
-                    }                    
+                    }
+                    sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
                     this.scrollToBottom();
                 });
                 // 啟動SignalR連線
                 await this.hubConnection.start();
-                //console.log("Hub 連線完成");
-                // 新增系統訊息到訊息列表
-                this.messages.push({
-                    type: "system",
-                    content: "成功輪到您進入真人客服！"
-                });
+                console.log("Hub 連線完成");
                 // 設定為客服模式
                 this.isCustomerService = true;
             }
@@ -325,7 +340,23 @@ const chatApp = Vue.createApp({
                 });
                 // 等待下一個更新週期後捲動到底部
                 this.$nextTick(() => this.scrollToBottom());
+                this.saveMessages();
             }, 1000);
+        },
+        // 儲存訊息到 sessionStorage
+        saveMessages() {
+            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
+            sessionStorage.setItem("isCustomerService", this.isCustomerService);
+        },
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const container = this.$refs.messagesContainer;
+                if (container) {
+                    setTimeout(() => {
+                        container.scrollTop = container.scrollHeight;
+                    }, 200); // 給予一個小延遲確保 DOM 已更新
+                }
+            });
         },
     }
     // 將Vue應用程式掛載到指定的DOM元素

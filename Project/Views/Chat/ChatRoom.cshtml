@@ -1,201 +1,555 @@
 ﻿@model IEnumerable<Project.Models.Tchat>
+@section styles{
+    <style>
+        /* 主要佈局 */
+        .chatRoom_container {
+            width: 100%; /* 使容器寬度填滿父容器 */
+            height: 100vh; /* 高度設為視窗高度 */
+            display: flex; /* 使用 flex 排版 */
+            margin: 0 auto; /* 水平居中 */
+            position: relative; /* 用於定位內部元素 */
+            background: #f4f7f9; /* 背景色設為淡灰藍 */
+            border-radius: 12px; /* 邊角圓潤 */
+            overflow: hidden; /* 隱藏超出範圍的內容 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+        }
+
+        /* 左側聊天列表 */
+        .chat_list {
+            width: 25%; /* 設定左側聊天列表的寬度 */
+            height: 100%; /* 高度填滿父容器 */
+            background: white; /* 背景色為白色 */
+            border-right: 1px solid #ddd; /* 右邊框線 */
+            overflow-y: auto; /* 允許垂直滾動 */
+            padding-top: 10px; /* 上方留空間 */
+        }
+
+        /* 聊天列表項目 */
+        .chat_listtag {
+            padding: 15px; /* 設定內邊距 */
+            border-bottom: 1px solid #eee; /* 下邊框線 */
+            cursor: pointer; /* 設為可點擊 */
+            transition: background-color 0.3s ease-in-out; /* 背景色變化的過渡效果 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 項目間距均勻分布 */
+            align-items: center; /* 垂直居中對齊 */
+            border-radius: 8px; /* 邊角圓潤 */
+        }
+
+            .chat_listtag:hover {
+                background-color: #e3eaf2; /* 滑鼠懸停時改變背景色 */
+            }
+
+        /* 未讀訊息標記 */
+        .unread-count {
+            background-color: #ff3b30; /* 背景顏色為紅色 */
+            color: white; /* 文字顏色為白色 */
+            font-weight: bold; /* 文字加粗 */
+            border-radius: 50%; /* 圓形標籤 */
+            padding: 5px 10px; /* 內邊距 */
+            font-size: 12px; /* 字體大小 */
+        }
+
+        /* 聊天室主區域 */
+        #chatRoom {
+            width: 75%; /* 右側聊天區域寬度 */
+            height: 100vh; /* 高度設為視窗高度 */
+            display: flex; /* 使用 flex 排版 */
+            flex-direction: column; /* 垂直排列 */
+            background: white; /* 背景色為白色 */
+            border-radius: 12px; /* 邊角圓潤 */
+            overflow: hidden; /* 隱藏超出範圍的內容 */
+        }
+
+        /* 聊天視窗頭部 */
+        .chat-widget-header {
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 項目間距均勻分布 */
+            align-items: center; /* 垂直居中對齊 */
+            padding: 15px 20px; /* 上下、左右內邊距 */
+            background: #007bff; /* 背景色為藍色 */
+            color: white; /* 文字顏色為白色 */
+            font-weight: bold; /* 文字加粗 */
+            border-top-left-radius: 12px; /* 左上圓角 */
+            border-top-right-radius: 12px; /* 右上圓角 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+        }
+
+        /* 聊天內容區域 */
+        .chat-widget-context {
+            flex: 1; /* 填滿剩餘空間 */
+            padding: 20px; /* 內邊距 */
+            display: flex; /* 使用 flex 排版 */
+            flex-direction: column; /* 垂直排列 */
+            overflow-y: auto; /* 允許垂直滾動 */
+            background: #f8f9fa; /* 背景色為淺灰色 */
+            scroll-behavior: smooth; /* 滾動過渡效果 */
+        }
+
+        /* 訊息樣式 */
+        .chat-message {
+            font-size: 15px; /* 設定字體大小 */
+            line-height: 1.5; /* 設定行高 */
+            margin-bottom: 12px; /* 設定下邊距 */
+            padding: 10px 15px; /* 內邊距 */
+            border-radius: 20px; /* 邊角圓潤 */
+            max-width: 75%; /* 設定最大寬度 */
+            word-wrap: break-word; /* 自動換行 */
+            display: flex; /* 使用 flex 排版 */
+            flex-direction: column; /* 垂直排列 */
+        }
+
+            /* 其他人的訊息 */
+            .chat-message.received {
+                background: #e0e7ef; /* 背景顏色為灰藍色 */
+                color: black; /* 文字顏色為黑色 */
+                align-self: flex-start; /* 向左對齊 */
+            }
+
+            /* 自己的訊息 */
+            .chat-message.sent {
+                background: #007bff; /* 背景顏色為藍色 */
+                color: white; /* 文字顏色為白色 */
+                align-self: flex-end; /* 向右對齊 */
+            }
+
+            /* 系統通知 */
+            .chat-message.system {
+                font-size: 13px; /* 字體大小設小 */
+                text-align: center; /* 文字居中 */
+                background: #f1f1f1; /* 背景顏色為淡灰色 */
+                padding: 8px 12px; /* 內邊距 */
+                border-radius: 12px; /* 邊角圓潤 */
+                align-self: center; /* 居中顯示 */
+            }
+
+        /* 訊息輸入區 */
+        .chat-widget-footer {
+            padding: 10px 20px; /* 上下、左右內邊距 */
+            background: #f8f9fa; /* 背景色為淡灰色 */
+            border-top: 1px solid #ddd; /* 上邊框線 */
+            display: flex; /* 使用 flex 排版 */
+            align-items: center; /* 垂直居中對齊 */
+        }
+
+        /* 訊息輸入框 */
+        .chat-widget-input {
+            flex: 1; /* 填滿剩餘空間 */
+            display: flex; /* 使用 flex 排版 */
+            align-items: center; /* 垂直居中對齊 */
+            background: white; /* 背景色為白色 */
+            border: 1px solid #ced4da; /* 邊框顏色 */
+            border-radius: 20px; /* 邊角圓潤 */
+            padding: 10px; /* 內邊距 */
+            gap: 12px; /* 項目間隙 */
+        }
+
+            /* 訊息輸入框內部 */
+            .chat-widget-input input {
+                flex: 1; /* 填滿剩餘空間 */
+                border: none; /* 移除邊框 */
+                outline: none; /* 移除聚焦時的邊框 */
+                font-size: 15px; /* 設定字體大小 */
+                background: transparent; /* 背景設為透明 */
+            }
+
+            /* 發送按鈕 */
+            .chat-widget-input button {
+                font-size: 18px; /* 字體大小 */
+                background: #007bff; /* 背景色為藍色 */
+                border: none; /* 移除邊框 */
+                color: white; /* 文字顏色為白色 */
+                padding: 10px; /* 內邊距 */
+                border-radius: 50%; /* 按鈕圓形 */
+                cursor: pointer; /* 變為可點擊狀態 */
+                transition: background 0.2s ease-in-out; /* 背景色變化的過渡效果 */
+            }
+
+                .chat-widget-input button:hover {
+                    background: #0056b3; /* 懸停時改變背景色 */
+                }
+
+        /* 檔案上傳按鈕 */
+        .media-upload-area {
+            display: flex; /* 使用 flex 排版 */
+            gap: 10px; /* 項目間隙 */
+        }
+
+        .upload-btn {
+            font-size: 16px; /* 字體大小 */
+            padding: 6px 12px; /* 內邊距 */
+            border-radius: 8px; /* 邊角圓潤 */
+            border: none; /* 移除邊框 */
+            cursor: pointer; /* 變為可點擊狀態 */
+            background: #ddd; /* 背景顏色 */
+            transition: background 0.2s ease-in-out; /* 背景色變化的過渡效果 */
+        }
+
+            .upload-btn:hover {
+                background: #bbb; /* 懸停時改變背景色 */
+            }
+
+        /* 會員側邊欄 */
+        .user_profile_sidebar {
+            width: 300px; /* 設定側邊欄寬度 */
+            height: 100%; /* 高度填滿父容器 */
+            background: white; /* 背景色為白色 */
+            box-shadow: -3px 0 10px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+            position: fixed; /* 固定在螢幕上 */
+            right: -300px; /* 初始時將側邊欄隱藏在右邊 */
+            transition: right 0.3s ease-in-out; /* 右側滑動效果 */
+        }
+
+            .user_profile_sidebar.active {
+                right: 0; /* 顯示側邊欄 */
+            }
+
+    </style>
+}
 @{
     ViewData["Title"] = "ChatRoom";
 }
-<h1>客服</h1>
-
-<form class="row mt-3 g-3 needs-validation" novalidate>
-    <div class="row justify-content-md-center">
-        <div class="col col-md-3">
-            <div class="form-group mb-2 text-center">
-                <h3>請輸入暱稱</h3>
-                <input id="txtUser"
-                       class="form-control"
-                       type="text"
-                       required
-                       minlength="2"
-                       maxlength="50" />
-                <div class="invalid-feedback">請輸入2至50個字元</div>
-                <div class="valid-feedback">OK</div>
+<div id="chatApp">
+    <!-- 主聊天界面 -->
+    <div class="chatRoom_container">
+        <!-- 左側聊天列表 -->
+        <div class="chat_list" id="chatlist">
+            <!-- 建立新聊天室按鈕 -->
+            <div class="chat_listtag" id="createRoom">
+                <i class="fas fa-plus"></i>
+                <span>建立新聊天室</span>
             </div>
-            <!-- 用於1對1聊天 -->
-            <div class="form-group mb-2 text-center">
-                <h3>請輸入聊天室ID</h3>
-                <input id="txtRoom" class="form-control" type="text" required />
-                <div class="invalid-feedback">請輸入聊天室ID</div>
-            </div>
-            <div class="form-group text-center">
-                <button type="submit" class="btn btn-dark">進入聊天室</button>
-            </div>
+            <!-- 動態聊天列表將在此插入 -->
         </div>
-    </div>
-</form>
-
-<div class="row" id="chatRoom">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between">
-                    <label>聊天室</label>
-                    <label>暱稱: <span id="userName"></span></label>
+        <!-- 主聊天區域 -->
+        <div class="chat_container" id="chatRoom">
+            <div class="chat-widget" ref="chatWidget">  
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <label>聊天室：<span id="roomName">{{ activeRoomName }}</span></label>
+                        <label>標題：<span id="title"></span></label>
+                        <label>會員：<span id="userName" class="cursor-pointer"></span></label>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="mb-3" id="room"></div>
-                <div class="input-group">
-                    <input id="txtMsg"
-                           class="form-control"
-                           type="text"
-                           value="hello html5 websocket" />
-                    <button class="btn btn-secondary" type="button" id="send">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             style="height: 18px"
-                             viewBox="0 0 512 512">
-                            <path fill="#fff"
-                                  d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
-                        </svg>
+            <div class="chat-widget-context" ref="messagesContainer">
+                <div v-for="(msg, index) in messages"
+                     :key="index"
+                     :class="['chat-message', msg.type]"
+                     id="room">
+                    <span v-html="msg.content"></span>               
+                </div>
+                <!-- 顯示「正在輸入」的訊息提示 -->
+                <div v-if="isTyping" class="chat-message received">正在輸入...</div>
+            </div>
+            <div class="chat-widget-footer">
+                <div class="chat-widget-input">
+                    <!-- 媒體上傳和輸入區域 -->
+                    <div class="media-upload-area">
+                        <button class="upload-btn" id="uploadFile" title="上傳檔案">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="upload-btn" id="uploadImage" title="上傳圖片">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="upload-btn" id="uploadVideo" title="上傳影片">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="upload-btn" id="uploadAudio" title="上傳語音">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>     
+                    <!-- 雙向綁定 message -->
+                    <!-- 按下 Enter 鍵觸發 SendMessage 方法 -->
+                    <input type="text"
+                           id="txtMSG"
+                           ref="chatInput"
+                           v-model="message"
+                           @@keyup.enter="sendMessage"
+                           placeholder="輸入訊息..." />
+                    <button class="upload-btn" id="emojiPicker" title="表情符號">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <!-- 發送按鈕 -->
+                    <button type="button" 
+                            id="sent"
+                            ref="chatsent"
+                            @@click="sendMessage" 
+                            :style="{ transform: message.trim() ? 'scale(1.1)' : 'scale(1)' }" 
+                            title="發送訊息">
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
-            <div class="card-footer"></div>
         </div>
-    </div>
-</div>
-
-<div id="liveToast"
-     class="toast align-items-center text-white bg-danger border-0 bottom-0 start-0"
-     role="alert"
-     aria-live="assertive"
-     aria-atomic="true">
-    <div class="d-flex">
-        <div class="toast-body">請輸入傳送訊息！</div>
-        <button type="button"
-                class="btn-close btn-close-white me-2 m-auto"
-                data-bs-dismiss="toast"
-                aria-label="Close"></button>
+        <!-- 右側會員資料側邊欄 -->
+        <div class="profile_overlay"></div>
+        <div class="user_profile_sidebar">
+                <!-- 個人資料內容將動態產生 -->
+        </div>     
     </div>
 </div>
 
 
-
-@section scripts {
-    <script type="text/javascript"
-            src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@section scripts {  
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.15/vue.global.prod.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
 
-          const myFile = document.querySelector("#myFile");
-          const form = document.querySelector(".needs-validation");
-          const chatRoom = document.querySelector("#chatRoom");
-          const txtUser = document.querySelector("#txtUser"); //SR用
-          const userName = document.querySelector("#userName");
-          const txtMsg = document.querySelector("#txtMsg"); //SR用
-          const liveToast = document.querySelector("#liveToast");
-          const room = document.querySelector("#room");
-          const send = document.querySelector("#send"); //SR用
-          const result = document.querySelector("#result"); //SR用
-
-          init();
-
-          function init() {
-            //隱藏chatRoom
-            chatRoom.style.display = "none";
-
-            //驗證form
-            form.addEventListener(
-              "submit",
-              (event) => {
-                event.preventDefault();
-                if (!form.checkValidity()) {
-                  event.stopPropagation();
-                } else {
-                  let timerInterval;
-                  Swal.fire({
-                    title: "系統通知",
-                    html: "即將進入聊天室 <b></b> milliseconds.",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: () => {
-                      Swal.showLoading();
-                      const timer = Swal.getPopup().querySelector("b");
-                      timerInterval = setInterval(() => {
-                        timer.textContent = `${Swal.getTimerLeft()}`;
-                      }, 100);
-                    },
-                    willClose: () => {
-                      clearInterval(timerInterval);
-                    },
-                  }).then((result) => {
-                    enterRoom(txtUser.value, txtRoom.value); // 傳遞用戶名稱和聊天室名稱
-                  });
+        let messages = []; // 初始化
+        const chatApp = Vue.createApp({
+            data() {
+                return {
+                    userId: "1", // 目前登入的會員ID
+                    userName: "帥哥", // 目前登入的會員名稱
+                    chatId: null, // 目前的聊天室ID
+                    activeRoom: null, // 目前選中的聊天室
+                    rooms: new Map(), // 儲存所有聊天室資訊
+                    message: "", // 訊息內容
+                    messages: [], 
+                    isTyping: false, // 用來顯示用戶是否正在輸入訊息
+                    hubConnection: null, // SignalR 連接對象
+                    members: [] // 儲存會員列表
                 }
-                form.classList.add("was-validated");
-              },
-              false
-            );
-          }
+            },
+            // 組件載入時初始化
+            async mounted() {
+                // 獲取當前用戶ID（假設從某個隱藏欄位或會話中獲取）
+                // this.userId = document.getElementById('currentUserId').value;
 
-          function enterRoom(userName, roomName) {
-                  const connection = new signalR.HubConnectionBuilder()
-              .withUrl(`https://localhost:7279/ChatRoom?room=${roomName}`) // 此處開頭可以接受 https 不需要為 wss ，signalR 底層邏輯會直接置換成 wss
-              .build();
+                // 初始化各項功能
+                await this.initializeSignalRConnection();
+                // await this.loadMembers();
+                // await this.initializeChatRooms();
 
-            //與Server建立連線
-            connection
-              .start()
-              .then(function () {
-                console.log("Hub 連線完成");
-                userName.textContent = userName;
+                // 載入聊天歷史
+                this.loadAllChatHistory();
 
-                //顯示chatRoom
-                chatRoom.style.display = "flex";
+                // 監聽消息變化以自動滾動
+                this.$watch(
+                    () => this.messages.size,
+                    () => this.$nextTick(this.scrollToBottom)
+                );
+            },
+            methods: {
+                // 初始化 SignalR 連線的方法
+                async initializeSignalRConnection() {
+                    try {
+                        // 建立 SignalR 連線
+                        this.hubConnection = new signalR.HubConnectionBuilder()
+                            .withUrl(`https://localhost:7279/ChatRoom?room=${this.userId}`) // 設定 SignalR Hub 連線
+                            .withAutomaticReconnect([0, 2000, 5000, 10000, null]) // 自動重連設置
+                            .configureLogging(signalR.LogLevel.Debug) // 開啟詳細的日誌記錄
+                            .build();
 
-                //隱藏form
-                form.style.display = "none";
-              })
+                        // 註冊接收消息處理器
+                        this.hubConnection.on("UpdContent", (msg) => {
+                            console.log("收到伺服器訊息: ", msg);
+                            // 過濾空訊息
+                            // 確保 messages 是陣列
+                            if (!Array.isArray(this.messages)) {
+                                this.messages = []; // 重新初始化
+                            }
+                            if (!msg.message || msg.message.trim() === "") return;
+                            console.log("收到訊息:", msg.message);
+                            if (msg.user === this.userId) {
+                                this.messages.push({
+                                    type: "sent",
+                                    content: messageContent,
+                                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                                });
+                                return;
+                            }
+                            else if (msg.user === "System") {
+                                this.messages.push({
+                                    type: "system",
+                                    content: msg.message,
+                                    timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+                                });
+                            }
+                            else{
+                                // 將訊息加入Vue數據中
+                                this.messages.push({
+                                    type: "received",
+                                    content: msg.message,
+                                    user: msg.user,
+                                    timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+                                });
+                            }
+                            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
+                            this.scrollToBottom();
+                        });
 
-              .catch(function (err) {
-                alert("連線錯誤: " + err.toString());
-              });
+                           // 將消息添加到對應房間
+                           //  const roomMessages = this.messages.get(this.activeRoom) || [];
+                           //  roomMessages.push(messageObj);
+                           //  this.messages.set(this.activeRoom, roomMessages);
 
-            //更新聊天內容事件
-            connection.on("UpdContent", function (msg) {
-              if (msg.user == txtUser.value) {
-                console.log("me");
-                console.log(msg);
-                const bubble = `
-    <div class="mine messages">
-        ${msg.timestamp} 我
+                           //  更新UI
+                           //  this.$nextTick(this.scrollToBottom);
 
-        <div class="message last">${msg.message}</div>
-    </div>
-                            `;
-                room.innerHTML += bubble;
-              } else if (msg.user != txtUser.value && msg.user != null) {
-                console.log("they");
-                const bubble = `
-    <div class="yours messages">
+                           //  如果不是當前房間的消息，增加未讀計數
+                           //  if (this.activeRoom !== msg.ChatId) {
+                           //      const room = this.rooms.get(msg.ChatId);
+                           //      if (room) {
+                           //          room.unreadCount = (room.unreadCount || 0) + 1;
+                           //          this.updateUnreadCount(msg.ChatId);
+                           //      }
+                           //  }
+                        
 
-        ${msg.timestamp} ${msg.user}
+                        // 啟動連接
+                        await this.hubConnection.start();
+                        console.log("SignalR連接成功");
+                    }
+                    catch (err) {
+                        // 錯誤處理
+                        console.error("連線錯誤:", err);
+                        // 將錯誤訊息加入聊天室
+                        this.messages.push({
+                            type: "system",
+                            content: "無法連接到客服系統，請稍後再試"
+                        });
+                        // 顯示錯誤提示
+                        Swal.fire({
+                            title: '錯誤',
+                            text: '無法連接到客服系統，請稍後再試',
+                            icon: 'error'
+                        });
+                        // 3秒後重試
+                        setTimeout(() => {
+                            this.initializeSignalRConnection();
+                        }, 3000);
+                    }
+                },
+                // 發送訊息
+                async sendMessage() {
+            // 檢查訊息是否為空
+            if (!this.message.trim()) return;
+            console.log(this.messages);
+            // 儲存訊息內容
+            const messageContent = this.message;
+             
+                 
+                this.messages.push({
+                    type: "sent",
+                    content: messageContent,
+                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                })
+            // 立即滾動到底部
+            await this.$nextTick();
+            this.scrollToBottom();
+            this.isTyping = false;
+            // this.saveMessages();
+            
+            this.message = "";
+                },
+                // 切換聊天室
+                async switchRoom(roomId) {
+                    if (this.activeRoom === roomId) return;
 
-        <div class="message last">${msg.message}</div>
-    </div>
-                            `;
-                room.innerHTML += bubble;
-              }
-            });
+                    try {
+                        // 保存當前房間的聊天記錄
+                        if (this.activeRoom) {
+                            this.saveRoomChatHistory(this.activeRoom);
+                        }
 
-            //傳送訊息
-            send.addEventListener("click", function (event) {
-              const user = txtUser.value;
-              const message = txtMsg.value;
-              connection.invoke("SendMessage", user, message).catch(function (err) {
-                alert("傳送錯誤: " + err.toString());
-              });
-            });
+                        // 更新活動房間
+                        this.activeRoom = roomId;
 
-            //#endregion SignalR
-          }
+                        // 更新UI
+                        document.getElementById('roomName').textContent =
+                            this.rooms.get(roomId)?.name || '未知房間';
+
+                        // 清空未讀計數
+                        if (this.rooms.has(roomId)) {
+                            this.rooms.get(roomId).unreadCount = 0;
+                            this.updateUnreadCount(roomId);
+                        }
+
+                        // 載入房間消息
+                        this.updateMessageDisplay(roomId);
+                    } catch (err) {
+                        console.error("切換房間失敗:", err);
+                    }
+                },
+
+                // 更新消息顯示
+                updateMessageDisplay(roomId) {
+                    const messages = this.messages.get(roomId) || [];
+                    const container = this.$refs.messagesContainer;
+                    if (!container) return;
+
+                    // 清空容器
+                    container.innerHTML = '';
+
+                    // 重新渲染消息
+                    messages.forEach(msg => {
+                        const msgElement = document.createElement('div');
+                        msgElement.className = `chat-message ${msg.type}`;
+                        msgElement.innerHTML = `
+                            <div class="message-content">${msg.content}</div>
+                            <div class="message-time">${msg.timestamp}</div>
+                        `;
+                        container.appendChild(msgElement);
+                    });
+
+                    this.scrollToBottom();
+                },
+
+                // 更新未讀計數UI
+                updateUnreadCount(roomId) {
+                    const roomElement = document.querySelector(`[data-room-id="${roomId}"]`);
+                    if (!roomElement) return;
+
+                    const countElement = roomElement.querySelector('.unread-count');
+                    const count = this.rooms.get(roomId)?.unreadCount || 0;
+
+                    if (count > 0) {
+                        countElement.textContent = count;
+                        countElement.style.display = 'block';
+                    } else {
+                        countElement.style.display = 'none';
+                    }
+                },
+
+                // 保存聊天記錄
+                saveRoomChatHistory(roomId) {
+                    const messages = this.messages.get(roomId);
+                    if (messages) {
+                        localStorage.setItem(
+                            `chat_history_${roomId}`,
+                            JSON.stringify(messages)
+                        );
+                    }
+                },
+
+                // 載入所有聊天記錄
+                loadAllChatHistory() {
+                    this.rooms.forEach((room, roomId) => {
+                        const savedMessages = localStorage.getItem(`chat_history_${roomId}`);
+                        if (savedMessages) {
+                            this.messages.set(roomId, JSON.parse(savedMessages));
+                        } else {
+                            this.messages.set(roomId, []);
+                        }
+                    });
+                },
+
+                // 滾動到最新消息
+                scrollToBottom() {
+                    const container = this.$refs.messagesContainer;
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }
+            }
+        });
+        // 啟動 Vue 應用
+        chatApp.mount("#chatApp");
     </script>
 }
