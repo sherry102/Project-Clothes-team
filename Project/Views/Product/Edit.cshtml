@@ -1,5 +1,19 @@
 ﻿@model Project.Models.CProductWrap
+@section Styles {
+    <style>
+        .custom-btn {
+            border: none; /* 預設無邊框 */
+            background-color: none;
+            color: #003060;
+        }
 
+        .custom-btn:hover {
+            background-color: #666699; /* 顏色稍微變深 */
+            color: white;
+        }
+            
+    </style>
+}
 <!-- 麵包屑 -->
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb mt-3">
@@ -11,7 +25,7 @@
 <h4>編輯商品</h4>
 <hr />
 
-<form asp-action="Edit" enctype="multipart/form-data">
+<form asp-action="Edit" id="editForm" enctype="multipart/form-data">
     <input type="hidden" name="Pid" value="@Model.Pid" />
     <div class="row">
         <div class="form-group col-md-4">
@@ -86,7 +100,7 @@
             <button type="button" class="btn btn-success btn-sm mt-2" onclick="addInventory()">+ 新增規格</button>
         </div>
         <div class="form-group mt-4 text-center">
-            <input type="submit" value="修改商品" class="btn btn-outline-secondary btn-sm mb-3" />
+            <input type="submit" value="修改商品" class="btn custom-btn btn-sm mb-3" />
         </div>
     </div>
 </form>
@@ -137,9 +151,9 @@
             newGroup.classList.add("inventory-group", "mb-2");
             newGroup.innerHTML = `
                 <input type="hidden" name="TproductInventories[${inventoryIndex}].Id" value="0" />
-                <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25" placeholder="顏色">
-                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25" placeholder="尺寸">
-                <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25" placeholder="庫存">
+                <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25 me-4" placeholder="顏色">
+                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25 me-4" placeholder="尺寸">
+                <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25 me-4" placeholder="庫存">
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
             `;
             container.appendChild(newGroup);
@@ -149,5 +163,42 @@
         function removeInventory(button) {
             button.parentElement.remove();
         }
+
+        document.getElementById("editForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); // 防止表單直接提交
+
+            let formData = new FormData(this);
+
+            try {
+                let response = await fetch(this.action, {
+                    method: "POST",
+                    body: formData
+                });
+
+                let data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: "修改成功！",
+                        text: "你要繼續編輯商品還是返回列表？",
+                        icon: "success",
+                        showCancelButton: true,
+                        confirmButtonText: "繼續編輯",
+                        cancelButtonText: "返回列表"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload(); // 重新整理頁面，繼續編輯
+                        } else {
+                            window.location.href = "/Product/List"; // 返回商品列表
+                        }
+                    });
+                } else {
+                    Swal.fire("錯誤", data.message, "error");
+                }
+            } catch (error) {
+                Swal.fire("錯誤", "發生錯誤，請稍後再試", "error");
+                console.error("提交表單時發生錯誤:", error);
+            }
+        });
     </script>
 }

@@ -35,7 +35,8 @@
 
 <!-- 產品列表 -->
 <div class="container">
-    <div class="text-end text-muted my-1">
+    <h2 class="text-center mt-3">@keyword</h2>
+    <div class="text-end text-muted mb-3">
         <a href="/Product/ProductList" class="text-reset @(currentSort == "" ? "fw-bold" : "")">全部商品</a> |
         <a href="/Product/ProductList?sortby=hot&keyword=@keyword" class="text-reset @(currentSort == "hot" ? "fw-bold" : "")">熱銷排序</a> |
         <a href="/Product/ProductList?sortby=price_asc&keyword=@keyword" class="text-reset @(currentSort == "price_asc" ? "fw-bold" : "")">價格低到高</a> |
@@ -105,16 +106,28 @@
                 }),
                 success: function (response) {
                     if (response === "請先登入會員") {
-                        alert(response);
+                        Swal.fire({
+                            icon: "warning",
+                            title: "請先登入會員",
+                        });
                     } else if (response === "已加入收藏" || response === "已移除收藏") {
                         toggleFavoriteUI(element);
-                        alert(response);
+                        Swal.fire({
+                            icon: "success",
+                            title: response,
+                        });
                     } else {
-                        alert("操作發生錯誤，請稍後再試");
+                        Swal.fire({
+                            icon: "error",
+                            title: "操作發生錯誤，請稍後再試",
+                        });
                     }
                 },
                 error: function () {
-                    alert("系統錯誤，請稍後再試！");
+                    Swal.fire({
+                        icon: "error",
+                        title: "系統錯誤，請稍後再試！",
+                    });
                 }
             });
         }
@@ -129,5 +142,4 @@
             }
         }
     </script>
-
 }
