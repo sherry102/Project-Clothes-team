@@ -226,6 +226,7 @@ namespace Project.Controllers
             {
                 var newOrder = new Torder
                 {
+                    Oprice = order.OPrice,
                     Odiscountedprice = order.ODiscountedprice,
                     OtotalPrice = order.OTotalPrice,
                     Oname = order.OName,
@@ -303,8 +304,7 @@ namespace Project.Controllers
             }
 
             var member = JsonSerializer.Deserialize<Tmember>(json);
-
-            // 查詢該會員且購物車 Id 在傳入清單中的資料
+             
             var itemsToRemove = _context.Tcarts.Where(c => c.Mid == member.Mid && cartItemIds.Contains(c.Id));
             if (!itemsToRemove.Any())
             {
@@ -548,6 +548,80 @@ namespace Project.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> ReturnExchange([FromBody] List<OrderDetailDTO> requestList)
+        {
+            if (requestList == null || requestList.Count == 0)
+            {
+                return BadRequest(new { success = false, message = "無效的請求資料" });
+            }
+
+            using (var db = new DbuniPayContext())
+            {
+                var odidList = requestList.Select(r => r.Odid).ToList();
+
+                var orderDetails = await db.TorderDetails
+                    .Where(od => odidList.Contains(od.Odid))
+                    .ToListAsync();
+
+                if (orderDetails.Count == 0)
+                {
+                    return NotFound(new { success = false, message = "找不到對應的訂單明細" });
+                }
+
+                foreach (var orderDetail in orderDetails)
+                {
+                    var updateData = requestList.FirstOrDefault(r => r.Odid == orderDetail.Odid);
+                    if (updateData != null)
+                    {
+                        orderDetail.Rmethod = updateData.Rmethod;
+                        orderDetail.Rqty = updateData.Rqty;
+                        orderDetail.Rreason = updateData.Rreason;
+                        orderDetail.RotherReason = updateData.RotherReason;
+                        orderDetail.Rname = updateData.Rname;
+                        orderDetail.Rphone = updateData.Rphone;
+                        orderDetail.Raddress = updateData.Raddress;
+                        orderDetail.Rdescription = updateData.Rdescription;
+                    }
+                }
+
+                await db.SaveChangesAsync();
+            }
+
+            return Ok(new { success = true, message = "退換貨資料已更新" });
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetMemberCoupons()
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Unauthorized("請先登入會員");
+            }
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+
+            var coupons = await _context.TmemberCoupons
+                .Where(mc => mc.Mid == member.Mid && !mc.IsUse)
+                .Join(_context.Tcoupons,
+                      mc => mc.CouponId,
+                      c => c.Id,
+                      (mc, c) => new CouponDTO
+                      {
+                          Id = c.Id,
+                          CouponName = c.CouponName,
+                          CouponDiscount = c.CouponDiscount,
+                          CouponPercentage = (float)c.CouponPercentage,
+                          DateStart = c.DateStart,
+                          DateEnd = c.DateEnd,
+                          CouponPassWord = c.PassWord
+                      })
+                .ToListAsync();
+
+            return Ok(coupons);
+        } 
 
         [HttpDelete]
         [Route("Ajax/DeleteItem/{id}")]
@@ -701,6 +775,7 @@ namespace Project.Controllers
                 .Where(od => od.Oid == oid)
                 .Select(od => new OrderDetailDTO
                 {
+                    Odid = od.Odid,
                     Oid = od.Oid,
                     PId = od.Pid,
                     PName = od.Pname,
@@ -832,8 +907,6 @@ namespace Project.Controllers
 		}
 
 	}
-
-
-
+     
 }
 

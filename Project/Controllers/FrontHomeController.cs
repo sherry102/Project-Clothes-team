@@ -86,6 +86,11 @@ namespace Project.Controllers
             return View();
         }
 
+        public IActionResult ReturnPurchase()
+        {
+            return View();
+        }
+
         public IActionResult Coupon()
         {
             return View();
@@ -169,7 +174,7 @@ namespace Project.Controllers
             if (ecpayOrder != null)
             {
                 ecpayOrder.Opayment = int.Parse(id["RtnCode"]) == 0 ?  false:true;
-                ecpayOrder.OpaymentDate = Convert.ToDateTime(id["PaymentDate"]);
+                //ecpayOrder.OpaymentDate = Convert.ToDateTime(id["PaymentDate"]);  //因為出現錯誤所以我先註解掉,麻煩還原此行註解
                 db.SaveChanges();
             }
             return View("EcpayView", data);

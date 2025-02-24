@@ -80,13 +80,13 @@
                     _this.orderId = urlParams.get("oid");
 
                     if (!_this.orderId) {
-                        alert("無效的訂單 ID");
+                            console.error("無效的訂單 ID");
                         return;
                     }
 
                     axios.post(`${_this.baseAddress}/Ajax/GetOrderDetail`, { oid: _this.orderId })
                         .then(response => {
-                            console.log("訂單細節資料:", response);
+                             
                             if (response.data) {
                                 _this.orderItems = response.data.map(od => ({
                                     Photo0: od.photo0 ? `${_this.baseAddress}/Images/${od.photo0}` : null,
@@ -98,11 +98,11 @@
                                     OStatus: od.ostatus
                                 }));
                             } else {
-                                alert("查無訂單細項");
+                                console.error("查無訂單細項");
                             }
                         })
                         .catch(err => {
-                            alert("錯誤: " + err.message);
+                                console.error("錯誤: ", err);
                         });
                 }
             },
@@ -133,31 +133,31 @@
 
 
                 table th:nth-child(1), table td:nth-child(1) {
-                    width: 150px; /* 商品圖片 */
+                    width: 150px;  
                 }
 
                 table th:nth-child(2), table td:nth-child(2) {
-                    width: 180px; /* 商品名稱 */
+                    width: 180px;  
                 }
 
                 table th:nth-child(3), table td:nth-child(3) {
-                    width: 100px; /* 尺寸 */
+                    width: 100px; 
                 }
 
                 table th:nth-child(4), table td:nth-child(4) {
-                    width: 100px; /* 顏色 */
+                    width: 100px; 
                 }
 
                 table th:nth-child(5), table td:nth-child(5) {
-                    width: 80px; /* 數量 */
+                    width: 80px;  
                 }
 
                 table th:nth-child(6), table td:nth-child(6) {
-                    width: 120px; /* 處理狀態 */
+                    width: 120px; 
                 }
 
                 table th:nth-child(7), table td:nth-child(7) {
-                    width: 150px; /* 出貨單號 */
+                    width: 150px;  
                 }
 
 
