@@ -98,7 +98,6 @@ namespace Project.Models
             set { _member.Maddress = value; }
         }
         [Required(ErrorMessage = "請選擇生日")]
-        [DataType(DataType.Date, ErrorMessage = "請輸入正確的日期格式")]
         [DisplayName("生日")]
         public string? Mbirthday
         {

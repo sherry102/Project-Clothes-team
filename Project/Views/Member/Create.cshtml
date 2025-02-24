@@ -14,78 +14,69 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
-                <label asp-for="member.Mname" class="control-label"></label>
-                <input asp-for="member.Mname" class="form-control" />
-                <span asp-validation-for="member.Mname" class="text-danger"></span>
+                <label asp-for="Mname" class="control-label"></label>
+                <input asp-for="Mname" class="form-control" />
+                <span asp-validation-for="Mname" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mgender" class="control-label"></label>
-                <select asp-for="member.Mgender" class="form-control">
+                <label asp-for="Mgender" class="control-label"></label>
+                <select asp-for="Mgender" class="form-control">
                     <option value="0">男性</option>
                     <option value="1">女性</option>
                 </select>
-                <span asp-validation-for="member.Mgender" class="text-danger"></span>
+                <span asp-validation-for="Mgender" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Maccount" class="control-label"></label>
-                <input asp-for="member.Maccount" class="form-control" />
-                <span asp-validation-for="member.Maccount" class="text-danger"></span>
+                <label asp-for="Maccount" class="control-label"></label>
+                <input asp-for="Maccount" class="form-control" />
+                <span asp-validation-for="Maccount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mpassword" class="control-label"></label>
-                <input asp-for="member.Mpassword" class="form-control" />
-                <span asp-validation-for="member.Mpassword" class="text-danger"></span>
+                <label asp-for="Mpassword" class="control-label"></label>
+                <input asp-for="Mpassword" class="form-control" />
+                <span asp-validation-for="Mpassword" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Memail" class="control-label"></label>
-                <input asp-for="member.Memail" class="form-control" />
-                <span asp-validation-for="member.Memail" class="text-danger"></span>
+                <label asp-for="Memail" class="control-label"></label>
+                <input asp-for="Memail" class="form-control" />
+                <span asp-validation-for="Memail" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Maddress" class="control-label"></label>
-                <input asp-for="member.Maddress" class="form-control" />
-                <span asp-validation-for="member.Maddress" class="text-danger"></span>
+                <label asp-for="Maddress" class="control-label"></label>
+                <input asp-for="Maddress" class="form-control" />
+                <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mbirthday" class="control-label"></label>
-                <input asp-for="member.Mbirthday" class="form-control datepicker" />
-                <span asp-validation-for="member.Mbirthday" class="text-danger"></span>
+                <label asp-for="Mbirthday" class="control-label"></label>
+                <input type="text" asp-for="Mbirthday" class="form-control datepicker" />
+                <span asp-validation-for="Mbirthday" class="text-danger"></span>
             </div>
            
             <div class="form-group">
-                <label asp-for="member.Mphone" class="control-label"></label>
-                <input asp-for="member.Mphone" class="form-control" />
-                <span asp-validation-for="member.Mphone" class="text-danger"></span>
+                <label asp-for="Mphone" class="control-label"></label>
+                <input asp-for="Mphone" class="form-control" />
+                <span asp-validation-for="Mphone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mpoints" class="control-label"></label>
-                <input asp-for="member.Mpoints" class="form-control" readonly value="0" />
-                <span asp-validation-for="member.Mpoints" class="text-danger"></span>
+                <label asp-for="Mpoints" class="control-label"></label>
+                <input asp-for="Mpoints" class="form-control" readonly value="0" />
+                <span asp-validation-for="Mpoints" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mpermissions" class="control-label"></label>
-                <select asp-for="member.Mpermissions" class="form-control">
-                <option value="0">一般訪客</option>
+                <label asp-for="Mpermissions" class="control-label"></label>
+                <select asp-for="Mpermissions" class="form-control">
+                <option value="0">會員</option>
                 <option value="1">黑名單</option>
-                <option value="2">會員</option>
-                <option value="3">VIP會員</option>
-                <option value="11">一般員工</option>
-                <option value="21">副店長</option>
-                <option value="31">店長</option>
-                <option value="51">經理</option>
-                <option value="61">區經理</option>
-                <option value="71">執行長</option>
-                <option value="81">副總</option>
-                <option value="91">負責人</option>
+                <option value="2">店家</option>     
                 </select>
-                <span asp-validation-for="member.Mpermissions" class="text-danger"></span>
+                <span asp-validation-for="Mpermissions" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="member.Mphoto" class="control-label">會員照片</label>
+                <label asp-for="Mphoto" class="control-label">會員照片</label>
                 <input name="photo" type="file" class="form-control"
                        id="Mphoto" accept="image/*" onchange="handleFileSelect(this)" />
                 <div class="text-muted">只接受 jpg, jpeg, png, gif 格式，檔案大小不超過 1MB</div>
-                <span asp-validation-for="member.Mphoto" class="text-danger"></span>
+                <span asp-validation-for="Mphoto" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <!-- 圖片預覽區 -->
@@ -120,30 +111,45 @@
         //         });
         //     });
    
-        function handleFileSelect(input) {
-            const file = input.files[0];
-            const preview = document.getElementById('photoPreview');
-            const maxSize = 1 * 1024 * 1024; // 1MB
+    function handleFileSelect(input) {
+        const file = input.files[0];
+        const preview = document.getElementById('photoPreview');
+        const maxSize = 1 * 1024 * 1024; // 1MB
 
-            if (file) {
-                if (file.size > maxSize) {
-                    alert('檔案大小超過限制，請選擇小於 1MB 的檔案');
-                    input.value = '';
-                    preview.src = "#";
-                    preview.style.display = 'none';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = () => {
-                    preview.src = reader.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
+        if (file) {
+            if (file.size > maxSize) 
+            {
+                alert('檔案大小超過限制，請選擇小於 1MB 的檔案');
+                input.value = '';
                 preview.src = "#";
                 preview.style.display = 'none';
+                return;
             }
+
+            const reader = new FileReader();
+            reader.onload = () => 
+            {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+                reader.readAsDataURL(file);
+        } 
+        else 
+        {
+            preview.src = "#";
+            preview.style.display = 'none';
         }
+    }
+        $(document).ready(function () 
+        {
+            $("form").validate({
+                onkeyup: false,
+                onfocusout: false,
+                submitHandler: function (form) 
+                {
+                    form.submit();
+                }
+            });
+        });
     </script>
 }
