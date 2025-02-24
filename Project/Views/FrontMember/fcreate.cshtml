@@ -13,21 +13,21 @@
             @Html.AntiForgeryToken() @* 防止 CSRF 攻擊 *@
             <!--姓名 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mname" class="mb-1"></label>
-                <input asp-for="member.Mname" class="form-control" placeholder="請輸入姓名"/>
-                <span asp-validation-for="member.Mname" class="text-danger"></span>
+                <label asp-for="Mname" class="mb-1"></label>
+                <input asp-for="Mname" class="form-control" placeholder="請輸入姓名"/>
+                <span asp-validation-for="Mname" class="text-danger"></span>
             </div>
             <!--性別-->
             <div class="form-group mb-3">
-                <label asp-for="member.Mgender" class="mb-1"></label>
+                <label asp-for="Mgender" class="mb-1"></label>
                 <div class="btn-group" role="group" aria-label="性別選擇">
-                    @Html.RadioButtonFor(model => model.member.Mgender, 0, new { id = "male", @class = "btn-check" })
+                    @Html.RadioButtonFor(model => model.Mgender, 0, new { id = "male", @class = "btn-check" })
                     <label class="btn btn-outline-primary" for="male">男性</label>
 
-                    @Html.RadioButtonFor(model => model.member.Mgender, 1, new { id = "female", @class = "btn-check" })
+                    @Html.RadioButtonFor(model => model.Mgender, 1, new { id = "female", @class = "btn-check" })
                     <label class="btn btn-outline-primary" for="female">女性</label>
                 </div>
-                <span asp-validation-for="member.Mgender" class="text-danger"></span>
+                <span asp-validation-for="Mgender" class="text-danger"></span>
             </div>
             <!--生日-->
             <div class="form-group mb-3">
@@ -41,33 +41,41 @@
             </div>
             <!--電子郵件 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Memail" class="mb-1"></label>
-                <input asp-for="member.Memail" class="form-control" placeholder="請輸入E-mail" />
-                <span asp-validation-for="member.Memail" class="text-danger"></span>
+                <label asp-for="Memail" class="mb-1"></label>
+                <input asp-for="Memail" class="form-control" id="email" placeholder="請輸入E-mail" />
+                <span asp-validation-for="Memail" class="text-danger"></span>
             </div>
+            <!-- 輸入驗證碼欄位 -->
+            <div class="form-group mb-3">
+                <label for="verificationCode" class="mb-1">驗證碼</label>
+                <input type="text" class="form-control" id="verificationCode" placeholder="請輸入驗證碼" />
+            </div>
+            <!-- 按鈕：寄送驗證碼與確認驗證碼 -->
+            <button type="button" class="btn btn-primary" onclick="sendCode()">寄送驗證碼</button>
+            <button type="button" class="btn btn-success" onclick="verifyCode()">確認驗證碼</button>
             <!--地址 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Maddress" class="mb-1"></label>
-                <input asp-for="member.Maddress" class="form-control" placeholder="請輸入地址" />
-                <span asp-validation-for="member.Maddress" class="text-danger"></span>
+                <label asp-for="Maddress" class="mb-1"></label>
+                <input asp-for="Maddress" class="form-control" placeholder="請輸入地址" />
+                <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
             <!--手機號碼 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mphone" class="mb-1"></label>
-                <input asp-for="member.Mphone" class="form-control" placeholder="請輸入手機號碼"/>
-                <span asp-validation-for="member.Mphone" class="text-danger"></span>
+                <label asp-for="Mphone" class="mb-1"></label>
+                <input asp-for="Mphone" class="form-control" placeholder="請輸入手機號碼"/>
+                <span asp-validation-for="Mphone" class="text-danger"></span>
             </div>
             <!--帳號 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Maccount" class="mb-1"></label>
-                <input asp-for="member.Maccount" class="form-control" placeholder="請輸入帳號"  />
-                <span asp-validation-for="member.Maccount" class="text-danger"></span>
+                <label asp-for="Maccount" class="mb-1"></label>
+                <input asp-for="Maccount" class="form-control" placeholder="請輸入帳號"  />
+                <span asp-validation-for="Maccount" class="text-danger"></span>
             </div>
             <!--密碼 -->
             <div class="form-group mb-3">
-                <label asp-for="member.Mpassword" class="mb-1"></label>
-                <input asp-for="member.Mpassword" class="form-control" placeholder="請輸入密碼" type="password" />
-                <span asp-validation-for="member.Mpassword" class="text-danger"></span>
+                <label asp-for="Mpassword" class="mb-1"></label>
+                <input asp-for="Mpassword" class="form-control" placeholder="請輸入密碼" type="password" />
+                <span asp-validation-for="Mpassword" class="text-danger"></span>
             </div>
             <!--確認密碼 (僅前端處理) -->
             <div class="form-group mb-3">
@@ -77,6 +85,11 @@
             </div>
             <button type="submit" class="btn btn-primary w-100 mb-3">註冊</button>
         </form>
+        @if (ViewBag.ErrorMessage != null) // 如果後端傳來的錯誤訊息不為 null
+        {
+            <!-- 這裡只是用來顯示表單上的錯誤文字(如需要) -->
+        }
+
         <!-- 登入表單-->
         <form id="loginForm" class="auth-form" method="post" action="~/Account/Login">
             <div class="form-group mb-3">
@@ -152,7 +165,64 @@
 </style>
 @section Scripts {
     <script>
-                document.addEventListener('DOMContentLoaded', () => {
+        // function sendCode() 負責寄送驗證碼
+        function sendCode() {                                                 // 定義名為 sendCode 的函式
+            var email = document.getElementById("email").value;              // 取得 id="email" 輸入框的值
+            if (!email) {                                                    // 如果 email 為空
+                Swal.fire("錯誤", "請先輸入Email", "error");                 // SweetAlert2 顯示錯誤訊息
+                return;                                                      // 結束函式，不往下執行
+            }
+
+            // 使用 fetch API 呼叫後端 FrontMemberController 的 SendVerificationCode 方法
+            fetch('@Url.Action("SendVerificationCode", "FrontMember")', {
+                method: 'POST',                                              // 使用 POST 方法
+                headers: {
+                    'Content-Type': 'application/json'                        // 告知後端傳遞的資料格式為 JSON
+                },
+                body: JSON.stringify({ email: email })                       // 將 email 打包成 JSON 傳給後端
+            })
+            .then(response => response.json())                               // 收到回應後轉成 JSON
+            .then(data => {                                                 // data 即為後端回傳的 JSON
+                if (data.success) {                                          // 如果 success 屬性為 true
+                    Swal.fire("成功", "驗證碼已寄送，請至信箱查收", "success"); // SweetAlert2 顯示成功訊息
+                } else {                                                     // 否則
+                    Swal.fire("錯誤", data.message, "error");                // SweetAlert2 顯示錯誤訊息
+                }
+            })
+            .catch(error => {                                                // 捕捉網路或程式錯誤
+                Swal.fire("錯誤", "寄送驗證碼時發生錯誤", "error");            // SweetAlert2 顯示錯誤訊息
+            });
+        }
+
+        // function verifyCode() 負責驗證使用者輸入的驗證碼
+        function verifyCode() {                                              // 定義名為 verifyCode 的函式
+            var code = document.getElementById("verificationCode").value;    // 取得 id="verificationCode" 輸入框的值
+            if (!code) {                                                     // 如果驗證碼為空
+                Swal.fire("錯誤", "請先輸入驗證碼", "error");                 // SweetAlert2 顯示錯誤訊息
+                return;                                                      // 結束函式
+            }
+
+            // 呼叫後端 FrontMemberController 的 VerifyCode 方法
+            fetch('@Url.Action("VerifyCode", "FrontMember")', {
+                method: 'POST',                                              // 使用 POST 方法
+                headers: {
+                    'Content-Type': 'application/json'                        // 告知後端資料格式為 JSON
+                },
+                body: JSON.stringify({ code: code })                         // 將 code 打包成 JSON 傳給後端
+            })
+            .then(response => response.json())                               // 收到回應後轉成 JSON
+            .then(data => {                                                 // data 為後端回傳的 JSON
+                if (data.success) {                                          // 若 success 屬性為 true
+                    Swal.fire("成功", "驗證碼正確", "success");               // SweetAlert2 顯示成功訊息
+                } else {                                                     // 否則
+                    Swal.fire("錯誤", data.message, "error");                // SweetAlert2 顯示錯誤訊息
+                }
+            })
+            .catch(error => {                                                // 捕捉網路或程式錯誤
+                Swal.fire("錯誤", "驗證碼驗證時發生錯誤", "error");            // SweetAlert2 顯示錯誤訊息
+            });
+        }          
+        document.addEventListener('DOMContentLoaded', () => {
             const tabBtns = document.querySelectorAll('.tab-btn');
             const registerForm = document.getElementById('registerForm');
             const loginForm = document.getElementById('loginForm');
@@ -170,12 +240,23 @@
                         loginForm.classList.remove('hidden');
                         registerForm.classList.add('hidden');
                     } else if (btn.dataset.form === 'register') {
-                        // 點擊「註冊」：顯示註冊表單，隱藏登入表單
+                       
                         registerForm.classList.remove('hidden');
                         loginForm.classList.add('hidden');
                     }
                 });
             });
+        @if (ViewBag.ErrorMessage != null)
+            {
+                <text>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: '@ViewBag.ErrorMessage',
+                            footer: '<a href="#">Why do I have this issue?</a>'
+                        });
+                </text>
+            }
         });
     </script>
 }

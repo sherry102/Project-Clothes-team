@@ -1,15 +1,26 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('personicon').addEventListener('click', function (e) { // 當使用者點擊個人圖示時
+    const personIcon = document.getElementById('personicon'); // 中文：取得 personicon 元素
+    const dropdown = document.getElementById('memberDropdown'); // 中文：取得下拉選單容器
+
+    personIcon.addEventListener('click', function (e) {
+        // 中文：點擊個人圖示時
         e.preventDefault();
-        fetch('/Account/CheckLoginStatus') // 呼叫AccountController的CheckLoginStatus方法
+
+        // 需要修改：如果下拉選單已顯示，則直接隱藏並結束，不再 fetch
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+            return; // 中文：直接結束，不再呼叫後端
+        }
+
+        // 中文：若尚未顯示下拉選單，才檢查登入並抓取選單
+        fetch('/Account/CheckLoginStatus')
             .then(response => response.json())
             .then(data => {
                 if (data.isLoggedIn == true) {
-                    fetch('/FrontMember/HandleProfileClick') // 已登入，呼叫FrontMember控制器的HandleProfileClick方法獲取選單
+                    fetch('/FrontMember/HandleProfileClick')
                         .then(response => response.json())
                         .then(menuData => {
                             if (menuData.success) {
-                                const dropdown = document.getElementById('memberDropdown');
                                 dropdown.innerHTML = '';
 
                                 menuData.data.forEach(item => {
@@ -45,13 +56,13 @@
             })
             .catch(error => {
                 console.error('Error checking login status:', error);
-                window.location.href = '/FrontMember/fcreate';// 發生錯誤時，導向 fcreate
+                window.location.href = '/FrontMember/fcreate';
             });
     });
 
-    function getIconForMenuItem(text) {// 根據選單文字取得對應圖示
+    function getIconForMenuItem(text) {
         switch (text) {
-            case '個人資料': return 'person';
+            case '個人資料': return 'person-circle';
             case '我的訂單': return 'bag';
             case '優惠券': return 'ticket-perforated';
             case '後檯': return 'unity';
@@ -60,11 +71,9 @@
         }
     }
 
-    function handleLogout(e) {// 處理登出
+    function handleLogout(e) {
         e.preventDefault();
-        fetch('/Account/Logout', {
-            method: 'POST'
-        })
+        fetch('/Account/Logout', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -77,15 +86,13 @@
                 console.error('Error during logout:', error);
             });
     }
+
     // 點擊外部關閉下拉選單
     document.addEventListener('click', function (event) {
-        const dropdown = document.getElementById('memberDropdown');
-        const personIcon = document.getElementById('personicon');
         if (dropdown.style.display === 'block' &&
             !dropdown.contains(event.target) &&
             !personIcon.contains(event.target)) {
             dropdown.style.display = 'none';
         }
     });
-
 });

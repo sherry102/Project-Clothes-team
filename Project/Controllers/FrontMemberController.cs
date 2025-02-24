@@ -5,6 +5,8 @@ using Project.ViewModel;            // 引用專案中 ViewModel 資料夾的類
 using System;                       // 基本系統功能，包含DateTime等
 using System.Collections.Generic;   // 提供集合 (List、Dictionary) 等相關功能
 using System.Globalization;
+using System.Net.Mail;
+using System.Net;
 using System.Text.Json;             // 提供 JSON 序列化/反序列化功能
 
 namespace Project.Controllers
@@ -15,28 +17,36 @@ namespace Project.Controllers
         public FrontMemberController(IWebHostEnvironment p)// 建構函式，注入環境變數
         {
             _enviro = p;
-        }       
-        [HttpGet]// 處理個人圖示點擊
+        }
+        [HttpGet]
         public IActionResult HandleProfileClick()
-        { // 從 Session 取得使用者 JSON 字串
+        {// 中文：從 Session 取得用戶 JSON         
             var userJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(userJson))
-            { // 未登入時返回狀態              
+            {// 中文：若未登入，回傳 false 與重定向                
                 return Json(new { success = false, redirectUrl = "/FrontMember/fcreate" });
             }           
-            return Json(new// 已登入時返回選單項目
+            var member = JsonSerializer.Deserialize<Tmember>(userJson); // 反序列化為 Tmember 物件，取得 Mpermissions
+            int perm = member.Mpermissions; // perm 即會員權限數字                    
+            var menuList = new List<object>//建立一個清單來裝選單項目
             {
-                success = true,
-                data = new[]
-                {
                 new { text = "個人資料", url = "/FrontMember/fprofile" },
                 new { text = "我的訂單", url = "/FrontHome/CheckOrder" },
-                new { text = "優惠券", url = "/FrontHome/Coupon" },
-                new { text = "後檯", url= "/Home/Index" },
-                new { text = "登出", url = "/Account/Logout" }
-                }
+                new { text = "優惠券",   url = "/FrontHome/Coupon" }
+            };                     
+            var validPerms = new int[] { 11, 21, 31, 51, 61, 71, 81, 91 };//如果權限在 [11,21,31,51,61,71,81,91]，則顯示「後檯」
+            if (validPerms.Contains(perm))
+            {
+                menuList.Add(new { text = "後檯", url = "/Home/Index" });
+            }            
+            menuList.Add(new { text = "登出", url = "/Account/Logout" });//最後一定都有「登出」          
+            return Json(new //回傳 JSON，success = true，data = menuList
+            {
+                success = true,
+                data = menuList.ToArray()
             });
-        }               
+        }
+
         public IActionResult fcreate()// 會員註冊頁面
         {
             var model = new CMemberWrap
@@ -141,6 +151,79 @@ namespace Project.Controllers
             string json2 = JsonSerializer.Serialize(T); // 序列化模型数据
             HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json2); // 更新 Session
             return RedirectToAction("fprofile");
-        }   
+        }
+        //[HttpPost]                                              // 指定此方法只接受 POST 請求
+        //public IActionResult SendVerificationCode([FromBody]  request) // 接收前端傳來的 EmailDto
+        //{
+        //    // 如果 Email 為空，回傳錯誤 JSON
+        //    if (string.IsNullOrEmpty(request.Email))
+        //    {
+        //        return Json(new { success = false, message = "Email不可為空" });
+        //    }
+
+        //    try
+        //    {
+        //        // 產生 6 位數隨機驗證碼
+        //        Random random = new Random();                              // 建立 Random 實例
+        //        int verificationCode = random.Next(100000, 999999);        // 產生介於 100000~999999 的數字
+
+        //        // 將驗證碼存入 Session (字串格式)
+        //        HttpContext.Session.SetString("VerificationCode", verificationCode.ToString());
+
+        //        // 寄送 Email 的示範 (請自行修改為您的 SMTP / Email)
+        //        var senderEmail = "yourEmail@gmail.com";                   // 寄件者 Email
+        //        var senderPassword = "yourEmailPassword";                  // 寄件者密碼或應用程式金鑰
+        //        var smtpClient = new SmtpClient("smtp.gmail.com")          // 使用 Gmail SMTP
+        //        {
+        //            Port = 587,                                            // Gmail SMTP 連接埠
+        //            Credentials = new NetworkCredential(senderEmail, senderPassword), // 帳密驗證
+        //            EnableSsl = true,                                      // 啟用 SSL
+        //        };
+
+        //        MailMessage mail = new MailMessage();                      // 建立郵件物件
+        //        mail.From = new MailAddress(senderEmail);                  // 寄件者
+        //        mail.To.Add(request.Email);                                // 收件者 (前端輸入的 Email)
+        //        mail.Subject = "您的驗證碼";                                 // 郵件主旨
+        //        mail.Body = $"您的驗證碼是: {verificationCode}";            // 郵件內容
+
+        //        smtpClient.Send(mail);                                     // 寄送郵件
+
+        //        // 回傳成功 JSON
+        //        return Json(new { success = true });
+        //    }
+        //    catch (Exception ex)                                           // 捕捉寄送郵件的任何錯誤
+        //    {
+        //        // 回傳錯誤 JSON，包含例外訊息
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpPost]                                                        // 指定此方法只接受 POST 請求
+        //public IActionResult VerifyCode([FromBody] CodeDto request)       // 接收前端傳來的 CodeDto
+        //{
+        //    // 如果驗證碼為空，回傳錯誤 JSON
+        //    if (string.IsNullOrEmpty(request.Code))
+        //    {
+        //        return Json(new { success = false, message = "驗證碼不可為空" });
+        //    }
+
+        //    // 從 Session 取出先前存的驗證碼
+        //    var savedCode = HttpContext.Session.GetString("VerificationCode");
+
+        //    // 比對使用者輸入的驗證碼與 Session 中的驗證碼
+        //    if (savedCode == request.Code)
+        //    {
+        //        // 驗證成功
+        //        return Json(new { success = true });
+        //    }
+        //    else
+        //    {
+        //        // 驗證失敗
+        //        return Json(new { success = false, message = "驗證碼錯誤" });
+        //    }
+        //}
     }
 }
+     
+
+    

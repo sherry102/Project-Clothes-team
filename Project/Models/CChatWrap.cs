@@ -44,5 +44,6 @@ namespace Project.Models
             get { return _chat.ChatCreateTime; }
             set { _chat.ChatCreateTime = value; }
         }
+       
     }
 }

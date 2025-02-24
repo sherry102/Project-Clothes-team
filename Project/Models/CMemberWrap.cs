@@ -191,6 +191,8 @@ namespace Project.Models
         }
 
         public IFormFile photoPath { get; set; }
+
+      
     }
 }
     
