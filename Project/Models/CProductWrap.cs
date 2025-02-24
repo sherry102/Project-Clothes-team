@@ -107,6 +107,8 @@ namespace Project.Models
             get { return _product.PisHided; }
             set { _product.PisHided = value; }
         }
+
+        public List<Tcomment> Comments { get; set; } // 新增評價列表
     }
 }
 

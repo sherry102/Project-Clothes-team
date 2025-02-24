@@ -4,11 +4,12 @@
         .custom-btn {
             border: none; /* 預設無邊框 */
             background-color: none;
-            color: dimgray;
+            color: #003060;
+      
         }
 
         .custom-btn:hover {
-            background-color: #808080; /* 顏色稍微變深 */
+                background-color: #666699; /* 顏色稍微變深 */
             color:white;
         }
     </style>
@@ -24,7 +25,7 @@
 <h4>上架商品列表</h4>
 <hr />
 <div class="d-flex align-items-center my-2">
-    <form class="d-flex me-5 form-search input-search"  method="get" action="@Url.Action("List","Product")">
+    <form class="d-flex me-5 form-search input-search" method="get" action="@Url.Action("List","Product")">
         <input class="form-control me-2 index-search"
                type="search"
                placeholder="請輸入商品關鍵字"
@@ -39,8 +40,8 @@
     <a href="@Url.Action("List", "Product", new { Keyword = "女裝" })" class="btn custom-btn me-3">女裝</a>
     <a href="@Url.Action("List", "Product", new { Keyword = "男裝" })" class="btn custom-btn me-3">男裝</a>
     <a href="@Url.Action("List", "Product", new { Keyword = "童裝" })" class="btn custom-btn me-3">童裝</a>
-    <a href="@Url.Action("Renew", "Product")" class="btn custom-btn me-3">未上架</a>
-    <a href="@Url.Action("Create", "Product")" class="btn custom-btn ms-auto">新增商品</a>
+    <a href="@Url.Action("Renew", "Product")" class="btn custom-btn me-3">未上架商品</a>
+    <a href="@Url.Action("Create", "Product")" class="btn custom-btn ms-auto">+ 新增商品</a>
 </div>
 
 <table class="table">
@@ -60,8 +61,10 @@
     <tbody>
         @{
             int count = 0;
+            var sortedModel = Model.OrderBy(item => item.Pinventory); // 依庫存排序
         }
-        @foreach (var item in Model)
+
+        @foreach (var item in sortedModel)
         {
             count++;
             <tr class="align-middle">
@@ -78,13 +81,12 @@
                 <td>
                     <!-- 查看庫存明細按鈕 -->
                     <button class="btn custom-btn btn-sm my-2" type="button" data-bs-toggle="modal"
-                            data-bs-target="#inventoryModal-@count">
+                            data-bs-target="#inventoryModal-@item.Pid">
                         查看商品詳細庫存
                     </button>
                     <div class="w-100"></div>
                     @Html.ActionLink("修改商品資訊", "Edit", new { id = item.Pid }, new { @class = "btn custom-btn btn-sm my-2" })
-                    @Html.ActionLink("商品下架", "Hide", "Product", new { id = item.Pid },
-                             new { @class = "btn custom-btn btn-sm my-2", onclick = "return confirm('確定要下架商品嗎?')" })
+                    <a href="#" class="btn custom-btn btn-sm my-2" onclick="confirmHide(@item.Pid)">商品下架</a>
                 </td>
             </tr>
         }
@@ -93,13 +95,12 @@
 
 @foreach (var item in Model)
 {
-    int modalCount = Model.IndexOf(item) + 1;
     <!-- Bootstrap 5 Modal -->
-    <div class="modal fade" id="inventoryModal-@modalCount" tabindex="-1" aria-labelledby="inventoryModalLabel-@modalCount" aria-hidden="true">
+    <div class="modal fade" id="inventoryModal-@item.Pid" tabindex="-1" aria-labelledby="inventoryModalLabel-@item.Pid" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="inventoryModalLabel-@modalCount">庫存明細 - @item.Pname</h5>
+                    <h5 class="modal-title" id="inventoryModalLabel-@item.Pid">庫存明細 - @item.Pname</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
@@ -139,6 +140,24 @@
         </div>
     </div>
 }
+
+<script>
+    function confirmHide(productId) {
+        Swal.fire({
+            title: "確定要下架商品嗎?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "確定",
+            cancelButtonText: "取消"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Hide", "Product")' + '?id=' + productId;
+            }
+        });
+    }
+</script>
 
 
 

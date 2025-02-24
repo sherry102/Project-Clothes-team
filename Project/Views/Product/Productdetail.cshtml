@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+TC&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <style>
         .btn-side {
@@ -64,6 +65,7 @@
             font-size:12px;
             color:grey;
         }
+
     </style>
 }
 
@@ -91,7 +93,7 @@
             <i class="bi bi-heart favorite p-4" data-id="@Model.Pid"
                onclick="addToFavorite('@Model.Pid','@Model.Pname','@Model.Pphoto','@Model.Pprice', this)">
             </i>
-            <div class="fs-4">@Html.DisplayFor(model => model.Pname)</div> 
+            <div class="fs-4 fw-bold">@Html.DisplayFor(model => model.Pname)</div> 
             <div class="pdes">@Html.DisplayFor(model => model.Pdescription)</div>
             <div class="fs-5 my-3 text-danger">NT$ @Html.DisplayFor(model => model.Pprice)</div>
            
@@ -135,10 +137,39 @@
                     <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQuantity()">+</button>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary btn-sm my-3 w-50"
+            <button type="button" class="btn btn-outline-secondary btn-sm mt-3 w-50"
                     onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
                 加入購物車
             </button>
+            @*<h4>商品評價</h4>
+            @foreach (var comment in Model.Comments)
+            {   
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@comment.Mname</h5>
+                        <p class="text-muted">@comment.ComCreateDate.ToString("yyyy-MM-dd")</p>
+                        <p>@comment.Comment</p>
+
+                        @if (!string.IsNullOrEmpty(comment.ComImage1) || !string.IsNullOrEmpty(comment.ComImage2))
+                        {
+                            <div class="d-flex mt-3">
+                                @if (!string.IsNullOrEmpty(comment.ComImage1))
+                                {
+                                    <a href="~/images/@comment.ComImage1" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/images/@comment.ComImage1" class="img-thumbnail me-2" width="80" alt="圖片1">
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(comment.ComImage2))
+                                {
+                                    <a href="~/images/@comment.ComImage2" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/images/@comment.ComImage2" class="img-thumbnail me-2" width="80" alt="圖片2">
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }*@
         </div>
     </div>
 </div>
@@ -146,7 +177,9 @@
 
 @section Scripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <script>
+
         //加入最愛
         $(document).ready(function () {
             // 取得使用者已收藏的商品 ID 並標記紅色
@@ -164,6 +197,7 @@
                 }
             });
         });
+
         function addToFavorite(pid, pname, pphoto, pprice, element) {
             $.ajax({
                 url: "/Ajax/PostFavorite",
@@ -177,19 +211,20 @@
                 }),
                 success: function (response) {
                     if (response === "請先登入會員") {
-                        alert(response);
+                        Swal.fire("提示", response, "warning");
                     } else if (response === "已加入收藏" || response === "已移除收藏") {
                         toggleFavoriteUI(element);
-                        alert(response);
+                        Swal.fire("成功", response, "success");
                     } else {
-                        alert("操作發生錯誤，請稍後再試");
+                        Swal.fire("錯誤", "操作發生錯誤，請稍後再試", "error");
                     }
                 },
                 error: function () {
-                    alert("系統錯誤，請稍後再試！");
+                    Swal.fire("錯誤", "系統錯誤，請稍後再試！", "error");
                 }
             });
         }
+
         function toggleFavoriteUI(element) {
             let isFavorite = $(element).hasClass("bi-heart-fill");
 
@@ -199,7 +234,7 @@
                 $(element).removeClass("bi-heart").addClass("bi-heart-fill text-danger");
             }
         }
-        
+
         //顏色尺寸變換庫存
         let selectedColor = null;
         let selectedSize = null;
@@ -218,7 +253,7 @@
 
         function selectSize(button) {
             if (!selectedColor) {
-                alert("請先選擇顏色");
+                Swal.fire("提示", "請先選擇顏色", "warning");
                 return;
             }
 
@@ -245,6 +280,7 @@
                 }
             });
         }
+
         function increaseQuantity() {
             let quantityInput = document.getElementById("quantity");
             let quantity = parseInt(quantityInput.value, 10);
@@ -269,7 +305,7 @@
             var selectedColor = document.getElementById("selectedColor").value;
 
             if (!selectedColor || !selectedSize) {
-                alert("請選擇顏色和尺寸！");
+                Swal.fire("提示", "請選擇顏色和尺寸！", "warning");
                 return;
             }
 
@@ -294,11 +330,11 @@
                     PPrice: productPrice,
                 }),
                 success: function(response) {
-                    alert(response);
+                    Swal.fire("成功", response, "success");
                 },
                 error: function(xhr, status, error) {
                     console.error("加入購物車時發生錯誤: " + error);
-                    alert("加入購物車失敗，請稍後再試！");
+                    Swal.fire("錯誤", "加入購物車失敗，請稍後再試！", "error");
                 }
             });
         }

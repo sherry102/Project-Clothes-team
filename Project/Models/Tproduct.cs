@@ -15,7 +15,7 @@ public partial class Tproduct
 
     public string Pcategory { get; set; } = null!;
 
-    public string Pdescription { get; set; } = null!;
+    public string? Pdescription { get; set; }
 
     public int Pinventory { get; set; }
 
