@@ -34,7 +34,7 @@ namespace Project.Controllers
                 new { text = "我的訂單", url = "/FrontHome/CheckOrder" },
                 new { text = "優惠券",   url = "/FrontHome/Coupon" }
             };                     
-            var validPerms = new int[] { 11, 21, 31, 51, 61, 71, 81, 91 };//如果權限在 [11,21,31,51,61,71,81,91]，則顯示「後檯」
+            var validPerms = new int[] { 1 };//如果權限在 [11,21,31,51,61,71,81,91]，則顯示「後檯」
             if (validPerms.Contains(perm))
             {
                 menuList.Add(new { text = "後檯", url = "/Home/Index" });
@@ -153,7 +153,7 @@ namespace Project.Controllers
             return RedirectToAction("fprofile");
         }
         //[HttpPost]                                              // 指定此方法只接受 POST 請求
-        //public IActionResult SendVerificationCode([FromBody]  request) // 接收前端傳來的 EmailDto
+        //public IActionResult SendVerificationCode([FromBody] request) // 接收前端傳來的 EmailDto
         //{
         //    // 如果 Email 為空，回傳錯誤 JSON
         //    if (string.IsNullOrEmpty(request.Email))
