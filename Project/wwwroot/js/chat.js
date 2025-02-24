@@ -1,7 +1,7 @@
 ﻿const chatRoom = document.querySelector("#chatRoom");
-const userName = document.querySelector("#userName");
+//const userName = document.querySelector("#userName");
 const txtMsg = document.querySelector("#txtMSG"); //SR用
-const room = document.querySelector("#room");
+//const room = document.querySelector("#room");
 const send = document.querySelector("#send"); //SR用
 const result = document.querySelector("#result"); //SR用
 
@@ -34,12 +34,14 @@ const chatApp = Vue.createApp({
             showChatButton: false,
             // 是否進入真人客服模式
             isRealCustomerVisible: false,
+            // 加入此狀態來追踪是否在客服模式
+            isCustomerService: false,
             // SignalR連線物件
             hubConnection: null,
             // 預設房間名稱
-            roomName: "1", 
+            roomName: "1",
             // 使用者ID，這裡需要根據實際登入用戶設置
-            userId: "1", 
+            userId: "1",
         };
     },
     mounted() {
@@ -144,13 +146,13 @@ const chatApp = Vue.createApp({
             const isCustomerService = this.message.includes("客服");
             console.log("發送訊息:", this.messages);
             // 儲存訊息內容
-            const messageContent = this.message;   
+            const messageContent = this.message;
             // 添加用戶訊息
             this.messages.push({
                 type: "sent",
                 content: messageContent,
                 timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
-            });         
+            });
             // 立即滾動到底部
             await this.$nextTick();
             this.scrollToBottom();
@@ -178,7 +180,7 @@ const chatApp = Vue.createApp({
                 // 如果不是客服模式，使用機器人回覆
                 this.handleBotResponse(messageContent);
             }
-            this.$nextTick(() => this.scrollToBottom());                            
+            this.$nextTick(() => this.scrollToBottom());
             // 清空訊息輸入框
             this.message = "";
             // 如果是來自其他使用者的訊息，不顯示正在輸入
@@ -208,21 +210,21 @@ const chatApp = Vue.createApp({
                     clearInterval(timerInterval);
                 },
             })
-            .then((result) => {
-                if (result.dismiss === Swal.DismissReason.timer) {
-                    this.messages.push({
-                        type: "system",
-                        content: "排隊進入真人客服！！"           
-                    })  
-                    this.isCustomerService = true; // 正式進入真人客服模式
-                    // 強制在下一個 tick 進行滾動
-                    this.$nextTick(() => {
-                        this.scrollToBottom();                       
-                    });
-                    // 初始化SignalR連線
-                    this.initializeSignalRConnection();
-                }
-            });
+                .then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        this.messages.push({
+                            type: "system",
+                            content: "排隊進入真人客服！！"
+                        })
+                        this.isCustomerService = true; // 正式進入真人客服模式
+                        // 強制在下一個 tick 進行滾動
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        });
+                        // 初始化SignalR連線
+                        this.initializeSignalRConnection();
+                    }
+                });
         },
         scrollToBottom() {
             this.$nextTick(() => {
@@ -249,47 +251,29 @@ const chatApp = Vue.createApp({
                     .build();
                 // 設置接收訊息的處理器
                 this.hubConnection.on("UpdContent", (msg) => {
+                    // 過濾空訊息
+                    if (!msg.message || msg.message.trim() === "") return;
                     //console.log("收到訊息:", content);                   
-                    const roomContainer = document.querySelector("#room");
+                    //const roomContainer = document.querySelector("#room");
                     if (msg.user === this.userId) {
-                        // 自己發送的訊息
-                        //console.log("自己發送的訊息", msg);
-                        const bubble =
-                           `<div class="chat-message.sent">
-                                ${msg.timestamp} 我
-                                <div class="message last">
-                                    ${msg.message}
-                                </div>
-                           </div>`;                      
+                        return;
                     }
-                    else if (typeof content === 'string') {
-                        // 處理系統訊息
+                    else if (msg.user === "System") {
                         this.messages.push({
                             type: "system",
-                            content: content
+                            content: msg.message,
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
                         });
                     }
-                    else{
-                        // 其他用戶發送的訊息
-                        //console.log("收到對方的訊息", msg);
-                        // 建立接收到的訊息氣泡HTML
-                        const bubble =
-                           `<div class="chat-message.received">
-                               ${msg.timestamp} ${msg.user}
-                               <div class="message last">
-                                    ${msg.message}
-                               </div>
-                           </div>`;
-                        // 將訊息加入聊天室
-                        roomContainer.innerHTML += bubble;
+                    else {
                         // 將訊息加入Vue數據中
                         this.messages.push({
                             type: "received",
                             content: msg.message,
                             user: msg.user,
-                            timestamp: msg.timestamp
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
                         });
-                    }                    
+                    }
                     this.scrollToBottom();
                 });
                 // 啟動SignalR連線
