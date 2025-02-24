@@ -167,12 +167,12 @@
                         this.ischecked = "全部";
                     }
                 },
-                openEdit: function (id) {
-                    let _this = this;
-                    _this.editId = id;
-                    axios.get(`${_this.baseAddress}/Ajax/openAdvice/${id}`).then(response => {
+                // openEdit: function (id) {
+                //     let _this = this;
+                //     _this.editId = id;
+                //     axios.get(`${_this.baseAddress}/Ajax/openAdvice/${id}`).then(response => {
                         
-                }
+                // }
             },
             mounted() {
                 this.getAdvice();
