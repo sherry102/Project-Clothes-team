@@ -82,7 +82,10 @@
  @if (ViewBag.Error=="true")
  {
      <script>
-         alert("帳號密碼有誤");
+         Swal.fire({
+          icon: "error",
+          title: "帳號密碼有誤",
+        });
      </script>
 }
 

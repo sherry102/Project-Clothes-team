@@ -171,12 +171,12 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public async Task<string> SaveToCart([FromBody] CustomCartDTO cart)
+        public async Task<IActionResult> SaveToCart([FromBody] CustomCartDTO cart)
         {
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(json))
             {
-                return "請先登入會員";
+                return Json(new {success=false,message= "請先登入會員" });
             }
             var member = JsonSerializer.Deserialize<Tmember>(json);
             var Cart = new Tcart
@@ -199,15 +199,15 @@ namespace Project.Controllers
             };
             if (Cart.Photo0 == "")
             {
-                return "請儲存正面圖案";
+                return Json(new { success = false, message = "請儲存正面圖案" });
             }
             else if (Cart.Photo1 == "")
             {
-                return "請儲存背面圖案";
+                return Json(new { success = false, message = "請儲存背面圖案" });
             }
             _context.Tcarts.Add(Cart);
             await _context.SaveChangesAsync();
-            return "已加入購物車";
+            return Json(new { success = true, message = "已加入購物車" });
         }
 
         [HttpPost]
@@ -351,27 +351,29 @@ namespace Project.Controllers
             return "已加入購物車";
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostAdvice([FromBody] AdviceDTO Ad)
-        {
-            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-            if (string.IsNullOrEmpty(json))
+            [HttpPost]
+            public async Task<IActionResult> PostAdvice([FromBody] AdviceDTO Ad)
             {
-                return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+                string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                if (string.IsNullOrEmpty(json))
+                {
+                    return Json(new { success = false, message = "請重新登入會員", redirectUrl = Url.Action("FrontIndex", "FrontHome") });
+                }
+                var member = JsonSerializer.Deserialize<Tmember>(json);
+  
+                    var Advice = new Tadvice
+                {
+                    Mid = member.Mid,
+                    Oid = Ad.OId,
+                    Question = Ad.Question,
+                    Title = Ad.Title,
+                    Description = Ad.Description,
+                    DateTime = DateTime.Now
+                };
+                _context.Tadvices.Add(Advice);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
             }
-            var member = JsonSerializer.Deserialize<Tmember>(json);
-            var Advice = new Tadvice
-            {
-                Mid = member.Mid,
-                Oid = Ad.OId,
-                Question = Ad.Question,
-                Title = Ad.Title,
-                Description = Ad.Description,
-            };
-            _context.Tadvices.Add(Advice);
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
-        }
 
         [HttpGet]
 
@@ -400,7 +402,7 @@ namespace Project.Controllers
 
         [HttpPost]
 
-        public async Task<string> SendCoupon([FromBody] CouponDTO CouponPassWord)
+        public async Task<IActionResult> SendCoupon([FromBody] CouponDTO CouponPassWord)
         {
 
             var Coupon = await _context.Tcoupons.Where(c => c.PassWord == CouponPassWord.CouponPassWord).FirstOrDefaultAsync();
@@ -409,15 +411,15 @@ namespace Project.Controllers
             var MemberCoupon = await _context.TmemberCoupons.Where(c => c.Mid == member.Mid).ToListAsync();
             if (string.IsNullOrEmpty(CouponPassWord.CouponPassWord))
             {
-                return "請輸入優惠碼";
+                return Json(new {success=false,message= "請輸入優惠碼" });
             }
             else if (Coupon == null)
             {
-                return "無效的優惠碼";
+                return Json(new { success = false, message = "無效的優惠碼" });
             }
             else if (MemberCoupon.Any(c => c.CouponId == Coupon.Id))
             {
-                return "已領取過該優惠";
+                return Json(new { success = false, message = "已領取過該優惠" });
             }
             else
             {
@@ -428,7 +430,7 @@ namespace Project.Controllers
                 };
                 _context.TmemberCoupons.Add(AddCoupon);
                 _context.SaveChanges();
-                return "已加入該優惠";
+                return Json(new { success = true, message = "已加入該優惠" });
             }
         }
 
@@ -483,7 +485,7 @@ namespace Project.Controllers
 
                 _context.Tcoupons.Update(CouponEdit);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "更新成功", redirectUrl = Url.Action("Coupon", "Other") });
+                return Json(new { success = true, message = "更新成功" });
             }
 
             return Json(new { success = false, message = "更新失敗", redirectUrl = Url.Action("Coupon", "Other") });
@@ -513,6 +515,15 @@ namespace Project.Controllers
         {
 
             var coupon = await _context.Tcoupons.FindAsync(id);
+            return Json(coupon);
+        }
+
+        [HttpGet("Ajax/openAdvice/{id}")]
+
+        public async Task<IActionResult> openAdvice(int id)
+        {
+
+            var coupon = await _context.Tadvices.FindAsync(id);
             return Json(coupon);
         }
 
@@ -862,11 +873,18 @@ namespace Project.Controllers
 
             var order = await _context.Torders.Where(c => c.Oid == id && c.Mid == member.Mid).FirstOrDefaultAsync();
             Console.WriteLine(order);
-            var orderdetail = await _context.TorderDetails.Where(c => c.Oid == id).ToListAsync();
+            var orderdetail = await _context.TorderDetails.Where(c => c.Oid == id).Select(c => new AdviceOrderDetailDTO
+            {
+                Pname = c.Pname,
+                Psize = c.Psize,
+                Pcolor = c.Pcolor,
+                Pcount = c.Pcount,
+                Pprice = c.Pprice
+            }).ToListAsync();
             Console.WriteLine(orderdetail);
             if (orderdetail == null)
             {
-                orderdetail = new List<TorderDetail>();  // 避免回傳 null
+                orderdetail = new List<AdviceOrderDetailDTO>();  // 避免回傳 null
             }
             if (order == null) {
                 return RedirectToAction("CheckOrder", "FrontHome");

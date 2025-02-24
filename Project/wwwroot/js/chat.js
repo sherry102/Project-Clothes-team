@@ -118,12 +118,15 @@ const chatApp = Vue.createApp({
                 return "我們提供客製化服務，請點擊下方按鈕與客服人員聯繫。";
             }
             if (lowerMsg.includes("價格") || lowerMsg.includes("費用")) {
+                this.showChatButton = true;
                 return "關於價格方案，建議您可以參考我們的方案頁面，或是告訴我您的需求，我可以為您推薦最適合的方案。";
             }
             if (lowerMsg.includes("如何") || lowerMsg.includes("怎麼")) {
+                this.showChatButton = true;
                 return "需要更詳細了解您的問題，可以告訴我您想知道的具體內容嗎？";
             }
             if (lowerMsg.includes("聯絡") || lowerMsg.includes("客服")) {
+                this.showChatButton = true;
                 return "請點擊下方按鈕連接真人客服";
             }
             for (let key in this.defaultReplies) {

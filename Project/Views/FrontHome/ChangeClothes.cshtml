@@ -531,14 +531,20 @@
                         _this.mergedImage0 = canvas0.toDataURL("image/png");
                     })
                     console.log(_this.mergedImage0);
-                    alert("儲存成功");
+                    Swal.fire({
+                      title: "正面儲存成功",
+                      icon: "success"
+                    });
                 },
                 Save1: function () {
                     let _this = this;
                     html2canvas(document.getElementById("designArea1"), { backgroundColor: null }).then(canvas1 => {
                         _this.mergedImage1 = canvas1.toDataURL("image/png");
                     })
-                    alert("儲存成功");
+                    Swal.fire({
+                      title: "背面儲存成功",
+                      icon: "success"
+                    });
                 },
                 ClothesBack:function(){
                     this.clothesFront = !this.clothesFront;
@@ -605,7 +611,11 @@
                             reader.readAsDataURL(file);
                             this.moneyChange();
                         }else{
-                            alert("不允許的檔案上傳類型");
+                            Swal.fire({
+                              icon: "error",
+                              title: "不允許的檔案上傳類型",
+                              text:"只允許圖片檔"
+                            });
                             photo.value = "";
                         }
                     }
@@ -622,7 +632,11 @@
                             reader.readAsDataURL(file);
                             this.moneyChange();
                         } else {
-                            alert("不允許的檔案上傳類型");
+                            Swal.fire({
+                              icon: "error",
+                              title: "不允許的檔案上傳類型",
+                              text:"只允許圖片檔"
+                            });
                             photo.value = "";
                         }
                     }
@@ -682,9 +696,19 @@
                     };
                     console.log(request);
                     axios.post(`${_this.baseAddress}/Ajax/SaveToCart`, request).then(response => {
-                        alert(response.data);
+                        if(response.data.success){
+                            Swal.fire({
+                              title: response.data.message,
+                              icon: "success"
+                            });
+                        }else{
+                            Swal.fire({
+                              icon: "error",
+                              title: response.data.message,
+                            });
+                        }
                     }).catch(err => {
-                        alert(err.message);
+                        // alert(err.message);
                     })
                 },
             },

@@ -73,10 +73,10 @@
                             alert(response.data);
                             return; 
                         }
-                        alert(response.data);
+                        // alert(response.data);
 						_this.Refresh();
                     }).catch(err => {
-                        alert(err.message);
+                        // alert(err.message);
                     });
                 },
 				GetFavoriteID: function () {
@@ -87,7 +87,7 @@
 							item.isFavorite = _this.favoriteList.includes(item.pid);
 						});
 					}).catch(err => {
-						alert(err.message);
+						// alert(err.message);
 					})
 				},
 				Refresh: function () {
@@ -96,7 +96,7 @@
 						_this.favorite = response.data;
 						_this.GetFavoriteID();
 					}).catch(err => { 
-						alert(err.message)
+						// alert(err.message)
 					})
 				}
 			},

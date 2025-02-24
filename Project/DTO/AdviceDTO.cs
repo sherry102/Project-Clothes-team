@@ -13,22 +13,7 @@ namespace Project.DTO
 
         public string Description { get; set; }
 
-        public string OName { get; set; }
-
-        public string OPhone { get; set; }
-
-        public string OEmail { get; set; }
-
-        public string OAddress { get; set; }
-
-        public string Odate { get; set; }
-
-        public string Ostatus { get; set; }
-
-        public bool OPayment { get; set; }
-
-        public List<TorderDetail> orderdetail { get; set; }
-
+        public DateTime DateTime { get; set; }
 
     }
 }

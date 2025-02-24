@@ -165,7 +165,7 @@
                         _this.Coupon = [..._this.allCoupons];
                         _this.ischecked = "全部";
                     }).catch(err => {
-                        alert(err.message);
+                        // alert(err.message);
                     });
                 },
                 filter: function (filtertype) {
@@ -185,14 +185,30 @@
                     console.log("Deleting coupon with id:", id);
                     let request = { Id: id };
                     let _this = this;
-                    if (confirm("確定要刪除該筆資料嗎?")) {
-                        axios.delete(`${_this.baseAddress}/Ajax/Delete/${id}`).then(response => { 
-                            alert(response.data);
-                            this.GetAllCoupon();
-                        }).catch(err => { 
-                            alert(err.message);
-                        })
-                    }
+                    Swal.fire({
+                        title: "確定要刪除該筆資料嗎?",
+                        text: "刪除後將無法恢復!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "確定刪除",
+                        cancelButtonText: "取消"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.delete(`${_this.baseAddress}/Ajax/Delete/${id}`)
+                                .then(response => {
+                                    Swal.fire({
+                                        title: "刪除成功",
+                                        text: response.data,
+                                        icon: "success"
+                                    }).then(() => {
+                                        _this.GetAllCoupon(); // 重新載入數據
+                                    });
+                                })
+                                .catch(err => {
+                                   
+                                });
+                        }
+                    })
                 },
                 saveEdit: function () { 
                     let _this = this;
@@ -207,15 +223,22 @@
                     }
                     axios.put(`${_this.baseAddress}/Ajax/saveEdit/${id}`,request).then(response => {
                         if (response.data.success) {
-                            alert(response.data.message);
-                            window.location.href = response.data.redirectUrl;
-                            _this.GetAllCoupon();
+                            Swal.fire({
+                                title: response.data.message,
+                                icon: "success"
+                            }).then(() => {
+                                _this.GetAllCoupon();
+                            })
                         } else {
-                            alert(response.data.message);
-                            window.location.href = response.data.redirectUrl;
+                            Swal.fire({
+                                icon: "error",
+                                title: response.data.message,
+                            }).then(() => {
+                                window.location.href = response.data.redirectUrl;
+                            })
                         }
                     }).catch(err => { 
-                        alert(err.message);
+                        // alert(err.message);
                     });
                 },
                 openEdit: function (id) { 
@@ -241,7 +264,7 @@
                         _this.DateEndEdit = formattedDateEnd;
                         _this.PassWordEdit = response.data.passWord;
                     }).catch(err => { 
-                        alert(err.message);
+                        // alert(err.message);
                     })
                 },
                 formatDate: function (date) {
@@ -250,47 +273,76 @@
                     let day = date.getDate().toString().padStart(2, '0'); // 讓日始終是兩位數
                     return `${year}-${month}-${day}`;
                 },
-                addCoupon: function () { 
+                addCoupon: function () {
                     let _this = this;
                     let request = {
-                        CouponName:_this.CouponName,
-                        CouponDiscount:_this.CouponDiscount,
-                        CouponPercentage:_this.CouponPercentage,
-                        DateStart:_this.DateStart,
-                        DateEnd:_this.DateEnd,
-                        CouponPassWord:_this.PassWord
+                        CouponName: _this.CouponName,
+                        CouponDiscount: _this.CouponDiscount,
+                        CouponPercentage: _this.CouponPercentage,
+                        DateStart: _this.DateStart,
+                        DateEnd: _this.DateEnd,
+                        CouponPassWord: _this.PassWord
                     }
-                    if (_this.CouponPercentage == 0 && _this.CouponDiscount ==0) {
-                        alert("請填寫折扣金額或折數之一")
-                        return
-                    };
+                    if (_this.CouponPercentage == 0 && _this.CouponDiscount == 0) {
+                        Swal.fire({
+                            title: "請填寫折扣金額或折數之一",
+                            icon: "warning"
+                        });
+                        return;
+                    }
                     if (_this.CouponPercentage != 0 && _this.CouponDiscount != 0) {
-                        alert("請僅填寫折扣金額或折數之一")
-                        return
-                    };
-                    if (_this.DateStart>= _this.DateEnd) {
-                        alert("開始時間不得超過結束時間")
-                        return
+                        Swal.fire({
+                            title: "請填寫折扣金額或折數之一",
+                            icon: "warning"
+                        });
+                        return;
                     }
-                    if (_this.PassWord=="") {
-                        alert("請填寫優惠碼")
-                        return
+                    if (_this.DateStart >= _this.DateEnd) {
+                        Swal.fire({
+                            title: "開始時間不得超過結束時間",
+                            icon: "warning"
+                        });
+                        return;
                     }
-                    if (confirm("確定要新增此優惠券?")) {
-
-                        axios.post(`${_this.baseAddress}/Ajax/addCoupon`, request).then(response => {
-                            alert(response.data);
-                            _this.GetAllCoupon();
-                            _this.CouponName = "會員獨享$1000折價券";
-                            _this.CouponDiscount = 0;
-                            _this.CouponPercentage = 0;
-                            _this.DateStart = new Date().toISOString().split("T")[0];
-                            _this.PassWord = "";
-                        }).catch(err => {
-                            alert(err.message);
-                        })
+                    if (_this.PassWord == "") {
+                        Swal.fire({
+                            title: "請填寫優惠碼",
+                            icon: "warning"
+                        });
+                        return;
                     }
-                },
+                    Swal.fire({
+                        title: '確定要新增此優惠券?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '確定',
+                        cancelButtonText: '取消'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post(`${_this.baseAddress}/Ajax/addCoupon`, request)
+                                .then(response => {
+                                    Swal.fire({
+                                        title: response.data,
+                                        icon: 'success'
+                                    }).then(() => {
+                                        _this.GetAllCoupon();
+                                        _this.CouponName = "會員獨享$1000折價券";
+                                        _this.CouponDiscount = 0;
+                                        _this.CouponPercentage = 0;
+                                        _this.DateStart = new Date().toISOString().split("T")[0];
+                                        _this.PassWord = "";
+                                    });
+                                })
+                                .catch(err => {
+                                    Swal.fire({
+                                        title: "發生錯誤",
+                                        text: err.message,
+                                        icon: "error"
+                                    });
+                                });
+                        }
+                    });
+                }
 
             },
             mounted() {
