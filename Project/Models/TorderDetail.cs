@@ -32,4 +32,20 @@ public partial class TorderDetail
     public string? Photo1 { get; set; }
 
     public int Pprice { get; set; }
+
+    public string? Rmethod { get; set; }
+
+    public int? Rqty { get; set; }
+
+    public string? Rreason { get; set; }
+
+    public string? RotherReason { get; set; }
+
+    public string? Rname { get; set; }
+
+    public string? Rphone { get; set; }
+
+    public string? Raddress { get; set; }
+
+    public string? Rdescription { get; set; }
 }

@@ -18,4 +18,6 @@ public partial class Tadvice
     public string Description { get; set; } = null!;
 
     public DateTime DateTime { get; set; }
+
+    public bool IsReply { get; set; }
 }

@@ -42,4 +42,10 @@ public partial class Torder
     public DateTime? OcancelDate { get; set; }
 
     public string OcancelStatus { get; set; } = null!;
+
+    public DateTime? OreturnDate { get; set; }
+
+    public string? OreturnStatus { get; set; }
+
+    public string? OreturnNo { get; set; }
 }
