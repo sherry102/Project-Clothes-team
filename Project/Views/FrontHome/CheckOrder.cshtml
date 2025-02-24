@@ -56,6 +56,7 @@
                     <th class="border p-1">付款狀態</th>
                     <th class="border p-1">取消訂單</th>
                     <th class="border p-1">意見反應</th>
+                    <th class="border p-1">退貨申請</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,7 +67,7 @@
                         </a>
                     </td>
                     <td class="border p-1">{{ order.odate }}</td>
-                    <td class="border p-1">{{ order.oPrice }}元</td>
+                    <td class="border p-1">{{ parseInt(order.oPrice) }}元</td>
                     <td class="border p-1">{{ order.oDiscountedprice }}元</td>
                     <td class="border p-1">{{ order.oAddress }}</td>
                     <td class="border p-1">60元</td>
@@ -75,15 +76,17 @@
                     <td class="border p-1">{{ order.oPayment ? '已付款' : '未付款' }}</td>
                     <td class="border p-1">  
                         <span v-if="order.oCancelStatus === '已取消'" class="feedback-links">已取消</span>
-                        <span v-if="order.oCancelStatus === '訂單無法取消'" class="feedback-links">訂單無法取消</span>
+                        <span v-if="order.oCancelStatus === '已出貨無法取消'" class="feedback-links">已出貨無法取消</span>
                         <span v-if="order.oCancelStatus === '申請中'" class="feedback-link text-gray-500">申請中</span>
-                        <a v-if="order.oStatus === '待出貨' && order.oCancelStatus !== '申請中' && order.oCancelStatus !== '已取消' && order.oCancelStatus !== '訂單無法取消' "
+                        <a v-if="order.oStatus === '待出貨' && order.oCancelStatus !== '申請中' && order.oCancelStatus !== '已取消' && order.oCancelStatus !== '已出貨無法取消' "
                            :href="`CancelOrder?oid=${order.oid}`"
                            class="feedback-link">取消</a> 
-                    </td>
-
+                    </td> 
                     <td class="border p-1">
                         <a :href="`/FrontHome/Advice/${order.oid}`" class="feedback-link">問題反應</a>
+                    </td>
+                    <td class="border p-1">
+                        <a v-if="order.oStatus === '已完成'" :href="`ReturnPurchase?oid=${order.oid}`" class="feedback-link text-red-500">退貨</a>
                     </td>
                 </tr>
             </tbody>
@@ -264,7 +267,7 @@
         }
 
         table th:nth-child(5), table td:nth-child(5) {
-            width: 350px; /* For Shipping Address */
+            width: 300px; /* For Shipping Address */
         }
 
         table th:nth-child(6), table td:nth-child(6) {
@@ -276,19 +279,23 @@
         }
 
         table th:nth-child(8), table td:nth-child(8) {
-            width: 120px; /* For Order Status */
+            width: 140px; /* For Order Status */
         }
 
         table th:nth-child(9), table td:nth-child(9) {
-            width: 120px; /* For Payment Status */
+            width: 140px; /* For Payment Status */
         }
 
         table th:nth-child(10), table td:nth-child(10) {
-            width: 120px; /* For Cancel Order Button */
+            width: 140px; /* For Cancel Order Button */
         }
 
         table th:nth-child(11), table td:nth-child(11) {
             width: 80px; /* For Feedback Button */
+        }
+
+        table th:nth-child(12), table td:nth-child(12) {
+            width: 80px; /* For Return Button */
         }
     </style> 
 }

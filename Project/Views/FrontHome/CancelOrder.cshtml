@@ -63,6 +63,7 @@
     <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script>
         var vueApp = {
@@ -84,7 +85,7 @@
                     _this.orderId = urlParams.get("oid");
 
                     if (!_this.orderId) {
-                        alert("無效的訂單 ID");
+                        swal("錯誤", "無效的訂單 ID", "error");
                         return;
                     }
 
@@ -101,11 +102,11 @@
                                     PPrice: od.pPrice
                                 }));
                             } else {
-                                alert("查無訂單細項");
+                                swal("錯誤", "查無訂單細項", "error");
                             }
                         })
                         .catch(err => {
-                            alert("錯誤: " + err.message);
+                            swal("錯誤", "取得訂單細節時發生錯誤", "error");
                         });
                 },
                 getOrderPrice: function () {
@@ -120,17 +121,17 @@
                                     OTotalPrice: order.oTotalPrice
                                 })); 
                             } else {
-                                alert("請先登入會員");
+                                swal("錯誤", "請先登入會員", "error");
                             }
                         })
                         .catch(err => {
-                            alert("錯誤: " + err.message);
+                            swal("錯誤", "取得訂單價格時發生錯誤", "error");
                         });
                 },
                 confirmCancel() {
 
                     if (!this.cancelReason) {
-                        alert("請選擇取消訂單的原因");
+                        swal("錯誤", "請選擇取消訂單的原因", "error");
                         return;
                     }
 
@@ -147,16 +148,16 @@
                     axios.post(`${this.baseAddress}/Ajax/CancelOrder`, cancelData)
                         .then(response => {
                             if (response.data.success) {
-                                alert(`訂單${this.orderId} 已成功取消！`); 
+                                swal("成功", `訂單已成功取消！`, "success")
+                                    .then(() => window.location.href = "/FrontHome/CheckOrder");
                             } else {
-                                alert("取消訂單失敗，請稍後再試");
-                                this.isCanceling = false;  
+                                swal("錯誤", "取消訂單失敗，請稍後再試", "error");
+                                this.isCanceling = false;
                             }
                         })
                         .catch(error => {
-                            console.error("取消訂單時發生錯誤:", error);
-                            alert("取消訂單時發生錯誤，請稍後再試");
-                            this.isCanceling = false; 
+                            swal("錯誤", "取消訂單時發生錯誤，請稍後再試", "error");
+                            this.isCanceling = false;
                         });
                 }
             },
