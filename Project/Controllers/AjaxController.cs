@@ -518,6 +518,15 @@ namespace Project.Controllers
             return Json(coupon);
         }
 
+        [HttpGet("Ajax/openAdvice/{id}")]
+
+        public async Task<IActionResult> openAdvice(int id)
+        {
+
+            var coupon = await _context.Tadvices.FindAsync(id);
+            return Json(coupon);
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateCart([FromBody] CustomCartDTO cart)
         {
