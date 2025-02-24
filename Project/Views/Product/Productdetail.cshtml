@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/Front_Layout.cshtml";
 }
 @section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+TC&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <style>
         .btn-side {
@@ -136,10 +137,39 @@
                     <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQuantity()">+</button>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary btn-sm my-3 w-50"
+            <button type="button" class="btn btn-outline-secondary btn-sm mt-3 w-50"
                     onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
                 加入購物車
             </button>
+            @*<h4>商品評價</h4>
+            @foreach (var comment in Model.Comments)
+            {   
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@comment.Mname</h5>
+                        <p class="text-muted">@comment.ComCreateDate.ToString("yyyy-MM-dd")</p>
+                        <p>@comment.Comment</p>
+
+                        @if (!string.IsNullOrEmpty(comment.ComImage1) || !string.IsNullOrEmpty(comment.ComImage2))
+                        {
+                            <div class="d-flex mt-3">
+                                @if (!string.IsNullOrEmpty(comment.ComImage1))
+                                {
+                                    <a href="~/images/@comment.ComImage1" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/images/@comment.ComImage1" class="img-thumbnail me-2" width="80" alt="圖片1">
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(comment.ComImage2))
+                                {
+                                    <a href="~/images/@comment.ComImage2" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/images/@comment.ComImage2" class="img-thumbnail me-2" width="80" alt="圖片2">
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }*@
         </div>
     </div>
 </div>
@@ -147,7 +177,9 @@
 
 @section Scripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <script>
+
         //加入最愛
         $(document).ready(function () {
             // 取得使用者已收藏的商品 ID 並標記紅色
@@ -306,6 +338,7 @@
                 }
             });
         }
+
     </script>
 }
 

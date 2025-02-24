@@ -13,10 +13,11 @@ namespace Project.Controllers
     public class StyleController : Controller
     {
         private readonly DbuniPayContext _context;
-
-        public StyleController(DbuniPayContext context)
+        IWebHostEnvironment _enviro = null;
+        public StyleController(IWebHostEnvironment p,DbuniPayContext context)
         {
             _context = context;
+            _enviro = p;
         }
 
         //前台StyleList
@@ -53,20 +54,20 @@ namespace Project.Controllers
 
 
         //後台StyleList
-        // GET: Style
         public async Task<IActionResult> List()
         {
-
+            DbuniPayContext db = new DbuniPayContext();
             var styles = (from tsi in _context.TstyleImgs
                           join ts in _context.Tstyles on tsi.Sid equals ts.Sid
                           join tp in _context.Tproducts on ts.Pid equals tp.Pid
-                          select new {tsi.Sid, tsi.Simg, tp.Pid, tp.Pname, tp.Pphoto, tp.Pprice })
+                          select new { tsi.Sid, tsi.Simg, tsi.SimgCategory, tp.Pid, tp.Pname, tp.Pphoto, tp.Pprice })
                       .ToList()
                       .GroupBy(x => x.Sid)
                       .Select(g => new StyleViewModel
                       {
                           Sid = g.Key,
                           SImg = g.Select(x => x.Simg).FirstOrDefault(),
+                          SimgCategory = g.Select(x => x.SimgCategory).FirstOrDefault() ?? string.Empty,
                           Products = g.Select(p => new ProductViewModel
                           {
                               PID = p.Pid,
@@ -78,117 +79,6 @@ namespace Project.Controllers
 
             return View(styles);
         }
-
-
-        // GET: Style/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Style/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Sid,Simg,SimgCategory")] TstyleImg tstyleImg)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(tstyleImg);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(tstyleImg);
-        }
-
-        // GET: Style/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tstyleImg = await _context.TstyleImgs.FindAsync(id);
-            if (tstyleImg == null)
-            {
-                return NotFound();
-            }
-            return View(tstyleImg);
-        }
-
-        // POST: Style/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Sid,Simg,SimgCategory")] TstyleImg tstyleImg)
-        {
-            if (id != tstyleImg.Sid)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(tstyleImg);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TstyleImgExists(tstyleImg.Sid))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(tstyleImg);
-        }
-
-        // GET: Style/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tstyleImg = await _context.TstyleImgs
-                .FirstOrDefaultAsync(m => m.Sid == id);
-            if (tstyleImg == null)
-            {
-                return NotFound();
-            }
-
-            return View(tstyleImg);
-        }
-
-        // POST: Style/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var tstyleImg = await _context.TstyleImgs.FindAsync(id);
-            if (tstyleImg != null)
-            {
-                _context.TstyleImgs.Remove(tstyleImg);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool TstyleImgExists(int id)
-        {
-            return _context.TstyleImgs.Any(e => e.Sid == id);
-        }
+    
     }
 }

@@ -61,8 +61,10 @@
     <tbody>
         @{
             int count = 0;
+            var sortedModel = Model.OrderBy(item => item.Pinventory); // 依庫存排序
         }
-        @foreach (var item in Model)
+
+        @foreach (var item in sortedModel)
         {
             count++;
             <tr class="align-middle">
@@ -79,7 +81,7 @@
                 <td>
                     <!-- 查看庫存明細按鈕 -->
                     <button class="btn custom-btn btn-sm my-2" type="button" data-bs-toggle="modal"
-                            data-bs-target="#inventoryModal-@count">
+                            data-bs-target="#inventoryModal-@item.Pid">
                         查看商品詳細庫存
                     </button>
                     <div class="w-100"></div>
@@ -93,13 +95,12 @@
 
 @foreach (var item in Model)
 {
-    int modalCount = Model.IndexOf(item) + 1;
     <!-- Bootstrap 5 Modal -->
-    <div class="modal fade" id="inventoryModal-@modalCount" tabindex="-1" aria-labelledby="inventoryModalLabel-@modalCount" aria-hidden="true">
+    <div class="modal fade" id="inventoryModal-@item.Pid" tabindex="-1" aria-labelledby="inventoryModalLabel-@item.Pid" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="inventoryModalLabel-@modalCount">庫存明細 - @item.Pname</h5>
+                    <h5 class="modal-title" id="inventoryModalLabel-@item.Pid">庫存明細 - @item.Pname</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
