@@ -130,33 +130,62 @@
                             _this.TotalPrice += item.pcount * item.pprice;
                         })
                     }).catch(err => { 
-                        alert(err.message);
+                        // alert(err.message);
                     });
                 },
                 sendAdvice: function () {
                     let _this = this;
                     let request = {
-                        OId:_this.OId,
-                        Question:_this.Question,
-                        Title:_this.Title,
-                        Description:_this.Description
-                    }
-                    console.log(request);
-                    if (confirm("確定要送出嗎")) {
-                        axios.post(`${_this.baseAddress}/Ajax/PostAdvice`, request).then(response => {
-                            if (response.data.success) {
-                                alert("已送出");
-                                window.location.href = response.data.redirectUrl;
-                            } else {
-                                alert(response.data.message);
-                                window.location.href = response.data.redirectUrl;
-                            }
-                        }).catch(err => { 
-                            alert(err.message);
-                        })
-                    }
+                        OId: _this.OId,
+                        Question: _this.Question,
+                        Title: _this.Title,
+                        Description: _this.Description
+                    };
+    
+                    // 前端字段验证
+                    if (!_this.Question || !_this.Title || !_this.Description) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '請填寫所有欄位',
+                        });
+                        return;
+                    };
 
-                }
+                    // 使用 SweetAlert 替代 confirm
+                    Swal.fire({
+                        title: '確定要送出嗎?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: '確定',
+                        cancelButtonText: '取消'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // 用户点击确认
+                            axios.post(`${_this.baseAddress}/Ajax/PostAdvice`, request).then(response => {
+                                if (response.data.success) {
+                                    Swal.fire({
+                                        title: "已送出",
+                                        icon: "success"
+                                    }).then(() => {
+                                        window.location.href = response.data.redirectUrl;
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: response.data.message,
+                                    }).then(() => {
+                                        window.location.href = response.data.redirectUrl;
+                                    });
+                                }
+                            }).catch(err => {
+                                // alert(err.message); 
+                                
+                            });
+                        } else {
+                            return ;
+                        }
+                    });
+                },
             },
             mounted() {
                 // 解析路徑，取得 id

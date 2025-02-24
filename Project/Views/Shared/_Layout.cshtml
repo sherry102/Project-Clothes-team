@@ -165,6 +165,11 @@
                             <i class="bi bi-circle"></i><span>訂單管理</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="~/order/OrderAdvice">
+                            <i class="bi bi-circle"></i><span>訂單意見</span>
+                        </a>
+                    </li>
                 </ul>
             </li><!-- End Tables Nav -->
 
@@ -239,6 +244,7 @@
     <script src="~/assets/js/main.js"></script>
     <script src="~/js/datepicker.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let json = @Html.Raw(JsonSerializer.Serialize(ViewContext.HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER)));
         if (json && json !== 'null') {
@@ -255,25 +261,34 @@
         }
         
         $("#signout").on("click", (e) => {
-            if (confirm("確定要登出嗎?")) {
-                $.ajax({
-                    url: "/Home/SingOut",
-                    type: "POST",        
-                    success: (response) => {
-                        if (response.success) {
-                            window.location.href = "/Home/Login";
-                        } else {
-                            alert("登出失敗，請稍後再試！");
+            e.preventDefault(); // 防止點擊後跳轉
+
+            Swal.fire({
+                title: "確定要登出嗎?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/Home/SingOut",
+                        type: "POST",        
+                        success: (response) => {
+                            if (response.success) {
+                                window.location.href = "/Home/Login";
+                            } else {
+                                Swal.fire("登出失敗", "登出過程中發生錯誤，請稍後再試", "error");
+                            }
+                        },
+                        error: () => {
+                            Swal.fire("發生錯誤", "無法完成登出，請稍後再試", "error");
                         }
-                    },
-                    error: () => {
-                        alert("發生錯誤，無法完成登出！");
-                    }
-                });
-            } else {
-                e.preventDefault(); 
-            }
+                    });
+                }
+            });
         });
+
 
     </script>    
     @await RenderSectionAsync("Scripts", required: false)

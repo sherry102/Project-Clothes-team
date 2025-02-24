@@ -113,5 +113,21 @@ namespace Project.Controllers
                 list.Add(new COrderDetailWarp() { orderdetail = t });
             return View(list);
         }
+
+        public IActionResult OrderAdvice()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>  getAdvice()
+        {
+            DbuniPayContext db = new DbuniPayContext();
+            var advice = await db.Tadvices.OrderByDescending(c=>c.DateTime).ToListAsync();
+            if (advice==null) {
+                advice = new List<Tadvice>();
+            }
+            return Json(advice);
+        }
     }
 }

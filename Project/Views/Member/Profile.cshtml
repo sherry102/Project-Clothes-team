@@ -141,7 +141,7 @@
                                     </div>
 
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary" onclick="confirmSubmit()">儲存修改</button>
+                                    <button type="submit" class="btn btn-primary" onclick="confirmSubmit(event)">儲存修改</button>
                                     </div>
                                 </form><!-- End Profile Edit Form -->
 
@@ -174,7 +174,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary" onclick="confirmSubmit()">密碼修改</button>
+                                    <button type="submit" class="btn btn-primary" onclick="confirmSubmit(event)">密碼修改</button>
                                     </div>
                                 </form>
 
@@ -192,9 +192,20 @@
 
 @section Scripts{
 <script>
-        function confirmSubmit() {
-            console.log($("#Mbirthdays").val());
-            return confirm("確定要儲存修改嗎?");
+        function confirmSubmit(event) {
+            event.preventDefault(); // 阻止表單提交
+            
+            Swal.fire({
+                title: "確定要儲存修改嗎?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.closest("form").submit(); // 手動提交表單
+                }
+            });
         }
 
         $("#confirmPassword").on("submit", (e) => {

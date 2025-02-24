@@ -82,23 +82,37 @@
                     let _this = this;
                     let request = { CouponPassWord: _this.CouponPassWord };
                     axios.post(`${_this.baseAddress}/Ajax/SendCoupon`, request).then(response => {
-                        alert(response.data);
+                        if (response.data.success) {
+                            Swal.fire({
+                                title: response.data.message,
+                                icon: "success"
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: response.data.message,
+                            });
+                        }
                         _this.GetCoupon();
                     }).catch(err => { 
-                        alert(err.message);
+                        // alert(err.message);
                     })
                 },
                 GetCoupon: function () {
                     let _this = this;
                     axios.get(`${_this.baseAddress}/Ajax/GetCoupon`).then(response => {
                         if (response.data.success==false) {
-                            alert(response.data.message);
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '請重新登入會員',
+                                showConfirmButton: true,
+                            });
                             window.location.href = response.data.redirectUrl;
                         } else {
                             _this.Coupon = response.data.data;
                         };
                     }).catch(err => {
-                        alert(err.message);
+                        // alert(err.message);
                     })
                 },
             },

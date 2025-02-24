@@ -302,13 +302,18 @@
                     };
                     axios.post(`${_this.baseAddress}/Ajax/PostFavorite`, request).then(response => {
                         if (response.data === "請先登入會員") {
-                            alert(response.data); 
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '請先登入會員',
+                                showConfirmButton: true,
+                                footer: '<a href="' + '@Url.Action("fcreate", "FrontMember")' + '" style="color:blue">前往登入</a>'
+                            });
                             return; 
                         }
-                        alert(response.data);
+
                         _this.GetFavoriteID();
                     }).catch(err => {
-                        alert(err.message);
+
                     });
                 },
                 GetFavoriteID: function () { 
@@ -322,7 +327,7 @@
                             item.isFavorite = _this.favoriteList.includes(item.pid);
                         })
                     }).catch(err => { 
-                        alert(err.message);
+
                     })
                 },
                 GetTop4Sales: function () {
@@ -331,7 +336,7 @@
                         _this.Top4Sales = response.data;
                         _this.GetFavoriteID();
                     }).catch(err => {
-                        alert(err.message);
+
                     })
                 },
                 GetNew4Sales: function () {
@@ -340,7 +345,7 @@
                         _this.New4Sales = response.data;
                         _this.GetFavoriteID();
                     }).catch(err => { 
-                        alert(err.message);
+
                     })
                 }
             },
