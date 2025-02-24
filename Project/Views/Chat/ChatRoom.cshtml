@@ -304,9 +304,9 @@
         const chatApp = Vue.createApp({
             data() {
                 return {
-                    userId: "1", // 目前登入的會員ID
+                    userId: "2", // 目前登入的會員ID
                     userName: "帥哥", // 目前登入的會員名稱
-                    chatId: null, // 目前的聊天室ID
+                    chatId: "1", // 目前的聊天室ID
                     activeRoom: null, // 目前選中的聊天室
                     rooms: new Map(), // 儲存所有聊天室資訊
                     message: "", // 訊息內容
@@ -318,22 +318,29 @@
             },
             // 組件載入時初始化
             async mounted() {
-                // 獲取當前用戶ID（假設從某個隱藏欄位或會話中獲取）
-                // this.userId = document.getElementById('currentUserId').value;
+                    try {
+            await this.initializeSignalRConnection();
 
-                // 初始化各項功能
-                await this.initializeSignalRConnection();
-                // await this.loadMembers();
-                // await this.initializeChatRooms();
+            // 載入聊天歷史
+            const savedMessages = sessionStorage.getItem("chatMessages");
+            if (savedMessages) {
+                this.messages = JSON.parse(savedMessages);
+            }
 
-                // 載入聊天歷史
-                this.loadAllChatHistory();
+            // 監聽消息變化以自動滾動
+            this.$watch(
+                () => this.messages.length,
+                () => this.$nextTick(this.scrollToBottom)
+            );
 
-                // 監聽消息變化以自動滾動
-                this.$watch(
-                    () => this.messages.size,
-                    () => this.$nextTick(this.scrollToBottom)
-                );
+        } catch (error) {
+            console.error("初始化失敗:", error);
+            Swal.fire({
+                title: '錯誤',
+                text: '連接聊天服務失敗，請重新整理頁面',
+                icon: 'error'
+            });
+        }
             },
             methods: {
                 // 初始化 SignalR 連線的方法
@@ -346,62 +353,34 @@
                             .configureLogging(signalR.LogLevel.Debug) // 開啟詳細的日誌記錄
                             .build();
 
-                        // 註冊接收消息處理器
-                        this.hubConnection.on("UpdContent", (msg) => {
-                            console.log("收到伺服器訊息: ", msg);
-                            // 過濾空訊息
-                            // 確保 messages 是陣列
-                            if (!Array.isArray(this.messages)) {
-                                this.messages = []; // 重新初始化
-                            }
-                            if (!msg.message || msg.message.trim() === "") return;
-                            console.log("收到訊息:", msg.message);
-                            if (msg.user === this.userId) {
-                                this.messages.push({
-                                    type: "sent",
-                                    content: messageContent,
-                                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
-                                });
-                                return;
-                            }
-                            else if (msg.user === "System") {
-                                this.messages.push({
-                                    type: "system",
-                                    content: msg.message,
-                                    timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
-                                });
-                            }
-                            else{
-                                // 將訊息加入Vue數據中
-                                this.messages.push({
-                                    type: "received",
-                                    content: msg.message,
-                                    user: msg.user,
-                                    timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
-                                });
-                            }
-                            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
-                            this.scrollToBottom();
-                        });
+                                this.hubConnection.on("UpdContent", (msg) => {
+            console.log("收到伺服器訊息: ", msg);
 
-                           // 將消息添加到對應房間
-                           //  const roomMessages = this.messages.get(this.activeRoom) || [];
-                           //  roomMessages.push(messageObj);
-                           //  this.messages.set(this.activeRoom, roomMessages);
+            // 確保 messages 是陣列
+            if (!Array.isArray(this.messages)) {
+                this.messages = [];
+            }
 
-                           //  更新UI
-                           //  this.$nextTick(this.scrollToBottom);
+            // 檢查消息是否有效
+            if (!msg || !msg.message) return;
 
-                           //  如果不是當前房間的消息，增加未讀計數
-                           //  if (this.activeRoom !== msg.ChatId) {
-                           //      const room = this.rooms.get(msg.ChatId);
-                           //      if (room) {
-                           //          room.unreadCount = (room.unreadCount || 0) + 1;
-                           //          this.updateUnreadCount(msg.ChatId);
-                           //      }
-                           //  }
-                        
+            // 根據消息類型添加不同樣式
+            const messageObj = {
+                type: msg.user === this.userId ? "sent" :
+                      msg.user === "System" ? "system" : "received",
+                content: msg.message,
+                timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+            };
 
+            // 添加消息到陣列
+            this.messages.push(messageObj);
+
+            // 儲存到 sessionStorage
+            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
+
+            // 滾動到底部
+            this.$nextTick(this.scrollToBottom);
+        });
                         // 啟動連接
                         await this.hubConnection.start();
                         console.log("SignalR連接成功");
@@ -427,26 +406,29 @@
                     }
                 },
                 // 發送訊息
-                async sendMessage() {
-            // 檢查訊息是否為空
-            if (!this.message.trim()) return;
-            console.log(this.messages);
-            // 儲存訊息內容
-            const messageContent = this.message;
-             
-                 
-                this.messages.push({
-                    type: "sent",
-                    content: messageContent,
-                    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
-                })
-            // 立即滾動到底部
-            await this.$nextTick();
-            this.scrollToBottom();
-            this.isTyping = false;
-            // this.saveMessages();
-            
+                    async sendMessage() {
+        // 檢查訊息是否為空
+        if (!this.message.trim()) return;
+
+        try {
+            // 儲存訊息內容並調用 SignalR 方法
+            await this.hubConnection.invoke("SendMessage", this.userId, this.message.trim());
+
+            // 清空輸入框
             this.message = "";
+
+            // 重置輸入狀態
+            this.isTyping = false;
+
+        } catch (error) {
+            console.error("發送訊息失敗:", error);
+            // 顯示錯誤提示
+            Swal.fire({
+                title: '錯誤',
+                text: '發送訊息失敗，請稍後再試',
+                icon: 'error'
+            });
+        }
                 },
                 // 切換聊天室
                 async switchRoom(roomId) {
