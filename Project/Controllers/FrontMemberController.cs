@@ -83,12 +83,6 @@ namespace Project.Controllers
                 return RedirectToAction("List");
             return View(member);
         }
-        [HttpPost]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);// 從 Session 中移除使用者資料
-            return Json(new { success = true });// 回傳登出成功狀態（用於 Ajax）
-        }
         public IActionResult fprofile()
         {
             DbuniPayContext db = new DbuniPayContext();// 建議使用 using 以確保資源釋放
