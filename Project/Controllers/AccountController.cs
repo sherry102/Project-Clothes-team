@@ -3,6 +3,7 @@ using Project.Models;
 using Project.ViewModel;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization; // 引入 ReferenceHandler 命名空間
 using System.Linq;
 
 namespace Project.Controllers
@@ -18,89 +19,117 @@ namespace Project.Controllers
             _logger = logger;
         }
 
-        // 新增：檢查登入狀態的端點
+        // AJAX登入功能 - 接收JSON格式的帳號密碼
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login([FromBody] FloginViewModel m)
+        {
+            // 驗證模型
+            if (m == null || string.IsNullOrEmpty(m.faccount) || string.IsNullOrEmpty(m.fpassword))
+            {
+                _logger.LogWarning("登入失敗: 帳號或密碼為空");
+                return Json(new { success = false, message = "帳號和密碼不能為空" });
+            }
+
+            try
+            {
+                // 查詢資料庫
+                Tmember? member = _context.Tmembers.FirstOrDefault(
+                    c => c.Maccount == m.faccount && c.Mpassword == m.fpassword
+                );
+
+                if (member != null)
+                {
+                    _logger.LogInformation($"登入成功: {m.faccount}");
+
+                    // 登入成功，將會員資料存入Session
+                    var options = new JsonSerializerOptions
+                    {
+                        ReferenceHandler = ReferenceHandler.Preserve,
+                    };
+                    string json = JsonSerializer.Serialize(member, options);
+                    HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
+
+                    return Json(new
+                    {
+                        success = true,
+                        redirectUrl = Url.Action("FrontIndex", "FrontHome")
+                    });
+                }
+                else
+                {
+                    _logger.LogWarning($"登入失敗: 用戶 {m.faccount} 帳號或密碼錯誤");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "帳號或密碼錯誤"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"登入處理錯誤: {m.faccount}");
+                return Json(new
+                {
+                    success = false,
+                    message = "系統錯誤，請稍後再試"
+                });
+            }
+        }
+
+        // 檢查登入狀態的API
         [HttpGet]
         public IActionResult CheckLoginStatus()
         {
-            // 從 Session 中獲取用戶信息
-            var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-            bool isLoggedIn = !string.IsNullOrEmpty(memberJson);
-            if (isLoggedIn) // 可以在這裡添加更多檢查，例如檢查 Session 是否過期
+            try
             {
-                try
-                {
-                    // 修正：添加null忽略運算符，避免編譯警告
-                    var member = JsonSerializer.Deserialize<Tmember>(memberJson!);
-                    return Json(new
-                    {
-                        isLoggedIn = true,
-                        username = member.Mname,
-                        // 修正：添加重定向URL供前端使用
-                        redirectUrl = "/FrontMember/fprofile"
-                    });
-                }
-                catch
-                {
-                    // Session數據損壞，清除並視為未登入
-                    HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
-                    return Json(new
-                    {
-                        isLoggedIn = false,
-                        redirectUrl = "/FrontMember/fcreate"
-                    });
-                }
-            }
-            return Json(new // 用戶未登入
-            {
-                isLoggedIn = false,
-                redirectUrl = "/FrontMember/fcreate"
-            });
-        }
+                var memberJson = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
 
-        // 修改：改進登入邏輯
+                // 檢查是否已登入
+                if (!string.IsNullOrEmpty(memberJson))
+                {
+                    try
+                    {
+                        // 嘗試反序列化會員資料
+                        var member = JsonSerializer.Deserialize<Tmember>(memberJson);
+                        if (member != null)
+                        {
+                            return Json(new
+                            {
+                                success = true,
+                                isLoggedIn = true,
+                                username = member.Mname,
+                                redirectUrl = Url.Action("fprofile", "FrontMember")
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "反序列化會員資料時發生錯誤");
+                        HttpContext.Session.Remove(CDictionary.SK_LOGEDIN_USER);
+                    }
+                }
+
+                // 未登入或登入失效
+                return Json(new
+                {
+                    success = true,
+                    isLoggedIn = false,
+                    redirectUrl = Url.Action("fcreate", "FrontMember")
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "檢查登入狀態時發生錯誤");
+                return Json(new
+                {
+                    success = false,
+                    isLoggedIn = false,
+                    message = "檢查登入狀態時發生錯誤"
+                });
+            }
+        }
         [HttpPost]
-        public IActionResult Login(PersoniconViewModel m) //存入快取
-        {
-            Tmember? member = _context.Tmembers.FirstOrDefault(
-                c => c.Maccount == m.faccount && c.Mpassword == m.fpassword
-            );
-
-            if (member != null)
-            {
-                // 登入成功，將用戶資料存入Session
-                string json = JsonSerializer.Serialize(member);
-                HttpContext.Session.SetString(CDictionary.SK_LOGEDIN_USER, json);
-                return RedirectToAction("FrontIndex", "FrontHome");
-            }
-            else
-            {
-                // 登入失敗，設置錯誤訊息
-                ViewBag.ErrorMessage = "帳號或密碼錯誤";
-                return View("~/Views/FrontMember/fcreate.cshtml");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Login()
-        {
-            // 檢查是否已經登入
-            if (HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER) != null)
-            {
-                // 已登入則重定向到首頁
-                return RedirectToAction("FrontIndex", "FrontHome");
-            }
-
-            // 顯示登入表單
-            // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-            // 修改重點：將原本的 return View("fcreate", "FrontMember");
-            // 改為直接指定對應的 cshtml 路徑，或改為 return View("fcreate");
-            // 以確保與 POST 一致並能正確顯示錯誤訊息。
-            // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-            return View("~/Views/FrontMember/fcreate.cshtml"); // 已修改
-        }
-    
-// 新增：登出端點
-[HttpPost]
         public IActionResult Logout()
         {
             try
