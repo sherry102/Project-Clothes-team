@@ -17,6 +17,7 @@
         public string? Photo1 { get; set; }
         public int PPrice { get; set; }
         public string Ostatus { get; set; }
+        public bool IsReviewed { get; set; }
         public string? Rmethod { get; set; } // 退換貨方式
         public int? Rqty { get; set; } // 退換貨數量
         public string? Rreason { get; set; } // 退換貨原因

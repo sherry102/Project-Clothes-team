@@ -10,8 +10,16 @@ public partial class Tcomment
     public int Mid { get; set; }
 
     public string Mname { get; set; } = null!;
+    
+    public int Rating { get; set; }
+
+    public int Oid { get; set; }
 
     public int Pid { get; set; }
+
+    public string Psize { get; set; } = null!;
+
+    public string Pcolor { get; set; } = null!;
 
     public string Comment { get; set; } = null!;
 

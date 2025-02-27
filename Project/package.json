@@ -11,5 +11,8 @@
   "description": "",
   "dependencies": {
     "sweetalert2": "^11.17.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.21.0"
   }
 }

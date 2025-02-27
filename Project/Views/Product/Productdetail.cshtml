@@ -65,7 +65,6 @@
             font-size:12px;
             color:grey;
         }
-
     </style>
 }
 
@@ -141,39 +140,63 @@
                     onclick="addToCart('@Model.Pid','@Model.Pname','@Model.Ptype','@Model.Pcategory','@Model.Pphoto','@Model.Pprice')">
                 加入購物車
             </button>
-            @*<h4>商品評價</h4>
+            <h4 class="ms-2">商品評價
+                <span class="text-muted fs-6">（@Model.CommentCount</span>則評論）
+            </h4>
             @foreach (var comment in Model.Comments)
-            {   
+            {
                 <div class="card mt-3">
                     <div class="card-body">
-                        <h5 class="card-title">@comment.Mname</h5>
-                        <p class="text-muted">@comment.ComCreateDate.ToString("yyyy-MM-dd")</p>
+                        <div class="d-flex justify-content-between">
+                            <h4 class="mt-4">
+                                @{
+                                    var maskedName = comment.Mname.Length > 2
+                                    ? comment.Mname.Substring(0, comment.Mname.Length - 2) + "**"
+                                    : comment.Mname;
+                                }
+                                @maskedName
+                            </h4>
+                            <p class="text-muted">@comment.ComCreateDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <p class="text-muted">規格：@comment.Pcolor／@comment.Psize</p>
+                        <!-- 星星評價 -->
+                        <div class="rating mt-2">
+                            @for (int i = 0; i < 5; i++) 
+                            {
+                                if (i < comment.Rating)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star text-warning"></i>
+                                }
+                            }
+                        </div>
                         <p>@comment.Comment</p>
-
                         @if (!string.IsNullOrEmpty(comment.ComImage1) || !string.IsNullOrEmpty(comment.ComImage2))
                         {
                             <div class="d-flex mt-3">
                                 @if (!string.IsNullOrEmpty(comment.ComImage1))
                                 {
-                                    <a href="~/images/@comment.ComImage1" data-lightbox="comment-gallery-@comment.ComId">
-                                        <img src="~/images/@comment.ComImage1" class="img-thumbnail me-2" width="80" alt="圖片1">
+                                    <a href="~/uploads/@comment.ComImage1" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/uploads/@comment.ComImage1" class="img-thumbnail me-2" width="80" alt="圖片1">
                                     </a>
                                 }
                                 @if (!string.IsNullOrEmpty(comment.ComImage2))
                                 {
-                                    <a href="~/images/@comment.ComImage2" data-lightbox="comment-gallery-@comment.ComId">
-                                        <img src="~/images/@comment.ComImage2" class="img-thumbnail me-2" width="80" alt="圖片2">
+                                    <a href="~/uploads/@comment.ComImage2" data-lightbox="comment-gallery-@comment.ComId">
+                                        <img src="~/uploads/@comment.ComImage2" class="img-thumbnail me-2" width="80" alt="圖片2">
                                     </a>
                                 }
                             </div>
                         }
                     </div>
                 </div>
-            }*@
+            }
         </div>
     </div>
 </div>
-
 
 @section Scripts
 {
@@ -330,7 +353,13 @@
                     PPrice: productPrice,
                 }),
                 success: function(response) {
-                    Swal.fire("成功", response, "success");
+                     if (response === "請先登入會員") {
+                        Swal.fire("提示", response, "warning");
+                    } else if(response === "已加入購物車"){
+                        Swal.fire("成功", response, "success");
+                    } else {
+                        Swal.fire("錯誤", "操作發生錯誤，請稍後再試！", "error");
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("加入購物車時發生錯誤: " + error);
@@ -342,3 +371,4 @@
     </script>
 }
 
+                  
