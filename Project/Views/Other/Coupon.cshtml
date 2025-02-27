@@ -83,8 +83,8 @@
                     <td style="letter-spacing:1px">
                         <span class="fw-bold">{{item.couponName}}</span><br />
                         優惠券編號：{{item.id}}<br />
-                        有效開始日：{{item.dateStart}}<br />
-                        <span style="color:indianred">有效結束日：{{item.dateEnd}}</span><br />
+                        有效開始日：{{item.dateStart.split("T")[0]}}<br />
+                        <span style="color:indianred">有效結束日：{{item.dateEnd.split("T")[0]}}</span><br />
                         優惠碼：{{item.password}}<br />
                     </td>
                     <td class="text-center" style="width:90px">

@@ -237,7 +237,7 @@
                                 <i v-bind:class="item.isFavorite? 'bi bi-heart-fill':'bi bi-heart'" class="favorite" v-on:click.prevent="Favorite(item)"></i>
                                 <img v-bind:src="'/Images/'+ item.pphoto" class="w-100" />
                                 <div style="background-color:white;">
-                                    <div class="fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
+                                    <div class="pt-2 fw-bold ps-2" style="color:dimgray">{{item.pname}}</div>
                                     <div class="fw-bold mt-1 ps-2 pb-2" style="color:black">NT$ {{item.pprice}}</div>
                                 </div>
                             </a>

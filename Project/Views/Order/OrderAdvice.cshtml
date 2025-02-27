@@ -88,22 +88,30 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <label class="form-label">優惠券名稱</label>
-                    <input class="form-control" type="text" v-model="CouponNameEdit" required />
-                    <label class="form-label mt-3">優惠券折扣(金額)</label>
-                    <input class="form-control" type="number" v-model="CouponDiscountEdit" min="0" required />
-                    <label class="form-label mt-3">優惠券折扣(折數)</label>
-                    <input class="form-control" type="number" v-model="CouponPercentageEdit" min="0" max="1" required />
-                    <label class="form-label mt-3">開始時間</label>
-                    <input class="form-control" type="date" v-model="DateStartEdit" required />
-                    <label class="form-label mt-3">結束時間</label>
-                    <input class="form-control" type="date" v-model="DateEndEdit" :min="End" required />
-                    <label class="form-label mt-3">優惠碼</label>
-                    <input class="form-control" type="text" v-model="PassWordEdit" required />
+                    <div class="d-flex">
+                        <div class="mt-2">意見編號：{{adviceId}}</div>
+                        <div class="mt-2 ms-auto d-flex align-items-center" style="color:darkgray">{{adviceDate.split('T')[0]}}</div>
+                    </div>
+                    <div class="mt-2">訂單編號：{{adviceOid}}</div>
+                    <div class="d-flex">
+                        <div class="mt-2">會員編號：{{adviceMid}}</div>
+                        <div class="mt-2 ms-auto d-flex align-items-center">Email：{{adviceEmail}}</div>
+                    </div>
+                    <div class="mt-4 mb-3">
+                        <label for="question" class="form-label mb-2">主要問題</label>
+                        <input class="form-control" v-model="adviceQuestion" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label mb-2">主旨</label>
+                        <input type="text" class="form-control" id="title" v-model="adviceTitle" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label  mb-2">簡述 </label>
+                        <textarea class="form-control" style="height:150px;overflow-y: scroll; resize: none;" maxlength="150" v-model="adviceDescription" readonly></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="saveEdit">儲存</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" v-on:click="sendEmail">回覆信件</button>
                 </div>
             </div>
         </div>
@@ -124,6 +132,13 @@
                     advice:[],
                     ischecked:"全部",
                     editId: null,
+                    adviceId:"",
+                    adviceDate:"",
+                    adviceOid:"",
+                    adviceEmail:"",
+                    adviceQuestion:"",
+                    adviceTitle:"",
+                    adviceDescription:""
                 }
             },
             methods: {
@@ -167,12 +182,41 @@
                         this.ischecked = "全部";
                     }
                 },
-                // openEdit: function (id) {
-                //     let _this = this;
-                //     _this.editId = id;
-                //     axios.get(`${_this.baseAddress}/Ajax/openAdvice/${id}`).then(response => {
-                        
-                // }
+                openEdit: function (id) {
+                    let _this = this;
+                    _this.editId = id;
+                    axios.get(`${_this.baseAddress}/Ajax/openAdvice/${id}`).then(response => {
+                        console.log(response.data);
+                        _this.adviceId=response.data.id;
+                        _this.adviceDate=response.data.dateTime;
+                        _this.adviceOid=response.data.oid;
+                        _this.adviceMid=response.data.mid;
+                        _this.adviceEmail=response.data.email;
+                        _this.adviceQuestion=response.data.question;
+                        _this.adviceTitle=response.data.title;
+                        _this.adviceDescription=response.data.description;
+                    }).catch(err=>{
+                    
+                        })
+                },
+                sendEmail:function(){
+                    if (this.adviceEmail) {
+                        let subject = encodeURIComponent("關於您的訂單意見回覆");
+                        let body = encodeURIComponent(`您好，\n\n感謝您的訂單意見，以下是我們的回覆：\n\n（請填寫回覆內容）\n\n敬祝順心`);
+        
+                        // 使用 Gmail 來發送郵件
+                        window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${this.adviceEmail}&su=${subject}&body=${body}`, '_blank');
+                    };
+                    let request={
+                        Id:this.editId,
+                        IsReply:true
+                    };
+                    axios.put(`${this.baseAddress}/Ajax/ReplyAdvice`,request).then(response=>{
+                        this.getAdvice();
+                    }).catch(err=>{
+                    
+                    })
+                }
             },
             mounted() {
                 this.getAdvice();

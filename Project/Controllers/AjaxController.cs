@@ -11,7 +11,7 @@ namespace Project.Controllers
     public class AjaxController : Controller
     {
         private readonly DbuniPayContext _context;
-
+            
         public AjaxController(DbuniPayContext context)
         {
             _context = context;
@@ -375,6 +375,16 @@ namespace Project.Controllers
                 return Json(new { success = true, redirectUrl = Url.Action("CheckOrder", "FrontHome") });
             }
 
+        [HttpPut]
+        public async Task<string> ReplyAdvice([FromBody] ReplyAdviceDTO replyadvice)
+        {
+            var advice = await _context.Tadvices.FindAsync(replyadvice.Id);
+            advice.IsReply = replyadvice.IsReply;
+            _context.Tadvices.Update(advice);
+            await _context.SaveChangesAsync();
+            return "回覆成功";
+        }
+
         [HttpGet]
 
         public async Task<IActionResult> GetCoupon()
@@ -523,8 +533,21 @@ namespace Project.Controllers
         public async Task<IActionResult> openAdvice(int id)
         {
 
-            var coupon = await _context.Tadvices.FindAsync(id);
-            return Json(coupon);
+            var advice = await _context.Tadvices.FindAsync(id);
+            var Email = await _context.Tmembers.Where(c => c.Mid == advice.Mid).Select(c => c.Memail).FirstOrDefaultAsync();
+            var openAdvice = new OpenAdviceDTO
+            {
+                Id = advice.Id,
+                Mid = advice.Mid,
+                Oid = advice.Oid,
+                Question = advice.Question,
+                Title = advice.Title,
+                Description = advice.Description,
+                DateTime = advice.DateTime,
+                IsReply = advice.IsReply,
+                email = Email
+            };
+            return Json(openAdvice);
         }
 
         [HttpPut]
