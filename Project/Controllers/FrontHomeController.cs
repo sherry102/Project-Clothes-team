@@ -2,15 +2,23 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.DTO;
 using Project.Models;
+using Project.ViewModel;
 
 namespace Project.Controllers
 {
     public class FrontHomeController : Controller
     {
+        private readonly DbuniPayContext _context;
+
+        public FrontHomeController(DbuniPayContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Customize()
         {
@@ -80,6 +88,31 @@ namespace Project.Controllers
         public IActionResult CancelOrder()
         {
             return View();
+        }
+        public IActionResult CommentList(int memberId)
+        {
+            var comments = (from c in _context.Tcomments
+                           join od in _context.TorderDetails on new { c.Pid, c.Oid } equals new { od.Pid, od.Oid }
+                           where c.Mid == memberId
+                           orderby c.ComCreateDate descending
+                           select new CommentViewModel
+                           {
+                               ComID = c.ComId,
+                               MID = c.Mid,
+                               MName = c.Mname,
+                               Rating = c.Rating,
+                               OID = c.Oid,
+                               PID = c.Pid,
+                               PName = od.Pname,
+                               PSize = c.Psize,
+                               PColor = c.Pcolor,
+                               Comment = c.Comment,
+                               ComCreateDate = c.ComCreateDate,
+                               ComImage1 = c.ComImage1,
+                               ComImage2 = c.ComImage2
+                           }).ToList();
+
+            return View(comments);
         }
 
         public IActionResult Advice() {

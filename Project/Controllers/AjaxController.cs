@@ -18,16 +18,17 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMemberId()
+        public async Task<string> GetCurrentMemberIdAsync()
         {
-            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
-            if (string.IsNullOrEmpty(json))
+            int? memberId = HttpContext.Session.GetInt32("MemberId");
+            Console.WriteLine($"MemberId from session: {memberId}");
+
+            if (memberId == null)
             {
-                return Json(new { success = false, message = "Session 已過期或未登入" });
+                return await Task.FromResult("Session 已過期或未登入");
             }
 
-            var member = JsonSerializer.Deserialize<Tmember>(json);
-            return Json(new { success = true, memberId = member.Mid });
+            return await Task.FromResult($"MemberId: {memberId}");
         }
 
         [HttpPost]
@@ -323,41 +324,26 @@ namespace Project.Controllers
             }
 
             var member = JsonSerializer.Deserialize<Tmember>(json);
-            var existingCartItem = await _context.Tcarts
-                .FirstOrDefaultAsync(c => c.Mid == member.Mid
-                                       && c.Pid == cart.PId
-                                       && c.Psize == cart.PSize
-                                       && c.Pcolor == cart.PColor);
+            var Cart = new Tcart
+            {
+                Mid = member.Mid,
+                Pid = cart.PId,
+                Pname = cart.PName,
+                Ptype = cart.PType,
+                Pcategory = cart.PCategory,
+                Pcount = cart.PCount,
+                Psize = cart.PSize,
+                Pcolor = cart.PColor,
+                CustomText0 = null,
+                CustomText1 = null,
+                CustomPhoto0 = null,
+                CustomPhoto1 = null,
+                Photo0 = cart.Photo0,
+                Photo1 = null,
+                Pprice = cart.PPrice * cart.PCount,
+            };
 
-            if (existingCartItem != null)
-            { 
-                existingCartItem.Pcount += cart.PCount;
-                existingCartItem.Pprice = existingCartItem.Pcount * cart.PPrice;
-            }
-            else
-            { 
-                var newCart = new Tcart
-                {
-                    Mid = member.Mid,
-                    Pid = cart.PId,
-                    Pname = cart.PName,
-                    Ptype = cart.PType,
-                    Pcategory = cart.PCategory,
-                    Pcount = cart.PCount,
-                    Psize = cart.PSize,
-                    Pcolor = cart.PColor,
-                    CustomText0 = null,
-                    CustomText1 = null,
-                    CustomPhoto0 = null,
-                    CustomPhoto1 = null,
-                    Photo0 = cart.Photo0,
-                    Photo1 = null,
-                    Pprice = cart.PPrice * cart.PCount,
-                };
-
-                _context.Tcarts.Add(newCart);
-            }
-
+            _context.Tcarts.Add(Cart);
             await _context.SaveChangesAsync();
             return "已加入購物車";
         }
@@ -925,7 +911,8 @@ namespace Project.Controllers
                     Photo0 = od.Photo0,
                     Photo1 = od.Photo1,
                     PPrice = od.Pprice,
-                    Ostatus = orderInfo.Ostatus  
+                    Ostatus = orderInfo.Ostatus,
+                    IsReviewed = od.IsReviewed
                 })
                 .ToListAsync();
 

@@ -33,6 +33,8 @@ public partial class TorderDetail
 
     public int Pprice { get; set; }
 
+    public bool IsReviewed { get; set; }
+
     public string? Rmethod { get; set; }
 
     public int? Rqty { get; set; }

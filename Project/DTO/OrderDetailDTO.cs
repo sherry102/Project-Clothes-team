@@ -17,14 +17,15 @@
         public string? Photo1 { get; set; }
         public int PPrice { get; set; }
         public string Ostatus { get; set; }
-        public string? Rmethod { get; set; }  
-        public int? Rqty { get; set; }  
-        public string? Rreason { get; set; } 
-        public string? RotherReason { get; set; } 
-        public string? Rname { get; set; }  
-        public string? Rphone { get; set; }  
-        public string? Raddress { get; set; }  
-        public string? Rdescription { get; set; }  
+        public bool IsReviewed { get; set; }
+        public string? Rmethod { get; set; } // 退換貨方式
+        public int? Rqty { get; set; } // 退換貨數量
+        public string? Rreason { get; set; } // 退換貨原因
+        public string? RotherReason { get; set; } // 其他退換貨原因
+        public string? Rname { get; set; } // 收件人姓名
+        public string? Rphone { get; set; } // 收件人電話
+        public string? Raddress { get; set; } // 收件人地址
+        public string? Rdescription { get; set; } // 退換貨備註
     }
 
     public class OrderDetailRequest

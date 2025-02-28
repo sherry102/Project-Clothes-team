@@ -109,6 +109,8 @@ namespace Project.Models
         }
 
         public List<Tcomment> Comments { get; set; } // 新增評價列表
+
+        public int CommentCount { get; set; } // 新增評價數量屬性
     }
 }
 

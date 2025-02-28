@@ -21,16 +21,26 @@
         .modal a:hover {
              color: gray; /* 滑鼠懸停時變灰色 */
         }
+           
     </style>
 }
-<div class="text-decoration-none text-center fs-5 my-3">
-    <a href="@Url.Action("StyleList", "Style", new { category = "" })" class="link-secondary mx-3">| All Style |</a>
-    <a href="@Url.Action("StyleList", "Style", new { category = "女性穿搭" })" class="link-secondary mx-3">| Women's Wear |</a>
-    <a href="@Url.Action("StyleList", "Style", new { category = "男性穿搭" })" class="link-secondary mx-3">| Men's Wear |</a>
-    <a href="@Url.Action("StyleList", "Style", new { category = "兒童穿搭" })" class="link-secondary mx-3">| Kid's Wear |</a>
-    <a href="@Url.Action("StyleList", "Style", new { category = "工作穿搭" })" class="link-secondary mx-3">| Work Outfit |</a>
+<!-- style 選單 -->
+<div class="fs-6 my-3" id="menu-style">
+    <div class="menu">
+        <div class="menu-column">
+            <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "女性穿搭" })" class="item">Women's Wear</a></div>
+        </div>
+        <div class="menu-column">
+            <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "男性穿搭" })" class="item">Men's Wear</a></div>
+        </div>
+        <div class="menu-column">
+            <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "兒童穿搭" })" class="item">Kid's Wear</a></div>
+        </div>
+        <div class="menu-column">
+            <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "工作穿搭" })" class="item">Work Outfit</a></div>
+        </div>
+    </div>
 </div>
-<hr />
 <div class="container">
 
     <div class="row">
@@ -78,3 +88,10 @@
         }
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+      
+    </script>
+}

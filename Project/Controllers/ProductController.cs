@@ -103,6 +103,9 @@ namespace Project.Controllers
                                         .OrderByDescending(c => c.ComCreateDate) // 依創建時間排序
                                         .ToList();
 
+            // 計算評價數量
+            int commentCount = comments.Count;
+
             return View(new CProductWrap()
             {
                 product = x,
@@ -110,7 +113,8 @@ namespace Project.Controllers
                 Colors = colors,
                 Sizes = sizes,
                 StockMap = stockMap,
-                Comments = comments // 傳遞評價列表
+                Comments = comments, // 傳遞評價列表
+                CommentCount = commentCount // 傳遞評價數量
             });
         }
 
@@ -246,7 +250,8 @@ namespace Project.Controllers
             CProductWrap model = new CProductWrap
             {
                 PtypeList = db.Tproducts.Select(p => p.Ptype).Distinct().ToList(),
-                PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList()
+                PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList(),
+                Sizes = db.TproductInventories.Select(i => i.Psize).Distinct().ToList()
             };
 
             return View(model);
@@ -359,6 +364,7 @@ namespace Project.Controllers
                 product = x,
                 PtypeList = db.Tproducts.Select(p => p.Ptype).Distinct().ToList(),
                 PcategoryList = db.Tproducts.Select(p => p.Pcategory).Distinct().ToList(),
+                Sizes = db.TproductInventories.Select(i => i.Psize).Distinct().ToList(),
                 TproductInventories = db.TproductInventories.Where(i => i.Pid == x.Pid).ToList(), // 加入庫存清單
                 Images = db.Tpimages.Where(img => img.Pid == x.Pid).Select(img => img.Piname).ToList() // 加入圖片清單
             };
