@@ -18,22 +18,17 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public async Task<string> GetCurrentMemberIdAsync()
-        { 
-            int? memberId = HttpContext.Session.GetInt32("MemberId");
-            Console.WriteLine($"MemberId from session: {memberId}");
-
-            if (memberId == null)
-            { 
-                return await Task.FromResult("Session 已過期或未登入");
+        public IActionResult GetMemberId()
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Json(new { success = false, message = "Session 已過期或未登入" });
             }
-             
-            return await Task.FromResult($"MemberId: {memberId}");
+
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            return Json(new { success = true, memberId = member.Mid });
         }
-
-
-
-
 
         [HttpPost]
         public async Task<IEnumerable<CustomCartDTO>> GetCartItems([FromBody] object request)
@@ -176,7 +171,7 @@ namespace Project.Controllers
             string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
             if (string.IsNullOrEmpty(json))
             {
-                return Json(new {success=false,message= "請先登入會員" });
+                return Json(new { success = false, message = "請先登入會員" });
             }
             var member = JsonSerializer.Deserialize<Tmember>(json);
             var Cart = new Tcart
@@ -195,7 +190,7 @@ namespace Project.Controllers
                 CustomPhoto1 = cart.CustomPhoto1,
                 Photo0 = cart.Photo0,
                 Photo1 = cart.Photo1,
-                Pprice = cart.PPrice,
+                Pprice = cart.PPrice * cart.PCount,
             };
             if (Cart.Photo0 == "")
             {
@@ -326,32 +321,49 @@ namespace Project.Controllers
             {
                 return "請先登入會員";
             }
-            var member = JsonSerializer.Deserialize<Tmember>(json);
-            var Cart = new Tcart
-            {
-                Mid = member.Mid,
-                Pid = cart.PId,
-                Pname = cart.PName,
-                Ptype = cart.PType,
-                Pcategory = cart.PCategory,
-                Pcount = cart.PCount,
-                Psize = cart.PSize,
-                Pcolor = cart.PColor,
-                CustomText0 = null,
-                CustomText1 = null,
-                CustomPhoto0 = null,
-                CustomPhoto1 = null,
-                Photo0 = cart.Photo0,
-                Photo1 = null,
-                Pprice = cart.PPrice,
-            };
 
-            _context.Tcarts.Add(Cart);
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            var existingCartItem = await _context.Tcarts
+                .FirstOrDefaultAsync(c => c.Mid == member.Mid
+                                       && c.Pid == cart.PId
+                                       && c.Psize == cart.PSize
+                                       && c.Pcolor == cart.PColor);
+
+            if (existingCartItem != null)
+            { 
+                existingCartItem.Pcount += cart.PCount;
+                existingCartItem.Pprice = existingCartItem.Pcount * cart.PPrice;
+            }
+            else
+            { 
+                var newCart = new Tcart
+                {
+                    Mid = member.Mid,
+                    Pid = cart.PId,
+                    Pname = cart.PName,
+                    Ptype = cart.PType,
+                    Pcategory = cart.PCategory,
+                    Pcount = cart.PCount,
+                    Psize = cart.PSize,
+                    Pcolor = cart.PColor,
+                    CustomText0 = null,
+                    CustomText1 = null,
+                    CustomPhoto0 = null,
+                    CustomPhoto1 = null,
+                    Photo0 = cart.Photo0,
+                    Photo1 = null,
+                    Pprice = cart.PPrice * cart.PCount,
+                };
+
+                _context.Tcarts.Add(newCart);
+            }
+
             await _context.SaveChangesAsync();
             return "已加入購物車";
         }
 
-            [HttpPost]
+
+        [HttpPost]
             public async Task<IActionResult> PostAdvice([FromBody] AdviceDTO Ad)
             {
                 string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
@@ -602,7 +614,63 @@ namespace Project.Controllers
             return Ok(new { success = true, message = "退換貨資料已更新" });
         }
 
+        [HttpPut]
+        public async Task<IActionResult> ReturnedExchange([FromBody] ReturnedExchangeDTO request)
+        {
+            if (string.IsNullOrEmpty(request.OrderId))
+            {
+                return BadRequest("沒有提供訂單ID");
+            }
 
+            if (!int.TryParse(request.OrderId, out int oid))
+            {
+                return BadRequest("訂單ID格式錯誤");
+            }
+
+            using (var context = new DbuniPayContext())
+            {
+                var order = await context.Torders.FirstOrDefaultAsync(o => o.Oid == oid);
+                if (order == null)
+                {
+                    return NotFound("找不到該訂單");
+                }
+                 
+                order.OreturnDate = DateTime.Now;
+                order.OreturnStatus = "申請中";
+                 
+                int taiwanYear = DateTime.Now.Year - 1911;
+                string today = $"{taiwanYear}{DateTime.Now:MMdd}";
+                 
+                var latestReturnNo = await context.Torders
+                    .Where(o => o.OreturnNo != null && o.OreturnNo.StartsWith("R" + today))
+                    .OrderByDescending(o => o.OreturnNo)
+                    .Select(o => o.OreturnNo)
+                    .FirstOrDefaultAsync();
+                 
+                int newSequence = 1;
+                if (!string.IsNullOrEmpty(latestReturnNo))
+                {
+                    string seqStr = latestReturnNo.Substring(8);  
+                    if (int.TryParse(seqStr, out int seq))
+                    {
+                        newSequence = seq + 1;
+                    }
+                }
+                 
+                order.OreturnNo = $"RT{today}{newSequence:D3}";
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                    return Ok(new { success = true, message = "訂單退貨資料更新成功" });
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { success = false, message = ex.Message });
+                }
+            }
+        }
+         
 
         [HttpGet]
         public async Task<IActionResult> GetMemberCoupons()
@@ -632,7 +700,39 @@ namespace Project.Controllers
                 .ToListAsync();
 
             return Ok(coupons);
-        } 
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UseMemberCoupon([FromBody] UseCouponDTO request)
+        { 
+            if (request == null || request.CouponId <= 0)
+            {
+                return BadRequest("無效的折價券 ID");
+            } 
+
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Unauthorized("請先登入會員");
+            }
+
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+             
+            var memberCoupon = await _context.TmemberCoupons
+                .FirstOrDefaultAsync(mc => mc.Mid == member.Mid && mc.CouponId == request.CouponId && !mc.IsUse);
+
+            if (memberCoupon == null)
+            {
+                return NotFound("折價券不存在、已使用，或無權使用");
+            }
+             
+            memberCoupon.IsUse = true;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "折價券使用成功" });
+        }
+
+
 
         [HttpDelete]
         [Route("Ajax/DeleteItem/{id}")]
@@ -718,7 +818,9 @@ namespace Project.Controllers
                     OEmail = o.Oemail,
                     OStatus = o.Ostatus,
                     OPayment = o.Opayment,
-                    OCancelStatus = o.OcancelStatus
+                    OCancelStatus = o.OcancelStatus,
+                    OReturnStatus = o.OreturnStatus,
+                    OReturnNo = o.OreturnNo
                 })
                 .ToListAsync();
 
@@ -822,8 +924,7 @@ namespace Project.Controllers
             Console.WriteLine($"Member MID: {member.Mid}");
              
             var query = _context.Torders.Where(o => o.Mid == member.Mid);
-
-            // 根據查詢條件篩選
+             
             if (request.Condition == "oneMonth")
                 query = query.Where(o => o.Odate >= DateTime.Now.AddMonths(-1));
             else if (request.Condition == "notShipped")
@@ -832,8 +933,7 @@ namespace Project.Controllers
                 query = query.Where(o => o.Ostatus == "退貨");
             else if (request.Condition == "sixMonths")
                 query = query.Where(o => o.Odate >= DateTime.Now.AddMonths(-6));
-
-            // 根據訂單編號篩選
+             
             if (!string.IsNullOrEmpty(request.OrderNumber))
                 query = query.Where(o => o.Oid.ToString().Contains(request.OrderNumber));
              
@@ -843,14 +943,17 @@ namespace Project.Controllers
                 {
                     OID = o.Oid,
                     OName = o.Oname,
+                    OPrice = o.Oprice,
+                    ODiscountedprice = o.Odiscountedprice,
                     OTotalPrice = o.OtotalPrice,
                     Odate = o.Odate.ToString("yyyy-MM-dd HH:mm:ss"),
                     OAddress = o.Oaddress,
                     OPhone = o.Ophone,
                     OEmail = o.Oemail,
                     OStatus = o.Ostatus,
-                    OPayment = o.Opayment,
-                    ODiscountedprice = o.Odiscountedprice
+                    OPayment = o.Opayment, 
+                    OCancelStatus = o.OcancelStatus,
+                    OReturnNo = o.OreturnNo
                 })
                 .ToListAsync();
 
@@ -884,7 +987,7 @@ namespace Project.Controllers
             Console.WriteLine(orderdetail);
             if (orderdetail == null)
             {
-                orderdetail = new List<AdviceOrderDetailDTO>();  // 避免回傳 null
+                orderdetail = new List<AdviceOrderDetailDTO>();   
             }
             if (order == null) {
                 return RedirectToAction("CheckOrder", "FrontHome");

@@ -192,6 +192,7 @@
                     }
                 },
                 validateForm() {
+                    let _this = this;
                     let isValid = true;
                     this.errors = {
                         handle: false,
@@ -270,10 +271,17 @@
                     axios.put(`${this.baseAddress}/Ajax/ReturnExchange`, requestData.items)
                         .then(response => {
                             if (response.data.success) {
+                                return axios.put(`${this.baseAddress}/Ajax/ReturnedExchange`, { orderId: _this.orderId });
+                            } else {
+                                throw new Error("儲存退換貨明細失敗：" + response.data.message);
+                            }
+                        })
+                        .then(response2 => {
+                            if (response2.data.success) {
                                 swal("表單提交成功！", { icon: "success" })
                                     .then(() => window.location.href = "/FrontHome/CheckOrder");
                             } else {
-                                swal("提交失敗：" + response.data.message, { icon: "error" });
+                                swal("更新訂單資料失敗：" + response2.data.message, { icon: "error" });
                             }
                         })
                         .catch(error => {
@@ -332,7 +340,7 @@
             .return-exchange-table thead {
                 background-color: #f2f2f2;
             }
-            /* 固定欄位寬度 */
+
             .return-exchange-table th:nth-child(1) {
                 width: 5%;
             }
@@ -356,7 +364,7 @@
             .return-exchange-table th:nth-child(6) {
                 width: 25%;
             }
-        /* 數量按鈕與輸入框 */
+
         .qty-btn {
             width: 30px;
             height: 30px;
@@ -403,18 +411,18 @@
 
         .recipient-fields {
             display: grid;
-            grid-template-columns: 150px 1fr; /* 調整 label 的寬度，讓 label 更長 */
+            grid-template-columns: 150px 1fr;
             gap: 10px 20px;
             align-items: center;
         }
 
             .recipient-fields label {
-                text-align: right; /* 讓標籤靠左對齊 */ 
+                text-align: right;
             }
 
             .recipient-fields input,
             .recipient-fields textarea {
-                width: 85%; /* 調整 input 的寬度，使其不要那麼長 */
+                width: 85%;
                 padding: 4px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
@@ -453,7 +461,7 @@
             background-color: #fff;
             font-size: 0.9rem;
             color: #333;
-            -webkit-appearance: none; /* 去除預設外觀 */
+            -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
             cursor: pointer;
@@ -497,7 +505,7 @@
 
             .agreement input {
                 margin-right: 3px;
-            } 
+            }
 
         .error {
             border: 2px solid red;

@@ -15,14 +15,14 @@ namespace Project.Controllers
         {
             return View();
         }
-        public IActionResult List(CKeywordViewModel vm, string status)
-        {
-            var db = new DbuniPayContext(); 
-            string keyword = vm.txtKeyword; 
 
+        public IActionResult List(CKeywordViewModel vm, string status, int page = 1)
+        {
+            var db = new DbuniPayContext();
+            string keyword = vm.txtKeyword;
             status = string.IsNullOrEmpty(status) ? "All" : status;
-             
-            IEnumerable<Torder> orders = db.Torders.AsQueryable();
+
+            IQueryable<Torder> orders = db.Torders.AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -33,42 +33,56 @@ namespace Project.Controllers
             {
                 if (status == "付款完成")
                 {
-                    orders = orders.Where(p => p.Opayment == true); // 已付款
+                    orders = orders.Where(p => p.Opayment == true);
                 }
                 else if (status == "尚未付款")
                 {
-                    orders = orders.Where(p => p.Opayment == false); // 未付款
+                    orders = orders.Where(p => p.Opayment == false);
                 }
                 else
                 {
-                    orders = orders.Where(p => p.Ostatus == status); // 其他状态
+                    orders = orders.Where(p => p.Ostatus == status);
                 }
             }
+             
+            orders = orders.OrderByDescending(p => p.Odate);
+             
+            int pageSize = 20;
+            int totalItems = orders.Count();  
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            List<OrderWrap> orderWrapList = new List<OrderWrap>();
-            foreach (var order in orders)
+            var paginatedOrders = orders
+                .Skip((page - 1) * pageSize) 
+                .Take(pageSize)  
+                .ToList();
+             
+            List<OrderWrap> orderWrapList = paginatedOrders.Select(order => new OrderWrap
             {
-                if (order != null)
-                {
-                    orderWrapList.Add(new OrderWrap
-                    {
-                        Oid = order.Oid,
-                        Oname = order.Oname,
-                        Oprice = order.Oprice,
-                        Odiscountedprice = order.Odiscountedprice,
-                        OtotalPrice = order.OtotalPrice,
-                        Odate = order.Odate,
-                        Mid = order.Mid,
-                        Oaddress = order.Oaddress,
-                        Ophone = order.Ophone,
-                        Ostatus = order.Ostatus,
-                        Opayment = order.Opayment,
-                        OcancelStatus = order.OcancelStatus
-                    });
-                }
-            } 
+                Oid = order.Oid,
+                Oname = order.Oname,
+                Oprice = order.Oprice,
+                Odiscountedprice = order.Odiscountedprice,
+                OtotalPrice = order.OtotalPrice,
+                Odate = order.Odate,
+                Mid = order.Mid,
+                Oaddress = order.Oaddress,
+                Ophone = order.Ophone,
+                Oemail = order.Oemail,
+                Ostatus = order.Ostatus,
+                Opayment = order.Opayment,
+                OcancelStatus = order.OcancelStatus,
+                OreturnStatus = order.OreturnStatus
+            }).ToList();
+             
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Status = status;
+            ViewBag.Keyword = keyword;
+
             return View(orderWrapList);
-        }  
+        }
+
+
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -91,13 +105,17 @@ namespace Project.Controllers
                 x.Oprice = p.Oprice;
                 x.Odiscountedprice = p.Odiscountedprice;
 				x.OtotalPrice = p.OtotalPrice;
-				x.Odate = p.Odate;
-				x.Mid = p.Mid;
+                x.Odate = new DateTime(p.Odate.Year, p.Odate.Month, p.Odate.Day, p.Odate.Hour, p.Odate.Minute, p.Odate.Second);
+                x.Mid = p.Mid;
 				x.Oaddress = p.Oaddress;
 				x.Ophone = p.Ophone;
+                x.Oemail = p.Oemail;
 				x.Ostatus = p.Ostatus;
 				x.Opayment = p.Opayment;
                 x.OcancelStatus = p.OcancelStatus; 
+                x.OreturnDate = p.OreturnDate;
+                x.OreturnStatus = p.OreturnStatus;
+                x.OreturnNo = p.OreturnNo;
                 db.SaveChanges();
 			}
 			return RedirectToAction("List");

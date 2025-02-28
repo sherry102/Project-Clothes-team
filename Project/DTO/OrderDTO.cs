@@ -41,16 +41,21 @@
         public string EncryptType { get; set; }
 
         public string OCancelStatus { get; set; }
-    }
 
+        public string OReturnStatus { get; set; }
+        public string OReturnNo { get; set; }
+    }
     public class OrderRequest
     {
         public int Oid { get; set; }
     }
-
+    public class ReturnedExchangeDTO
+    {
+        public string OrderId { get; set; }
+    }
     public class SearchOrderRequest
     {
-        public string Condition { get; set; }  // 查詢條件
-        public string OrderNumber { get; set; } // 訂單編號
+        public string Condition { get; set; }   
+        public string OrderNumber { get; set; }  
     }
 }

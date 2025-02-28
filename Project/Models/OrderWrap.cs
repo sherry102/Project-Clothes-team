@@ -70,6 +70,12 @@ namespace Project.Models
             get { return _order.Ophone; }
             set { _order.Ophone = value; }
         }
+        [DisplayName("訂單電子郵件")]
+        public string Oemail
+        {
+            get { return _order.Oemail; }
+            set { _order.Oemail = value; }
+        }
         [DisplayName("訂單狀態")]
         public string Ostatus
         {
@@ -100,6 +106,24 @@ namespace Project.Models
         {
             get { return _order.OcancelStatus; }
             set { _order.OcancelStatus = value; }
+        }
+        [DisplayName("申請時間")]
+        public DateTime? OreturnDate
+        {
+            get { return _order.OreturnDate; }
+            set { _order.OreturnDate = value; }
+        }
+        [DisplayName("退貨申請")]
+        public string? OreturnStatus
+        {
+            get { return _order.OreturnStatus; }
+            set { _order.OreturnStatus = value; }
+        }
+        [DisplayName("退貨編號")]
+        public string? OreturnNo
+        {
+            get { return _order.OreturnNo; }
+            set { _order.OreturnNo = value; }
         }
     }
 }

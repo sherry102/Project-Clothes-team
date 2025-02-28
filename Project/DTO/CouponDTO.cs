@@ -16,4 +16,8 @@
 
         public string CouponPassWord { get; set; }
     }
+    public class UseCouponDTO
+    {
+        public int CouponId { get; set; }
+    }
 }
