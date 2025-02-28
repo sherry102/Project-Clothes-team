@@ -129,7 +129,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcomment>(entity =>
         {
-            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F41323313BB6C");
+            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F4132CF707C4A");
 
             entity.ToTable("TComment");
 
@@ -144,7 +144,14 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Mname)
                 .HasMaxLength(20)
                 .HasColumnName("MName");
+            entity.Property(e => e.Oid).HasColumnName("OID");
+            entity.Property(e => e.Pcolor)
+                .HasMaxLength(50)
+                .HasColumnName("PColor");
             entity.Property(e => e.Pid).HasColumnName("PID");
+            entity.Property(e => e.Psize)
+                .HasMaxLength(50)
+                .HasColumnName("PSize");
         });
 
         modelBuilder.Entity<Tcoupon>(entity =>
@@ -325,7 +332,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TorderDetail>(entity =>
         {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C1523F3689B");
+            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C15C5D6430A");
 
             entity.ToTable("TOrderDetail");
 
