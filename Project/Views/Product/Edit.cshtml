@@ -7,11 +7,10 @@
             color: #003060;
         }
 
-        .custom-btn:hover {
-            background-color: #666699; /* 顏色稍微變深 */
-            color: white;
-        }
-            
+            .custom-btn:hover {
+                background-color: #666699; /* 顏色稍微變深 */
+                color: white;
+            }
     </style>
 }
 <!-- 麵包屑 -->
@@ -76,7 +75,7 @@
             <div id="multiplePreview">
                 @foreach (var image in Model.Images)
                 {
-                   <img src="~/Images/@image" style="max-width:175px; margin:5px;">
+                    <img src="~/Images/@image" style="max-width:175px; margin:5px;">
                 }
             </div>
         </div>
@@ -90,14 +89,7 @@
                         <div class="inventory-group mb-2">
                             <input type="hidden" name="TproductInventories[@i].Piid" value="@Model.TproductInventories[i].Piid" />
                             <input type="text" name="TproductInventories[@i].Pcolor" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Pcolor" placeholder="顏色">
-                            <select name="TproductInventories[@i].Psize" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Psize" placeholder="尺寸">
-                                <option value="">@Model.TproductInventories[i].Psize</option>
-                                <option value="F">F</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                            </select>
+                            <input type="text" name="TproductInventories[@i].Psize" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Psize" placeholder="尺寸">
                             <input type="number" name="TproductInventories[@i].Pstock" class="form-control d-inline w-25 me-4" value="@Model.TproductInventories[i].Pstock" placeholder="庫存">
                             <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
                         </div>
@@ -115,12 +107,6 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    @{
-        var sortedSizes = new List<string> { "F", "S", "M", "L", "XL" }
-            .Where(s => Model.Sizes.Contains(s))
-            .Concat(Model.Sizes.Except(new List<string> { "F", "S", "M", "L", "XL" }))
-            .ToList();
     }
     <script>
         document.getElementById("photo").addEventListener("change", function (e) {
@@ -156,8 +142,6 @@
             }
         });
         let inventoryIndex = @Model.TproductInventories.Count; // 記錄目前的索引值
-        // 從 Razor 變數生成尺寸選項
-        let sizeOptions = '@Html.Raw(Json.Serialize(sortedSizes.Select(s => $"<option value=\'{s}\'> {s} </option>").ToList()))'.replace(/[\[\]"]/g, '');
 
         function addInventory() {
             let container = document.getElementById("inventoryContainer");
@@ -167,10 +151,7 @@
             newGroup.innerHTML = `
                 <input type="hidden" name="TproductInventories[${inventoryIndex}].Id" value="0" />
                 <input type="text" name="TproductInventories[${inventoryIndex}].Pcolor" class="form-control d-inline w-25 me-4" placeholder="顏色">
-                <select name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25 me-4" placeholder="尺寸">
-                    <option value="">請選擇尺寸</option>
-                    ${sizeOptions}
-                </select>
+                <input type="text" name="TproductInventories[${inventoryIndex}].Psize" class="form-control d-inline w-25 me-4" placeholder="尺寸">
                 <input type="number" name="TproductInventories[${inventoryIndex}].Pstock" class="form-control d-inline w-25 me-4" placeholder="庫存">
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeInventory(this)">-</button>
             `;
