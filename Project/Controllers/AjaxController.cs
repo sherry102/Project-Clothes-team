@@ -1037,7 +1037,98 @@ namespace Project.Controllers
 			}
 		}
 
-	}
+
+        [HttpPost]
+        public IActionResult AddComment([FromForm] CommentDTO dto)
+        {
+            try
+            {
+                using (var db = new DbuniPayContext())
+                {
+                    string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+                    if (string.IsNullOrEmpty(json))
+                    {
+                        return Json(new { success = false, message = "請先登入" });
+                    }
+
+                    var member = JsonSerializer.Deserialize<Tmember>(json);
+                    var order = db.Torders.FirstOrDefault(o => o.Oid == dto.Oid && o.Mid == member.Mid && o.Ostatus == "已完成");
+                    if (order == null)
+                    {
+                        return Json(new { success = false, message = "訂單不存在或未完成" });
+                    }
+
+                    var orderDetail = db.TorderDetails.FirstOrDefault(od => od.Oid == dto.Oid && od.Pid == dto.Pid);
+                    if (orderDetail == null)
+                    {
+                        return Json(new { success = false, message = "商品不存在於該訂單" });
+                    }
+                    if (orderDetail.IsReviewed)
+                    {
+                        return Json(new { success = false, message = "該商品已評論" });
+                    }
+
+                    string savePath1 = null, savePath2 = null;
+                    if (dto.Image1 != null)
+                    {
+                        savePath1 = Guid.NewGuid() + Path.GetExtension(dto.Image1.FileName);
+                        using (var stream = new FileStream(Path.Combine("wwwroot/uploads", savePath1), FileMode.Create))
+                        {
+                            dto.Image1.CopyTo(stream);
+                        }
+                    }
+                    if (dto.Image2 != null)
+                    {
+                        savePath2 = Guid.NewGuid() + Path.GetExtension(dto.Image2.FileName);
+                        using (var stream = new FileStream(Path.Combine("wwwroot/uploads", savePath2), FileMode.Create))
+                        {
+                            dto.Image2.CopyTo(stream);
+                        }
+                    }
+
+                    var newComment = new Tcomment
+                    {
+                        Mid = member.Mid,
+                        Mname = member.Mname,
+                        Oid = dto.Oid,
+                        Pid = dto.Pid,
+                        Psize = dto.PSize,
+                        Pcolor = dto.PColor,
+                        Rating = dto.Rating,
+                        Comment = dto.CommentText,
+                        ComCreateDate = DateTime.Now,
+                        ComImage1 = savePath1,
+                        ComImage2 = savePath2
+                    };
+
+                    db.Tcomments.Add(newComment);
+                    orderDetail.IsReviewed = true;
+                    db.SaveChanges();
+
+                    return Json(new { success = true, message = "評論已提交" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "發生錯誤: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetMemberId()
+        {
+            string json = HttpContext.Session.GetString(CDictionary.SK_LOGEDIN_USER);
+            if (string.IsNullOrEmpty(json))
+            {
+                return Json(new { success = false, message = "Session 已過期或未登入" });
+            }
+
+            var member = JsonSerializer.Deserialize<Tmember>(json);
+            return Json(new { success = true, memberId = member.Mid });
+        }
+    }
+
+
      
 }
 
