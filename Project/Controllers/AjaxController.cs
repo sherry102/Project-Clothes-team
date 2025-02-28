@@ -191,7 +191,7 @@ namespace Project.Controllers
                 CustomPhoto1 = cart.CustomPhoto1,
                 Photo0 = cart.Photo0,
                 Photo1 = cart.Photo1,
-                Pprice = cart.PPrice,
+                Pprice = cart.PPrice * cart.PCount,
             };
             if (Cart.Photo0 == "")
             {
@@ -339,7 +339,7 @@ namespace Project.Controllers
                 CustomPhoto1 = null,
                 Photo0 = cart.Photo0,
                 Photo1 = null,
-                Pprice = cart.PPrice,
+                Pprice = cart.PPrice * cart.PCount,
             };
 
             _context.Tcarts.Add(Cart);

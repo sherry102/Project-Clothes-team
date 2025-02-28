@@ -4,6 +4,17 @@
 }
 @section Styles {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <style>
+        .card:hover {
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body {
+            position: relative;
+            justify-content: space-between;
+            font-size: 18px;
+        }
+    </style>
 }
 <h2 class="text-center my-4">我的評論列表</h2>
 
@@ -15,10 +26,10 @@
                 <!-- 調整卡片的寬度 -->
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">@item.PName</h5>
-                        <p class="card-text">
-                            <small class="text-muted">評論日期：@item.ComCreateDate.ToString("yyyy-MM-dd HH:mm:ss")</small>
-                        </p>
+                       
+                        <a href="@Url.Action("ProductDetail", "Product" ,new { id = item.PID })">
+                            <h5 class="card-title">@item.PName</h5>
+                        </a>
                         <p class="card-text">
                             規格：@item.PColor／@item.PSize
                         </p>
@@ -37,8 +48,11 @@
                             }
                         </div>
                         <p class="card-text">@item.Comment</p>
-                        
-                    </div>
+                        <p class="card-text">
+                            <small class="text-muted">評論時間：@item.ComCreateDate.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                        </p>
+                    </div> 
+                    
                     <div class="text-center mb-2">
                         @if (!string.IsNullOrEmpty(item.ComImage1))
                         {
