@@ -6,9 +6,14 @@
     <h3 class="text-xl font-bold mb-4">訂單內容</h3>
     <div class="table-container">
         <div v-for="item in orderItems" :key="item.id" class="product-item"> 
-            <div class="product-images">
-                <img v-if="item.Photo0" :src="item.Photo0" alt="商品圖">
-                <img v-if="item.Photo1" :src="item.Photo1" alt="商品圖2">
+            <div class="flex flex-col items-center product-images">
+                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                    <img :src="item.Photo0" class="w-20 h-20 object-cover border border-gray-300">
+                </div>
+                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                    <img :src="item.Photo1" class="w-20 h-20 object-cover border border-gray-300 mt-2">
+                </div>
+                <img :style="{ display: item.PId !== 0 ? 'block' : 'none' }" :src="`${baseAddress}/images/${item.Photo0}`" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300">
             </div>
              
             <div class="product-info">
@@ -85,16 +90,17 @@
                     _this.orderId = urlParams.get("oid");
 
                     if (!_this.orderId) {
-                        swal("錯誤", "無效的訂單 ID", "error");
+                        swal("錯誤", "無效的訂單ID", "error");
                         return;
                     }
 
                     axios.post(`${_this.baseAddress}/Ajax/GetOrderDetail`, { oid: _this.orderId })
-                        .then(response => { 
+                        .then(response => {
                             if (response.data) {
                                 _this.orderItems = response.data.map(od => ({
-                                    Photo0: od.photo0 ? `${_this.baseAddress}/Images/${od.photo0}` : null,
-                                    Photo1: od.photo1 ? `${_this.baseAddress}/Images/${od.photo1}` : null,
+                                    PId: od.pId,
+                                    Photo0: od.photo0,
+                                    Photo1: od.photo1,
                                     PName: od.pName,
                                     PSize: od.pSize,
                                     PColor: od.pColor,
@@ -106,36 +112,37 @@
                             }
                         })
                         .catch(err => {
-                            swal("錯誤", "取得訂單細節時發生錯誤", "error");
+                            swal("錯誤", "取得訂單細節發生錯誤", "error");
                         });
                 },
                 getOrderPrice: function () {
                     let _this = this;
+
                     axios.post(`${_this.baseAddress}/Ajax/GetOrderPrice`, { oid: _this.orderId })
-                        .then(response => { 
+                        .then(response => {
                             if (response.data) {
                                 _this.orders = response.data.map(order => ({
                                     OID: order.oid,
                                     OPrice: order.oPrice,
                                     ODiscountedprice: order.oDiscountedprice,
                                     OTotalPrice: order.oTotalPrice
-                                })); 
+                                }));
                             } else {
                                 swal("錯誤", "請先登入會員", "error");
                             }
                         })
                         .catch(err => {
-                            swal("錯誤", "取得訂單價格時發生錯誤", "error");
+                            swal("錯誤", "取得訂單價格發生錯誤", "error");
                         });
                 },
                 confirmCancel() {
 
                     if (!this.cancelReason) {
-                        swal("錯誤", "請選擇取消訂單的原因", "error");
+                        swal("錯誤", "請選擇取消訂單原因", "error");
                         return;
                     }
 
-                    this.isCanceling = true;  
+                    this.isCanceling = true;
 
                     let cancelData = {
                         Oid: this.orderId,
@@ -148,15 +155,15 @@
                     axios.post(`${this.baseAddress}/Ajax/CancelOrder`, cancelData)
                         .then(response => {
                             if (response.data.success) {
-                                swal("成功", `訂單已成功取消！`, "success")
+                                swal("成功", `訂單已申請取消！`, "success")
                                     .then(() => window.location.href = "/FrontHome/CheckOrder");
                             } else {
-                                swal("錯誤", "取消訂單失敗，請稍後再試", "error");
+                                swal("錯誤", "訂單申請取消失敗", "error");
                                 this.isCanceling = false;
                             }
                         })
                         .catch(error => {
-                            swal("錯誤", "取消訂單時發生錯誤，請稍後再試", "error");
+                            swal("錯誤", "取消訂單發生錯誤", "error");
                             this.isCanceling = false;
                         });
                 }
@@ -168,9 +175,9 @@
             goBack() {
                 window.history.back();
             }
-        }; 
-        Vue.createApp(vueApp).mount("#app"); 
-    </script> 
+        };
+        Vue.createApp(vueApp).mount("#app");
+    </script>
 }
 
 @section Styles {
@@ -189,31 +196,31 @@
 
 
                 table th:nth-child(1), table td:nth-child(1) {
-                    width: 150px; /* 商品圖片 */
+                    width: 150px;
                 }
 
                 table th:nth-child(2), table td:nth-child(2) {
-                    width: 180px; /* 商品名稱 */
+                    width: 180px;
                 }
 
                 table th:nth-child(3), table td:nth-child(3) {
-                    width: 100px; /* 尺寸 */
+                    width: 100px;
                 }
 
                 table th:nth-child(4), table td:nth-child(4) {
-                    width: 100px; /* 顏色 */
+                    width: 100px;
                 }
 
                 table th:nth-child(5), table td:nth-child(5) {
-                    width: 80px; /* 數量 */
+                    width: 80px;
                 }
 
                 table th:nth-child(6), table td:nth-child(6) {
-                    width: 120px; /* 處理狀態 */
+                    width: 120px;
                 }
 
                 table th:nth-child(7), table td:nth-child(7) {
-                    width: 150px; /* 出貨單號 */
+                    width: 150px;
                 }
 
         .product-item {
@@ -394,5 +401,4 @@
                 transform: scale(1.05);
             }
     </style>
-
 }

@@ -39,9 +39,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Odate" class="control-label"></label>
-                <input asp-for="Odate" class="form-control" />
+                <input type="datetime-local" class="form-control"
+                       value="@Model.Odate.ToString("yyyy-MM-ddTHH:mm:ss")"
+                       name="Odate" />
                 <span asp-validation-for="Odate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Mid" class="control-label"></label>
                 <input asp-for="Mid" class="form-control" readonly="readonly" />
@@ -57,7 +60,12 @@
                 <input asp-for="Ophone" class="form-control" />
                 <span asp-validation-for="Ophone" class="text-danger"></span>
             </div>
-            <!-- 訂單狀態 (下拉選單) -->
+            <div class="form-group">
+                <label asp-for="Oemail" class="control-label"></label>
+                <input asp-for="Oemail" class="form-control" />
+                <span asp-validation-for="Oemail" class="text-danger"></span>
+            </div>
+           
             <div class="form-group">
                 <label asp-for="Ostatus" class="control-label">訂單狀態</label>
                 @Html.DropDownListFor(model => model.Ostatus,
@@ -65,14 +73,17 @@
                          new { @class = "form-control" })
                 <span asp-validation-for="Ostatus" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Opayment" /> @Html.DisplayNameFor(model => model.Opayment)
-                </label>
+            <div class="form-group">
+                <label asp-for="Opayment" class="control-label">付款狀態</label>
+                <select asp-for="Opayment" class="form-control"> 
+                    <option value="True">已付款</option>
+                    <option value="False">未付款</option>
+                </select>
+                <span asp-validation-for="Opayment" class="text-danger"></span>
             </div>
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="OcancelReason" class="control-label">訂單取消原因</label>
                 <textarea asp-for="OcancelReason" class="form-control" rows="1" readonly></textarea>
@@ -95,19 +106,41 @@
                 </select>
                 <span asp-validation-for="OcancelStatus" class="text-danger"></span>
             </div>
+
+        </div>
+
+        <div class="col-md-3">
             <div class="form-group">
-                <input type="submit" value="送出修改" class="btn btn-primary" />
+                <label asp-for="OreturnStatus" class="control-label">退貨申請</label>
+                <select asp-for="OreturnStatus" class="form-control">
+                    <option value=""></option>
+                    <option value="申請中">申請中</option>
+                    <option value="申請逾時">申請逾時</option>
+                </select>
+                <span asp-validation-for="OreturnStatus" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="OreturnNo" class="control-label">退貨編號</label>
+                <input asp-for="OreturnNo" class="form-control" readonly="readonly" />
+                <span asp-validation-for="OreturnNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OreturnDate" class="control-label">申請時間</label>
+                <input asp-for="OreturnDate" class="form-control" readonly="readonly" />
+                <span asp-validation-for="OreturnDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="padding-top: 23px;">
+                <input type="submit" value="訂單內容送出修改" class="btn btn-primary" />
+                <a asp-action="List" class="btn btn-primary">取消/返回</a>
+            </div> 
         </div>
     </div>
 </form>
 
 
-<p>
-    <div>
-        <a asp-action="List">取消</a>
-    </div>
-
+<p> 
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");

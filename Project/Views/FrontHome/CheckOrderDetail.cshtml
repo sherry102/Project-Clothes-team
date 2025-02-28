@@ -22,11 +22,22 @@
                     <tr v-for="item in orderItems" :key="item.id" class="text-center"> 
                         <td class="border p-2">
                             <div class="flex flex-col items-center product-images">
-                                <img v-if="item.Photo0" :src="item.Photo0" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300">
-                                <img v-if="item.Photo1" :src="item.Photo1" alt="商品圖2" class="w-20 h-20 object-cover border border-gray-300 mt-2">
+                                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                                    <img :src="item.Photo0" class="w-20 h-20 object-cover border border-gray-300">
+                                </div>
+                                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                                    <img :src="item.Photo1" class="w-20 h-20 object-cover border border-gray-300 mt-2">
+                                </div>
+                                <img :style="{ display: item.PId !== 0 ? 'block' : 'none' }" :src="`${baseAddress}/images/${item.Photo0}`" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300"> 
                             </div>
                         </td>
-                        <td class="border p-2">{{ item.PName }}</td>
+                        <td class="border p-2">
+                            <p>
+                                <a v-bind:href="item.PId > 0 ? '/Product/ProductDetail/' + item.PId : '/FrontHome/ChangeClothes'">
+                                    {{ item.PName }}
+                                </a>
+                            </p>
+                        </td> 
                         <td class="border p-2">{{ item.PSize }}</td>
                         <td class="border p-2">{{ item.PColor }}</td>
                         <td class="border p-2">{{ item.PCount }}</td>
@@ -41,12 +52,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
-
-            <div class="mt-4">
-                <p><strong>配送方式：</strong> {{ shippingMethod }}</p>
-                <p><strong>收件資訊：</strong> {{ recipientInfo }}</p>
-            </div>
+            </table> 
             <div class="flex justify-start mb-4">
                 <a href="javascript:history.back()" class="back-button">
                     ↩ 回上一頁
@@ -89,14 +95,16 @@
                              
                             if (response.data) {
                                 _this.orderItems = response.data.map(od => ({
-                                    Photo0: od.photo0 ? `${_this.baseAddress}/Images/${od.photo0}` : null,
-                                    Photo1: od.photo1 ? `${_this.baseAddress}/Images/${od.photo1}` : null,
+                                    PId: od.pId,
+                                    Photo0: od.photo0, 
+                                    Photo1: od.photo1, 
                                     PName: od.pName,
                                     PSize: od.pSize,
                                     PColor: od.pColor,
                                     PCount: od.pCount,
                                     OStatus: od.ostatus
                                 }));
+                                console.log(_this.orderItems);
                             } else {
                                 console.error("查無訂單細項");
                             }
@@ -200,7 +208,7 @@
 
         .back-button {
             position: absolute;
-            bottom: -20px;
+            bottom: -40px;
             right: 0;
             background-color: white;
             color: slateblue;

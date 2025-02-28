@@ -32,7 +32,11 @@
                                 
                                 <div class="cart-item-info">
                                     <p></p>
-                                    <p>{{ item.pId === 0 ? item.pType : item.pName }}</p>
+                                    <p> 
+                                        <a v-bind:href="item.pId > 0 ? '/Product/ProductDetail/' + item.pId : '/FrontHome/ChangeClothes'">
+                                            {{ item.pId === 0 ? item.pType : item.pName }}
+                                        </a>
+                                    </p> 
                                     <h3>
                                         {{ item.pCategory }}
                                     </h3>
@@ -253,7 +257,7 @@
                     let _this = this;
                     axios.get(`${_this.baseAddress}/Ajax/GetMemberCoupons`)
                         .then(response => { 
-                            _this.coupons = response.data;
+                            _this.coupons = response.data; 
                         })
                         .catch(error => {
                             console.error("取得折價券失敗:", error);
@@ -275,7 +279,8 @@
                             swal("已選擇優惠券！", {
                                 icon: "success",
                             }); 
-                            _this.dcprice = coupon.couponDiscount;  
+                            _this.dcprice = coupon.couponDiscount;
+                            localStorage.setItem('couponId', this.selectedCouponId);
                         } else { 
                             _this.selectedCouponId = "";
                             _this.dcprice = 0; 
@@ -289,6 +294,7 @@
                 this.getCartItems();
                 this.loadFromStorage();
                 this.getMemberCoupons();
+                this.saveToStorage('couponId', ""); 
             }
         };
         var app = Vue.createApp(vueApp).mount("#app");
