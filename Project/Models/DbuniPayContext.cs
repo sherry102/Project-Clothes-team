@@ -6,10 +6,6 @@ namespace Project.Models;
 
 public partial class DbuniPayContext : DbContext
 {
-    public DbuniPayContext()
-    {
-    }
-
     public DbuniPayContext(DbContextOptions<DbuniPayContext> options)
         : base(options)
     {
@@ -55,7 +51,7 @@ public partial class DbuniPayContext : DbContext
     {
         modelBuilder.Entity<EcpayOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__EcpayOrd__3214EC077BAD38D2");
+            entity.HasKey(e => e.Id).HasName("PK__EcpayOrd__3214EC0793A15151");
 
             entity.Property(e => e.MemberId)
                 .HasMaxLength(50)
@@ -71,7 +67,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tadvice>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TAdvice__3214EC0783E21D14");
+            entity.HasKey(e => e.Id).HasName("PK__TAdvice__3214EC073472CE29");
 
             entity.ToTable("TAdvice");
 
@@ -85,7 +81,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TCart__3214EC07B74B5665");
+            entity.HasKey(e => e.Id).HasName("PK__TCart__3214EC0747803006");
 
             entity.ToTable("TCart");
 
@@ -114,7 +110,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tchat>(entity =>
         {
-            entity.HasKey(e => e.ChatId).HasName("PK__TChat__A9FBE6261853A575");
+            entity.HasKey(e => e.ChatId).HasName("PK__TChat__A9FBE6267D1FC079");
 
             entity.ToTable("TChat");
 
@@ -130,7 +126,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcomment>(entity =>
         {
-            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F4132CEC2AABA");
+            entity.HasKey(e => e.ComId).HasName("PK__TComment__E15F4132682E7D8F");
 
             entity.ToTable("TComment");
 
@@ -138,19 +134,26 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.ComCreateDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.ComDescription).HasMaxLength(500);
             entity.Property(e => e.ComImage1).HasMaxLength(500);
             entity.Property(e => e.ComImage2).HasMaxLength(500);
-            entity.Property(e => e.ComImage3).HasMaxLength(500);
+            entity.Property(e => e.Comment).HasMaxLength(500);
             entity.Property(e => e.Mid).HasColumnName("MID");
             entity.Property(e => e.Mname)
                 .HasMaxLength(20)
                 .HasColumnName("MName");
+            entity.Property(e => e.Oid).HasColumnName("OID");
+            entity.Property(e => e.Pcolor)
+                .HasMaxLength(50)
+                .HasColumnName("PColor");
+            entity.Property(e => e.Pid).HasColumnName("PID");
+            entity.Property(e => e.Psize)
+                .HasMaxLength(50)
+                .HasColumnName("PSize");
         });
 
         modelBuilder.Entity<Tcoupon>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TCoupon__3214EC07907862DD");
+            entity.HasKey(e => e.Id).HasName("PK__TCoupon__3214EC07ED6C523B");
 
             entity.ToTable("TCoupon");
 
@@ -162,7 +165,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tcustomization>(entity =>
         {
-            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC59ADCDB66A");
+            entity.HasKey(e => e.Cid).HasName("PK__TCustomi__C1F8DC59AA359632");
 
             entity.ToTable("TCustomization");
 
@@ -197,7 +200,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tfavorite>(entity =>
         {
-            entity.HasKey(e => e.Fid).HasName("PK__TFavorit__C1BEA5A2D57BE3D9");
+            entity.HasKey(e => e.Fid).HasName("PK__TFavorit__C1BEA5A20508D984");
 
             entity.ToTable("TFavorite");
 
@@ -219,7 +222,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tmember>(entity =>
         {
-            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348AD99AAA44");
+            entity.HasKey(e => e.Mid).HasName("PK__TMember__C797348A2136509F");
 
             entity.ToTable("TMember");
 
@@ -258,7 +261,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TmemberCoupon>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TMemberC__3214EC07260FCC71");
+            entity.HasKey(e => e.Id).HasName("PK__TMemberC__3214EC07DC754109");
 
             entity.ToTable("TMemberCoupon");
 
@@ -268,7 +271,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tmessage>(entity =>
         {
-            entity.HasKey(e => e.MessageId).HasName("PK__TMessage__C87C037C52E0F3C0");
+            entity.HasKey(e => e.MessageId).HasName("PK__TMessage__C87C037C6015E144");
 
             entity.ToTable("TMessage");
 
@@ -282,7 +285,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Torder>(entity =>
         {
-            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B399186152E");
+            entity.HasKey(e => e.Oid).HasName("PK__TOrder__CB394B39C7A483A5");
 
             entity.ToTable("TOrder");
 
@@ -321,6 +324,15 @@ public partial class DbuniPayContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("OPhone");
             entity.Property(e => e.Oprice).HasColumnName("OPrice");
+            entity.Property(e => e.OreturnDate)
+                .HasColumnType("datetime")
+                .HasColumnName("OReturnDate");
+            entity.Property(e => e.OreturnNo)
+                .HasMaxLength(100)
+                .HasColumnName("OReturnNo");
+            entity.Property(e => e.OreturnStatus)
+                .HasMaxLength(10)
+                .HasColumnName("OReturnStatus");
             entity.Property(e => e.Ostatus)
                 .HasMaxLength(20)
                 .HasColumnName("OStatus");
@@ -335,7 +347,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TorderDetail>(entity =>
         {
-            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C15B2D9F863");
+            entity.HasKey(e => e.Odid).HasName("PK__TOrderDe__AD346C15735EF37B");
 
             entity.ToTable("TOrderDetail");
 
@@ -355,11 +367,33 @@ public partial class DbuniPayContext : DbContext
             entity.Property(e => e.Psize)
                 .HasMaxLength(50)
                 .HasColumnName("PSize");
+            entity.Property(e => e.Raddress)
+                .HasMaxLength(100)
+                .HasColumnName("RAddress");
+            entity.Property(e => e.Rdescription)
+                .HasMaxLength(100)
+                .HasColumnName("RDescription");
+            entity.Property(e => e.Rmethod)
+                .HasMaxLength(20)
+                .HasColumnName("RMethod");
+            entity.Property(e => e.Rname)
+                .HasMaxLength(50)
+                .HasColumnName("RName");
+            entity.Property(e => e.RotherReason)
+                .HasMaxLength(100)
+                .HasColumnName("ROtherReason");
+            entity.Property(e => e.Rphone)
+                .HasMaxLength(50)
+                .HasColumnName("RPhone");
+            entity.Property(e => e.Rqty).HasColumnName("RQty");
+            entity.Property(e => e.Rreason)
+                .HasMaxLength(50)
+                .HasColumnName("RReason");
         });
 
         modelBuilder.Entity<Tpimage>(entity =>
         {
-            entity.HasKey(e => e.Piid).HasName("PK__TPImage__5F86BE60FB8FF189");
+            entity.HasKey(e => e.Piid).HasName("PK__TPImage__5F86BE60041A5573");
 
             entity.ToTable("TPImage");
 
@@ -372,7 +406,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<Tproduct>(entity =>
         {
-            entity.HasKey(e => e.Pid).HasName("PK__TProduct__C5775520DAE7D65B");
+            entity.HasKey(e => e.Pid).HasName("PK__TProduct__C57755205B584C88");
 
             entity.ToTable("TProducts");
 
@@ -403,7 +437,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TproductInventory>(entity =>
         {
-            entity.HasKey(e => e.Piid).HasName("PK__TProduct__5F86BE603AB7592F");
+            entity.HasKey(e => e.Piid).HasName("PK__TProduct__5F86BE600417748F");
 
             entity.ToTable("TProductInventory");
 
@@ -434,7 +468,7 @@ public partial class DbuniPayContext : DbContext
 
         modelBuilder.Entity<TstyleImg>(entity =>
         {
-            entity.HasKey(e => e.Sid).HasName("PK__TStyleIm__CA195970E622BBB0");
+            entity.HasKey(e => e.Sid).HasName("PK__TStyleIm__CA19597012993E5D");
 
             entity.ToTable("TStyleImgs");
 
