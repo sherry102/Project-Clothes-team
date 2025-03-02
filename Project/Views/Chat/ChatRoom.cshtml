@@ -246,18 +246,21 @@
                 <div class="chat-widget-input">
                     <!-- 媒體上傳和輸入區域 -->
                     <div class="media-upload-area">
-                        <button class="upload-btn" id="uploadFile" title="上傳檔案">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <button class="upload-btn" id="uploadImage" title="上傳圖片">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <button class="upload-btn" id="uploadVideo" title="上傳影片">
-                            <i class="fas fa-video"></i>
-                        </button>
-                        <button class="upload-btn" id="uploadAudio" title="上傳語音">
-                            <i class="fas fa-microphone"></i>
-                        </button>
+                        <div class="media-upload-area">
+                            <button class="upload-btn" title="上傳檔案" v-on:click="triggerFileInput(`file`)">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="upload-btn" title="上傳圖片" v-on:click="triggerFileInput(`image`)">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <button class="upload-btn" title="上傳影片" v-on:click="triggerFileInput(`video`)">
+                                <i class="fas fa-video"></i>
+                            </button>
+                        </div>
+                        <!-- 隱藏的 file input -->
+                        <input type="file" ref="fileInput" v-on:change="handleFileUpload" style="display: none;">
+                        <input type="file" ref="imageInput" accept="image/*" v-on:change="handleFileUpload" style="display: none;">
+                        <input type="file" ref="videoInput" accept="video/*" v-on:change="handleFileUpload" style="display: none;">
                     </div>     
                     <!-- 雙向綁定 message -->
                     <!-- 按下 Enter 鍵觸發 SendMessage 方法 -->
@@ -299,6 +302,12 @@
     <script type="text/javascript"
             src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // 在Vue應用的data部分添加(或在外部定義)
+        const fileTypeMap = {
+            'file': { label: '檔案', accept: '*/*' },
+            'image': { label: '圖片', accept: 'image/*' },
+            'video': { label: '影片', accept: 'video/*' }
+        };
 
         let messages = []; // 初始化
         const chatApp = Vue.createApp({
@@ -318,29 +327,29 @@
             },
             // 組件載入時初始化
             async mounted() {
-                    try {
-            await this.initializeSignalRConnection();
+                try {
+                    await this.initializeSignalRConnection();
 
-            // 載入聊天歷史
-            const savedMessages = sessionStorage.getItem("chatMessages");
-            if (savedMessages) {
-                this.messages = JSON.parse(savedMessages);
-            }
+                    // 載入聊天歷史
+                    const savedMessages = sessionStorage.getItem("chatMessages");
+                    if (savedMessages) {
+                        this.messages = JSON.parse(savedMessages);
+                    }
 
-            // 監聽消息變化以自動滾動
-            this.$watch(
-                () => this.messages.length,
-                () => this.$nextTick(this.scrollToBottom)
-            );
-
-        } catch (error) {
-            console.error("初始化失敗:", error);
-            Swal.fire({
-                title: '錯誤',
-                text: '連接聊天服務失敗，請重新整理頁面',
-                icon: 'error'
-            });
-        }
+                    // 監聽消息變化以自動滾動
+                    this.$watch(
+                        () => this.messages.length,
+                        () => this.$nextTick(this.scrollToBottom)
+                    );
+                } 
+                catch (error) {
+                    console.error("初始化失敗:", error);
+                    Swal.fire({
+                        title: '錯誤',
+                        text: '連接聊天服務失敗，請重新整理頁面',
+                        icon: 'error'
+                    });
+                }
             },
             methods: {
                 // 初始化 SignalR 連線的方法
@@ -353,34 +362,34 @@
                             .configureLogging(signalR.LogLevel.Debug) // 開啟詳細的日誌記錄
                             .build();
 
-                                this.hubConnection.on("UpdContent", (msg) => {
-            console.log("收到伺服器訊息: ", msg);
+                        this.hubConnection.on("UpdContent", (msg) => {
+                            console.log("收到伺服器訊息: ", msg);
 
-            // 確保 messages 是陣列
-            if (!Array.isArray(this.messages)) {
-                this.messages = [];
-            }
+                            // 確保 messages 是陣列
+                            if (!Array.isArray(this.messages)) {
+                                this.messages = [];
+                            }
 
-            // 檢查消息是否有效
-            if (!msg || !msg.message) return;
+                            // 檢查消息是否有效
+                            if (!msg || !msg.message) return;
 
-            // 根據消息類型添加不同樣式
-            const messageObj = {
-                type: msg.user === this.userId ? "sent" :
-                      msg.user === "System" ? "system" : "received",
-                content: msg.message,
-                timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
-            };
+                            // 根據消息類型添加不同樣式
+                            const messageObj = {
+                                type: msg.user === this.userId ? "sent" :
+                                msg.user === "System" ? "system" : "received",
+                                content: msg.message,
+                                timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+                            };
 
-            // 添加消息到陣列
-            this.messages.push(messageObj);
+                            // 添加消息到陣列
+                            this.messages.push(messageObj);
 
-            // 儲存到 sessionStorage
-            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
+                            // 儲存到 sessionStorage
+                            sessionStorage.setItem("chatMessages", JSON.stringify(this.messages));
 
-            // 滾動到底部
-            this.$nextTick(this.scrollToBottom);
-        });
+                            // 滾動到底部
+                            this.$nextTick(this.scrollToBottom);
+                        });
                         // 啟動連接
                         await this.hubConnection.start();
                         console.log("SignalR連接成功");
@@ -406,122 +415,96 @@
                     }
                 },
                 // 發送訊息
-                    async sendMessage() {
-        // 檢查訊息是否為空
-        if (!this.message.trim()) return;
-
-        try {
-            // 儲存訊息內容並調用 SignalR 方法
-            await this.hubConnection.invoke("SendMessage", this.userId, this.message.trim());
-
-            // 清空輸入框
-            this.message = "";
-
-            // 重置輸入狀態
-            this.isTyping = false;
-
-        } catch (error) {
-            console.error("發送訊息失敗:", error);
-            // 顯示錯誤提示
-            Swal.fire({
-                title: '錯誤',
-                text: '發送訊息失敗，請稍後再試',
-                icon: 'error'
-            });
-        }
-                },
-                // 切換聊天室
-                async switchRoom(roomId) {
-                    if (this.activeRoom === roomId) return;
+                async sendMessage() {
+                    // 檢查訊息是否為空
+                    if (!this.message.trim()) return;
 
                     try {
-                        // 保存當前房間的聊天記錄
-                        if (this.activeRoom) {
-                            this.saveRoomChatHistory(this.activeRoom);
-                        }
+                        // 儲存訊息內容並調用 SignalR 方法
+                        await this.hubConnection.invoke("SendMessage", this.userId, this.message.trim());
 
-                        // 更新活動房間
-                        this.activeRoom = roomId;
+                        // 清空輸入框
+                        this.message = "";
 
-                        // 更新UI
-                        document.getElementById('roomName').textContent =
-                            this.rooms.get(roomId)?.name || '未知房間';
+                        // 重置輸入狀態
+                        this.isTyping = false;
 
-                        // 清空未讀計數
-                        if (this.rooms.has(roomId)) {
-                            this.rooms.get(roomId).unreadCount = 0;
-                            this.updateUnreadCount(roomId);
-                        }
-
-                        // 載入房間消息
-                        this.updateMessageDisplay(roomId);
-                    } catch (err) {
-                        console.error("切換房間失敗:", err);
+                    } 
+                    catch (error) {
+                        console.error("發送訊息失敗:", error);
+                        // 顯示錯誤提示
+                        Swal.fire({
+                            title: '錯誤',
+                            text: '發送訊息失敗，請稍後再試',
+                            icon: 'error'
+                        });
                     }
                 },
-
-                // 更新消息顯示
-                updateMessageDisplay(roomId) {
-                    const messages = this.messages.get(roomId) || [];
-                    const container = this.$refs.messagesContainer;
-                    if (!container) return;
-
-                    // 清空容器
-                    container.innerHTML = '';
-
-                    // 重新渲染消息
-                    messages.forEach(msg => {
-                        const msgElement = document.createElement('div');
-                        msgElement.className = `chat-message ${msg.type}`;
-                        msgElement.innerHTML = `
-                            <div class="message-content">${msg.content}</div>
-                            <div class="message-time">${msg.timestamp}</div>
-                        `;
-                        container.appendChild(msgElement);
-                    });
-
+                // 處理檔案上傳
+                async handleFileUpload(event, fileType) {
+                    const fileInput = event.target;
+                    if (!fileInput.files || fileInput.files.length === 0) return;
+                    const file = fileInput.files[0];
+                    // 檢查檔案類型（如果需要限制）
+                    if (fileTypeMap[fileType] && !file.type.startsWith(fileType + "/")) {
+                        Swal.fire({
+                            title: '錯誤',
+                            text: `請選擇${fileTypeMap[fileType].label}檔案`,
+                            icon: 'error'
+                        });
+                    }
+                    // 顯示上傳中訊息
+                    const loadingMsg = { type: "system", content: `正在上傳${fileTypeMap[fileType]?.label ?? "檔案"}...` };
+                    this.messages.push(loadingMsg);
                     this.scrollToBottom();
-                },
-
-                // 更新未讀計數UI
-                updateUnreadCount(roomId) {
-                    const roomElement = document.querySelector(`[data-room-id="${roomId}"]`);
-                    if (!roomElement) return;
-
-                    const countElement = roomElement.querySelector('.unread-count');
-                    const count = this.rooms.get(roomId)?.unreadCount || 0;
-
-                    if (count > 0) {
-                        countElement.textContent = count;
-                        countElement.style.display = 'block';
-                    } else {
-                        countElement.style.display = 'none';
-                    }
-                },
-
-                // 保存聊天記錄
-                saveRoomChatHistory(roomId) {
-                    const messages = this.messages.get(roomId);
-                    if (messages) {
-                        localStorage.setItem(
-                            `chat_history_${roomId}`,
-                            JSON.stringify(messages)
-                        );
-                    }
-                },
-
-                // 載入所有聊天記錄
-                loadAllChatHistory() {
-                    this.rooms.forEach((room, roomId) => {
-                        const savedMessages = localStorage.getItem(`chat_history_${roomId}`);
-                        if (savedMessages) {
-                            this.messages.set(roomId, JSON.parse(savedMessages));
-                        } else {
-                            this.messages.set(roomId, []);
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        const response = await fetch('/Chat/UploadFile', { method: 'POST', body: formData });
+                        // 移除載入訊息
+                        this.messages.pop();
+                        if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+                        const result = await response.json();
+                        if (result.success) {
+                            let fileMessageContent = "";
+                            if (fileType === "image") {
+                                fileMessageContent = `<img src="${result.fileUrl}" alt="${result.originalName}" class="chat-image height:50% width:50%"/>`;
+                            }
+                            else if (fileType === "video") {
+                                fileMessageContent = `<video controls class="chat-video"><source src="${result.fileUrl}" type="${result.contentType}"></video>`;
+                            }
+                            else {
+                                fileMessageContent = `<div class="file-link"><a href="${result.fileUrl}" target="_blank" download="${result.originalName}"><i class="fas fa-file"></i> ${result.originalName}</a></div>`;
+                            }
+                            // 發送到聊天室
+                            await this.hubConnection.invoke("SendMessage", this.userId, fileMessageContent);
                         }
-                    });
+                        else {
+                            this.messages.push({ type: "system", content: `檔案上傳失敗：${result.message}` });
+                        }
+                    }
+                    catch (error) {
+                        console.error("檔案上傳失敗:", error);
+                        this.messages.pop();
+                        this.messages.push({ type: "system", content: "檔案上傳失敗，請稍後再試" });
+                    }
+                    finally {
+                        this.scrollToBottom();
+                        fileInput.value = ''; // 清空輸入框
+                    }
                 },
-
+                triggerFileInput(fileType) {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.style.display = 'none';
+                    if (fileTypeMap[fileType]) {
+                        fileInput.accept = fileTypeMap[fileType].accept;
+                    }
+                    fileInput.addEventListener('change', (event) => this.handleFileUpload(event, fileType));
+                    document.body.appendChild(fileInput);
+                    fileInput.click();
+                    setTimeout(() => document.body.removeChild(fileInput), 100);
+                },
                 // 滾動到最新消息
                 scrollToBottom() {
                     const container = this.$refs.messagesContainer;
