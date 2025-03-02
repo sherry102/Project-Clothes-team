@@ -1,85 +1,87 @@
 ﻿
     // 定義檔案類型對應表，用於上傳檔案時的類型選擇和驗證
-    const fileTypeMap = {
-        'file': {label: '檔案', accept: '*/*' },
+const fileTypeMap = {
+    'file': {label: '檔案', accept: '*/*' },
     'image': {label: '圖片', accept: 'image/*' },
     'video': {label: '影片', accept: 'video/*' }
-        };
+};
 
     // 建立初始聊天資料模擬，整合原本第一個JS的結構和資料
-    const initialChatData = {
-        proposal: {
+const initialChatData = {
+    proposal: {
         1: {
-        name: "陳蟑言",
-    avatar: "https://www.shutterstock.com/image-photo/adorable-piglet-peeking-over-wooden-260nw-2526412985.jpg",
-    projectName: "客製化服飾問題",
-    status: "進行中",
-    messages: [
-    {
-        type: "received",
-    content: "請問客製化服飾什麼時候出貨？",
-    time: "下午 2:02",
-    timestamp: new Date().toLocaleTimeString('en-US', {hour12: false })
-                        },
-    ],
+            name: "陳蟑言",
+            avatar: "https://th.bing.com/th/id/R.9296d25101792ea80cf1bba824573355?rik=404SXrsH2qx3Rg&riu=http%3a%2f%2fi2.kknews.cc%2fnn-So7Rsv5m8q7KexKIR_UKCtv5r5PqiLz1c1U0_L3M%2f0.jpg&ehk=PLJYjJbjSYAXr4fkJB2dDsB6HcJsk7jTdaGuI9WXbz0%3d&risl=&pid=ImgRaw&r=0",
+            projectName: "客製化服飾問題",
+            status: "進行中",
+            messages: [
+                {
+                    type: "received",
+                    content: "請問客製化服飾什麼時候出貨？",
+                    time: "下午 2:02",
+                    timestamp: new Date().toLocaleTimeString('en-US', {hour12: false })
                 },
-    2: {
-        name: "謝欣達",
-    avatar: "https://yt3.googleusercontent.com/o0D3C98I6Z6I0SG8HJIZoM7bOGNVkl8MEtFGrh65U2X07x5Eg8EtEpV5GH7X5SWuilb9UBHF=s900-c-k-c0x00ffffff-no-rj",
-    projectName: "會員註銷",
-    status: "已完成",
-    messages: [
-    {
-        type: "received",
-    content: "我的會員要註銷",
-    time: "上午 9:20",
-    timestamp: new Date().toLocaleTimeString('en-US', {hour12: false })
-                        },
-    ],
+            ],
+        },
+        2: {
+            name: "謝陳達",
+            avatar: "https://th.bing.com/th/id/OIP.JuNf6Wc6CQUCPyXUTjiuZAHaHr?rs=1&pid=ImgDetMain",
+            projectName: "會員註銷",
+            status: "已完成",
+            messages: [
+                {
+                    type: "received",
+                    content: "我的會員要註銷",
+                    time: "上午 9:20",
+                    timestamp: new Date().toLocaleTimeString('en-US', {hour12: false })
                 },
-            },
-        };
+            ],
+        },
+    },
+};
 
-    // 創建 Vue 應用
-    const chatApp = Vue.createApp({
-        data() {
-                return {
-        userId: "2", // 目前登入的會員ID
-    userName: "陳蟑言", // 目前登入的會員名稱
-    chatId: null, // 目前的聊天室ID
-    chatType: "proposal", // 目前的聊天類型，預設為提案訊息
-    chatData: JSON.parse(JSON.stringify(initialChatData)), // 所有聊天資料，使用深拷貝避免修改原始資料
-    message: "", // 輸入框中的訊息內容
-    messages: [], // 目前顯示的訊息列表
-    isTyping: false, // 用來顯示用戶是否正在輸入訊息
-    hubConnection: null, // SignalR 連接對象
-    lastEnterTime: null, // 追蹤最後一次按Enter的時間，用於雙擊Enter發送訊息功能
-    members: [] // 儲存會員列表
-                }
-            },
+ // 創建 Vue 應用
+const chatApp = Vue.createApp({
+    data() {
+        return {
+            userId: "2", // 目前登入的會員ID
+            userName: "陳蟑言", // 目前登入的會員名稱
+            chatId: null, // 目前的聊天室ID
+            chatType: "proposal", // 目前的聊天類型，預設為提案訊息
+            chatData: JSON.parse(JSON.stringify(initialChatData)), // 所有聊天資料，使用深拷貝避免修改原始資料
+            message: "", // 輸入框中的訊息內容
+            messages: [], // 目前顯示的訊息列表
+            isTyping: false, // 用來顯示用戶是否正在輸入訊息
+            hubConnection: null, // SignalR 連接對象
+            lastEnterTime: null, // 追蹤最後一次按Enter的時間，用於雙擊Enter發送訊息功能
+            members: [] // 儲存會員列表
+        }
+    },
     // 計算屬性
     computed: {
         // 獲取當前聊天室的完整資訊
         currentChat() {
-                    if (!this.chatId || !this.chatData[this.chatType]) return null;
-    return this.chatData[this.chatType][this.chatId] || null;
-                },
-    // 判斷是否有選中聊天室
-    hasChatSelected() {
-                    return !!this.currentChat;
-                },
-    // 根據當前時間生成問候語
-    greeting() {
-                    const currentHour = new Date().getHours();
-                    if (currentHour >= 5 && currentHour < 12) {
-                        return "早安";
-                    } else if (currentHour >= 12 && currentHour < 18) {
-                        return "午安";
-                    } else {
-                        return "晚安";
-                    }
-                },
+            if (!this.chatId || !this.chatData[this.chatType]) return null;
+                    return this.chatData[this.chatType][this.chatId] || null;
             },
+        // 判斷是否有選中聊天室
+        hasChatSelected() {
+            return !!this.currentChat;
+        },
+        // 根據當前時間生成問候語
+        greeting() {
+            const currentHour = new Date().getHours();
+            if (currentHour >= 5 && currentHour < 12) {
+                return "早安";
+            }
+            else if (currentHour >= 12 && currentHour < 18) {
+                return "午安";
+            }
+            else {
+                return "晚安";
+            }
+        },
+    },
     // 監聽器
     watch: {
         // 監聽當前聊天室變化，更新顯示的訊息
@@ -92,7 +94,7 @@
                         } else {
         this.messages = [];
                         }
-                    },
+    },
     immediate: true, // 初始化時立即執行
     deep: true // 深度監聽，確保監聽到陣列和物件內部的變化
                 },

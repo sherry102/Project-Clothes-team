@@ -6,6 +6,10 @@ namespace Project.Models;
 
 public partial class DbuniPayContext : DbContext
 {
+    public DbuniPayContext()
+    {
+    }
+
     public DbuniPayContext(DbContextOptions<DbuniPayContext> options)
         : base(options)
     {
