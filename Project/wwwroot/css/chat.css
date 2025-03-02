@@ -13,7 +13,7 @@
     border-radius: 16px; /* 圓角邊框，讓視窗更美觀 */
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); /* 添加陰影效果 */
     /*opacity: 0;*/ /*預設隱藏*/
-    /*visibility: hidden;*/ /*預設不可見*/
+    visibility: hidden; /*預設不可見*/
     transform: scale(0.95) translateY(10px); /* 初始縮小並稍微向下移動，增加動畫效果 */
     transition: all 0.3s ease; /* 平滑過渡動畫效果 */
 }

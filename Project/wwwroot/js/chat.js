@@ -94,10 +94,18 @@ const chatApp = Vue.createApp({
     methods: {
         toggleChat() {
             this.isVisible = !this.isVisible;
+            const chatWidget = document.querySelector(".chat-widget");
             if (this.isVisible) {
                 this.isBubbleVisible = false;
                 this.isRealCustomerVisible = false;
+                if (chatWidget) {
+                    chatWidget.classList.add("show");
+                }
                 this.$nextTick(() => this.scrollToBottom());
+            } else {
+                if (chatWidget) {
+                    chatWidget.classList.remove("show");
+                }
             }
         },
         closeChat() {
