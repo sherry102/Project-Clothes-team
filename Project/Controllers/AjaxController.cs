@@ -313,7 +313,6 @@ namespace Project.Controllers
             return Ok("購物車資料已刪除");
         }
 
-
         [HttpPost]
         public async Task<string> addToCart([FromBody] CustomCartDTO cart)
         {
@@ -324,26 +323,41 @@ namespace Project.Controllers
             }
 
             var member = JsonSerializer.Deserialize<Tmember>(json);
-            var Cart = new Tcart
-            {
-                Mid = member.Mid,
-                Pid = cart.PId,
-                Pname = cart.PName,
-                Ptype = cart.PType,
-                Pcategory = cart.PCategory,
-                Pcount = cart.PCount,
-                Psize = cart.PSize,
-                Pcolor = cart.PColor,
-                CustomText0 = null,
-                CustomText1 = null,
-                CustomPhoto0 = null,
-                CustomPhoto1 = null,
-                Photo0 = cart.Photo0,
-                Photo1 = null,
-                Pprice = cart.PPrice * cart.PCount,
-            };
+            var existingCartItem = await _context.Tcarts
+                .FirstOrDefaultAsync(c => c.Mid == member.Mid
+                                       && c.Pid == cart.PId
+                                       && c.Psize == cart.PSize
+                                       && c.Pcolor == cart.PColor);
 
-            _context.Tcarts.Add(Cart);
+            if (existingCartItem != null)
+            {
+                existingCartItem.Pcount += cart.PCount;
+                existingCartItem.Pprice = existingCartItem.Pcount * cart.PPrice;
+            }
+            else
+            {
+                var newCart = new Tcart
+                {
+                    Mid = member.Mid,
+                    Pid = cart.PId,
+                    Pname = cart.PName,
+                    Ptype = cart.PType,
+                    Pcategory = cart.PCategory,
+                    Pcount = cart.PCount,
+                    Psize = cart.PSize,
+                    Pcolor = cart.PColor,
+                    CustomText0 = null,
+                    CustomText1 = null,
+                    CustomPhoto0 = null,
+                    CustomPhoto1 = null,
+                    Photo0 = cart.Photo0,
+                    Photo1 = null,
+                    Pprice = cart.PPrice * cart.PCount,
+                };
+
+                _context.Tcarts.Add(newCart);
+            }
+
             await _context.SaveChangesAsync();
             return "已加入購物車";
         }

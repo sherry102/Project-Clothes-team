@@ -35,6 +35,15 @@ $(function () {
         "border-bottom": "none",
       });
     });
+    $(".menu-style, #menu-style").on("mouseenter", function () {
+        $("#menu-style").stop().slideDown();
+        $(".menu-style").css("border-bottom", "1px solid #ddd");
+    });
+
+    $(".menu-style, #menu-style").on("mouseleave", function () {
+        $("#menu-style").stop().slideUp();
+        $(".menu-style").css("border-bottom", "none");
+    });
     $(".owl-carousel").owlCarousel({
         loop: true,
         margin: 10,

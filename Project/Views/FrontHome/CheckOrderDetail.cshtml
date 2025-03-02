@@ -23,32 +23,32 @@
                     <tr v-for="item in orderItems" :key="item.Pid" class="text-center">
                         <td class="border p-2">
                             <div class="flex flex-col items-center product-images">
-                                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                                <div :style="{ display: item.Pid === 0 ? 'block' : 'none' }">
                                     <img :src="item.Photo0" class="w-20 h-20 object-cover border border-gray-300">
                                 </div>
-                                <div :style="{ display: item.PId === 0 ? 'block' : 'none' }">
+                                <div :style="{ display: item.Pid === 0 ? 'block' : 'none' }">
                                     <img :src="item.Photo1" class="w-20 h-20 object-cover border border-gray-300 mt-2">
                                 </div>
-                                <img :style="{ display: item.PId !== 0 ? 'block' : 'none' }" :src="`${baseAddress}/images/${item.Photo0}`" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300"> 
+                                <img :style="{ display: item.Pid !== 0 ? 'block' : 'none' }" :src="`${baseAddress}/images/${item.Photo0}`" alt="商品圖1" class="w-20 h-20 object-cover border border-gray-300">
                             </div>
                         </td>
                         <td class="border p-2">
                             <a v-bind:href="'/Product/ProductDetail/' + item.Pid" class="text-dark">
-                            {{ item.PName }}
+                                {{ item.PName }}
                             </a>
-                         </td>
+                        </td>
                         <td class="border p-2">{{ item.PSize }}</td>
                         <td class="border p-2">{{ item.PColor }}</td>
                         <td class="border p-2">{{ item.PCount }}</td>
                         <td class="border p-2">{{ item.OStatus }}</td>
                         <td class="border p-2">
-                            <button v-if="item.OStatus === '已完成' && !item.isReviewed"
-                            @@click ="openReviewModal(item)"
+                            <button v-if="item.OStatus === '已完成' && !item.isReviewed && item.Pid != 0"
+                                    @@click="openReviewModal(item)"
                                     class="btn btn-outline-secondary">
                                 我要評論 <i class="fas fa-edit"></i>
                             </button>
 
-                            <button v-else-if="item.OStatus === '已完成' && item.isReviewed"
+                            <button v-else-if="item.OStatus === '已完成' && item.isReviewed && item.Pid != 0"
                                     @@click="goToCommentList()"
                                     class="btn btn-secondary">
                                 已評論 <i class="bi bi-chat-square-text"></i>
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
+
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -83,11 +83,11 @@
                     <div class="row">
                         <h5 class="mb-1">請選擇圖片</h5>
                         <div class="col-md-6">
-                            <input type="file" @@change ="handleImageUpload($event, 1)" class="form-control">
+                            <input type="file" @@change="handleImageUpload($event, 1)" class="form-control">
                             <img v-if="preview1" :src="preview1" alt="預覽圖片1" class="img-preview">
                         </div>
                         <div class="col-md-6">
-                            <input type="file" @@change ="handleImageUpload($event, 2)" class="form-control">
+                            <input type="file" @@change="handleImageUpload($event, 2)" class="form-control">
                             <img v-if="preview2" :src="preview2" alt="預覽圖片2" class="img-preview">
                         </div>
                     </div>
@@ -119,17 +119,17 @@
                     showReviewModal: false,
                     currentPid: null,
                     currentOid: null,
-                    currentPName: "",  // 新增變數儲存產品名稱 
-                    rating: 0,  // 儲存使用者選擇的評分
+                    currentPName: "",
+                    rating: 0,
                     reviewText: "",
                     image1: null,
                     image2: null,
-                    preview1: null,  // 圖片預覽 URL
+                    preview1: null,
                     preview2: null
                 };
             },
             methods: {
-                getOrderDetails: function () {      
+                getOrderDetails: function () {
                     let _this = this;
                     let urlParams = new URLSearchParams(window.location.search);
                     _this.orderId = urlParams.get("oid");
@@ -144,15 +144,15 @@
 
                             if (response.data) {
                                 _this.orderItems = response.data.map(od => ({
-                                    Pid: od.pId,  // 確保這裡有 Pid
-                                    Photo0: od.photo0 ? `${_this.baseAddress}/Images/${od.photo0}` : null,
-                                    Photo1: od.photo1 ? `${_this.baseAddress}/Images/${od.photo1}` : null,
+                                    Pid: od.pId,
+                                    Photo0: od.photo0,
+                                    Photo1: od.photo1,
                                     PName: od.pName,
                                     PSize: od.pSize,
                                     PColor: od.pColor,
                                     PCount: od.pCount,
                                     OStatus: od.ostatus,
-                                    isReviewed: od.isReviewed // 新增評論狀態 (後端應該返回這個值)
+                                    isReviewed: od.isReviewed
                                 }));
                                 console.log(_this.orderItems);
                             } else {
@@ -180,11 +180,11 @@
                     this.image1 = null;
                     this.image2 = null;
                     this.preview1 = null;
-                    this.preview2 = null; // 確保圖片預覽清除
+                    this.preview2 = null;
 
                     let modal = new bootstrap.Modal(document.getElementById("reviewModal"));
                     modal.show();
-                    
+
                 },
                 handleImageUpload(event, index) {
                     const file = event.target.files[0];
@@ -194,22 +194,22 @@
                     reader.onload = (e) => {
                     if (index === 1) {
                         this.image1 = file;
-                        this.preview1 = e.target.result; // 設置預覽圖片
+                        this.preview1 = e.target.result;
                     }
                     if (index === 2) {
                         this.image2 = file;
                         this.preview2 = e.target.result;
                     }
                     };
-                    reader.readAsDataURL(file); // 讀取圖片，轉換為 Base64
+                    reader.readAsDataURL(file);
                 },
                 submitReview() {
-                    let formData = new FormData(); 
+                    let formData = new FormData();
                     formData.append("oid", this.currentOid);
                     formData.append("pid", this.currentPid);
                     formData.append("psize", this.currentPSize);
                     formData.append("pcolor", this.currentPColor);
-                    formData.append("rating", this.rating);  // 新增評分數值
+                    formData.append("rating", this.rating);
                     formData.append("commentText", this.reviewText);
                     if (this.image1) formData.append("image1", this.image1);
                     if (this.image2) formData.append("image2", this.image2);
@@ -222,24 +222,21 @@
                     console.log("後端回應:", response.data);
                     if (response.data.success) {
                          Swal.fire("成功", "評論提交成功！", "success");
-                        // 清空圖片與輸入框
+
                         this.image1 = null;
                         this.image2 = null;
                         this.preview1 = null;
                         this.preview2 = null;
                         this.reviewText = "";
-                        this.rating = 0;  // 清空評分
+                        this.rating = 0;
 
-                    // 清空 input[type="file"]
                     document.querySelectorAll('input[type="file"]').forEach(input => {
                         input.value = "";
                     });
 
-                    // 更新 orderItems，讓按鈕變成 "已評論"
                     let item = this.orderItems.find(i => i.Pid === this.currentPid);
                     if (item) item.isReviewed = true;
 
-                    // 手動隱藏 modal
                     let modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
                          modal.hide();
                     } else {
@@ -267,7 +264,6 @@
             },
             mounted() {
                 this.getOrderDetails();
-                // 監聽 modal 關閉事件，清空 file input
                 let modalElement = document.getElementById("reviewModal");
                 modalElement.addEventListener("hidden.bs.modal", () => {
                 document.querySelectorAll('input[type="file"]').forEach(input => input.value = "");
@@ -276,7 +272,7 @@
                 this.preview1 = null;
                 this.preview2 = null;
                 this.reviewText = "";
-                this.rating = 0;  // 清空評分
+                this.rating = 0;
                 });
             },
             goBack() {

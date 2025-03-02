@@ -158,8 +158,16 @@
                                         Kids
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link  navtitle" href="~/Style/StyleList">Style</a>
+                                <li class="nav-item ">
+                                    <a class="nav-link dropdown-toggle menu-style navtitle"
+                                       href="@Url.Action("StyleList", "Style")"
+                                       id="navbarDropdown"
+                                       role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false"
+                                       onclick="location.href=this.href">
+                                        Style
+                                    </a>
                                 </li>
                                 <li class="nav-item ">
                                     <a class="nav-link navtitle" href="~/FrontHome/Customize">Customized</a>
@@ -254,6 +262,23 @@
                 </div>
             </div>
         </div>
+        <!-- style 選單 -->
+        <div class="fs-6 my-3" id="menu-style">
+            <div class="menu">
+                <div class="menu-column">
+                    <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "女性穿搭" })" class="item">Women's Wear</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "男性穿搭" })" class="item">Men's Wear</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "兒童穿搭" })" class="item">Kid's Wear</a></div>
+                </div>
+                <div class="menu-column">
+                    <div class="my-2"><a href="@Url.Action("StyleList", "Style", new { category = "工作穿搭" })" class="item">Work Outfit</a></div>
+                </div>
+            </div>
+        </div>
     </header>
         <div class="container my-3">
             <div class="row">
@@ -286,12 +311,8 @@
                                 <li class="box-item" id="order">
                                 <a href="@Url.Action("CheckOrder","FrontHome")">訂單查詢</a>
                                 </li>
-                            <li class="box-item" id="order">
-                                <a href="@Url.Action("CommentList","FrontHome")">我的評價</a>
-                            </li>
                             </ul>
                         </div>
-                        
                     </div>
                 </div>
                 <div class="col-10">
