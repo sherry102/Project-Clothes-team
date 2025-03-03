@@ -11,11 +11,57 @@
 
 <h2 class="mt-3">會員資料</h2>
 <p>
-    <a asp-action="Create">新增會員</a>
+    <a asp-action="Create" class="btn btn-warning">新增會員</a>
     <a href="@Url.Action("BlacklistIndex", "Member")" class="btn btn-warning">黑名單</a>
 </p>
-<table class="table">
-    <thead>
+<style>
+    .btn {
+        margin: 2px;
+        border-radius: 4px;
+    }
+
+    /* 如果你想讓按鈕並排顯示且對齊 */
+    td .btn {
+        display: inline-block;
+        width: auto;
+        min-width: 70px;
+    }
+    .table-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+        .table-wrapper .table {
+            width: 100%;
+        }
+
+    /* 移除Bootstrap響應式表格的滾動行為 */
+    .table-responsive {
+        overflow-x: visible !important;
+    }
+    .table thead th {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap; /* 防止文字換行 */
+    }
+
+    .table tbody td {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap; /* 防止文字換行 */
+    }
+
+    /* 如果表格太寬，添加水平滾動條 */
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+        <table class="table">
+        <thead>
         <tr>
             <th>
                序
@@ -40,9 +86,6 @@
             </th>
             <th>
                 電話
-            </th>
-            <th>
-                點數
             </th>
             <th>
                 權限
@@ -87,9 +130,6 @@
                 @Html.DisplayFor(modelItem => item.member.Mphone)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.member.Mpoints)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.member.Mpermissions)
             </td>
             <td>
@@ -104,14 +144,17 @@
                
             </td>         
             <td>
-                @Html.ActionLink("修改", "Edit", new { id = item.member.Mid }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("修改", "Edit", new { id = item.member.Mid }, new { @class = "btn btn-primary me-1" })
                 @Html.ActionLink("黑名單", "Blacklist", new { id = item.member.Mid }, 
                 new { @class = "btn btn-danger", onclick = "return confirm('確定要將此會員加入黑名單嗎?');" })
             </td>
             </tr>
 }}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
 
 <div class="text-end mt-3">
     <a href="@Url.Action("List")" class="btn btn-secondary">
@@ -119,4 +162,4 @@
     </a>
 </div>
 
-          
+
