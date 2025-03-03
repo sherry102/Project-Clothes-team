@@ -42,17 +42,9 @@
             <!--電子郵件 -->
             <div class="form-group mb-3">
                 <label asp-for="Memail" class="mb-1"></label>
-                <input asp-for="Memail" class="form-control" id="email" placeholder="請輸入E-mail" />
-                <span asp-validation-for="Memail" class="text-danger"></span>
+                <input asp-for="Memail" class="form-control" id="email" placeholder="請輸入E-mail" onblur="checkDuplicateField('Memail', this.value, 'email-duplicate-error')" />        
+                <span id="email-duplicate-error" style="color:red;"></span>
             </div>
-            <!-- 輸入驗證碼欄位 -->
-            <div class="form-group mb-3">
-                <label for="verificationCode" class="mb-1">驗證碼</label>
-                <input type="text" class="form-control" id="verificationCode" placeholder="請輸入驗證碼" />
-            </div>
-            <!-- 按鈕：寄送驗證碼與確認驗證碼 -->
-            <button type="button" class="btn btn-primary" onclick="sendCode()">寄送驗證碼</button>
-            <button type="button" class="btn btn-success" onclick="verifyCode()">確認驗證碼</button>
             <!--地址 -->
             <div class="form-group mb-3">
                 <label asp-for="Maddress" class="mb-1"></label>
@@ -62,14 +54,14 @@
             <!--手機號碼 -->
             <div class="form-group mb-3">
                 <label asp-for="Mphone" class="mb-1"></label>
-                <input asp-for="Mphone" class="form-control" placeholder="請輸入手機號碼"/>
-                <span asp-validation-for="Mphone" class="text-danger"></span>
+                <input asp-for="Mphone" class="form-control" id="phone" placeholder="請輸入手機號碼" onblur="checkDuplicateField('Mphone', this.value, 'phone-duplicate-error')" />                
+                <span id="phone-duplicate-error" style="color:red;"></span>
             </div>
             <!--帳號 -->
             <div class="form-group mb-3">
                 <label asp-for="Maccount" class="mb-1"></label>
-                <input asp-for="Maccount" class="form-control" placeholder="請輸入帳號"  />
-                <span asp-validation-for="Maccount" class="text-danger"></span>
+                <input asp-for="Maccount" class="form-control" placeholder="請輸入帳號" id="account" onblur="checkDuplicateField('Maccount', this.value, 'account-duplicate-error')" />               
+                <span id="account-duplicate-error" style="color:red;"></span>
             </div>
             <!--密碼 -->
             <div class="form-group mb-3">
@@ -95,10 +87,6 @@
             <div class="form-group mb-3">
                 <label class="mb-1">密碼</label>
                 <input type="password" class="form-control" placeholder="請輸入密碼" id="fpassword" name="fpassword" required>
-            </div>
-            <!-- 忘記密碼連結，修改為靠右顯示於登入按鈕上方 -->
-            <div class="text-end mb-3">
-                <a href="#" class="forgot-link text-decoration-none">忘記密碼?</a>
             </div>
             <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>
         </form>
@@ -158,6 +146,53 @@
 </style>
 @section Scripts {
     <script>
+        // (1)【新增】即時檢查重複函式
+        // -------------------------------
+        function checkDuplicateField(fieldName, fieldValue, errorSpanId) {
+            // 先把使用者輸入做 trim()
+            const trimmedValue = fieldValue.trim();
+            // 若輸入空值 => 顯示「未填寫」
+            if (!trimmedValue) {
+                if (fieldName === 'Maccount') {
+                    document.getElementById(errorSpanId).textContent = "帳號必須填寫";
+                } else if (fieldName === 'Memail') {
+                    document.getElementById(errorSpanId).textContent = "Email必須填寫";
+                } else if (fieldName === 'Mphone') {
+                    document.getElementById(errorSpanId).textContent = "手機必須填寫";
+                }
+                return; // 不進行資料庫檢查
+            }
+
+            // 呼叫後端 CheckDuplicate
+            fetch('@Url.Action("CheckDuplicate", "FrontMember")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ fieldName: fieldName, fieldValue: fieldValue })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.isDuplicate) {
+                    // 若重複 => 顯示對應訊息
+                    if (fieldName === 'Maccount')
+                        document.getElementById(errorSpanId).textContent = "帳號已有人使用";
+                    else if (fieldName === 'Memail')
+                        document.getElementById(errorSpanId).textContent = "已有人使用";
+                    else if (fieldName === 'Mphone')
+                        document.getElementById(errorSpanId).textContent = "手機已有人使用";
+                } else {
+                    // 若不重複 => 清空錯誤訊息
+                    document.getElementById(errorSpanId).textContent = "";
+                }
+            })
+            .catch(err => {
+                console.error('CheckDuplicate錯誤:', err);
+                // 視需求可顯示系統錯誤訊息
+            });
+        }
+
         // 用戶介面相關變數
         let isProcessing = false; // 防止重複提交
 
@@ -404,6 +439,8 @@
         function registerWithAjax() {
             // 獲取表單數據
             const registerAccount = document.getElementById('register-account').value;
+            const registerEmail   = document.getElementById('register-email').value;  // <-- 新增
+            const registerPhone    = document.getElementById('register-phone').value.trim();
             const registerPassword = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const registerName = document.getElementById('register-name').value;
@@ -441,8 +478,11 @@
                 '@Url.Action("Register", "Account")',
                 {
                     faccount: registerAccount,
+                    femail: registerEmail,
+                    fphone: registerPhone,
                     fpassword: registerPassword,
                     fname: registerName
+                 
                 },
                 // 成功回調
                 (data) => {

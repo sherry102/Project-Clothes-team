@@ -59,9 +59,45 @@ namespace Project.Controllers
             return View(model); // 將 model 傳遞到 fcreate.cshtml 這個 View
         }
         [HttpPost]
+        public JsonResult CheckDuplicate([FromBody] CheckDuplicateRequest req)
+        {
+            using var db = new DbuniPayContext();
+            bool isDuplicate = false;
+
+            // 中文註解：根據前端傳來的 fieldName 判斷要檢查哪個欄位
+            if (req.fieldName == "Maccount")
+            {
+                isDuplicate = db.Tmembers.Any(m => m.Maccount == req.fieldValue);
+            }
+            else if (req.fieldName == "Memail")
+            {
+                isDuplicate = db.Tmembers.Any(m => m.Memail == req.fieldValue);
+            }
+            else if (req.fieldName == "Mphone")
+            {
+                isDuplicate = db.Tmembers.Any(m => m.Mphone == req.fieldValue);
+            }
+
+            // 回傳 JSON：isDuplicate=true 表示重複；false 表示不重複
+            return Json(new { isDuplicate });
+        }
+        [HttpPost]
         public IActionResult fcreate(CMemberWrap memberWrap)
         {
             using var db = new DbuniPayContext();
+
+            // (1)【新增】後端再次檢查帳號/Email/手機是否重複，防止前端繞過JS
+            bool isAccountExists = db.Tmembers.Any(m => m.Maccount == memberWrap.member.Maccount);
+            if (isAccountExists)
+                return Json(new { success = false, message = "帳號已有人使用" });
+
+            bool isEmailExists = db.Tmembers.Any(m => m.Memail == memberWrap.member.Memail);
+            if (isEmailExists)
+                return Json(new { success = false, message = "Email已有人使用" });
+
+            bool isPhoneExists = db.Tmembers.Any(m => m.Mphone == memberWrap.member.Mphone);
+            if (isPhoneExists)
+                return Json(new { success = false, message = "手機已有人使用" });
             memberWrap.member.McreatedDate = DateTime.Now; //設定會員的建立日期為目前時間
             try
             {
