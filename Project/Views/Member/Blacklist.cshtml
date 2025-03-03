@@ -4,6 +4,54 @@
     ViewData["Title"] = "Blacklist";
 }
 <h1>黑名單會員列表</h1>
+<style>
+    .btn {
+        margin: 2px;
+        border-radius: 4px;
+    }
+
+    /* 如果你想讓按鈕並排顯示且對齊 */
+    td .btn {
+        display: inline-block;
+        width: auto;
+        min-width: 70px;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+        .table-wrapper .table {
+            width: 100%;
+        }
+
+    /* 移除Bootstrap響應式表格的滾動行為 */
+    .table-responsive {
+        overflow-x: visible !important;
+    }
+
+    .table thead th {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap; /* 防止文字換行 */
+    }
+
+    .table tbody td {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap; /* 防止文字換行 */
+    }
+
+    /* 如果表格太寬，添加水平滾動條 */
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
 <table class="table">
     <thead>
         <tr>
@@ -94,6 +142,10 @@
 }}
     </tbody>
 </table>
+        </div>
+    </div>
+
+</div>
 <div class="text-end mt-3">
     <a href="@Url.Action("List")" class="btn btn-secondary">返回會員列表</a>
 </div>
