@@ -54,5 +54,81 @@ namespace Project.Controllers
                 }
             });
         }
+
+        // 上傳檔案
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return Json(new { success = false, message = "檔案無效或為空。" });
+            }
+
+            try
+            {
+                string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadDir))
+                {
+                    Directory.CreateDirectory(uploadDir);
+                }
+
+                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                string filePath = Path.Combine(uploadDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    fileUrl = $"/uploads/{fileName}",
+                    originalName = file.FileName,
+                    contentType = file.ContentType
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"檔案上傳錯誤: {ex}");
+                return Json(new { success = false, message = "檔案上傳失敗，請稍後再試。" });
+            }
+        }
+
+        // 儲存聊天訊息
+        [HttpPost]
+        public async Task<IActionResult> SaveMessage(int chatId, int messageSendId, string messageContent)
+        {
+            if (string.IsNullOrEmpty(messageContent))
+            {
+                return Json(new { success = false, message = "訊息內容不能為空。" });
+            }
+
+            try
+            {
+                var message = new Tmessage
+                {
+                    ChatId = chatId,
+                    MessageSendId = messageSendId,
+                    MessageContent = messageContent,
+                    MessageTime = DateTime.UtcNow
+                };
+
+                _dbuniPayContext.Tmessages.Add(message);
+                await _dbuniPayContext.SaveChangesAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    messageId = message.MessageId,
+                    messageTime = message.MessageTime
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"訊息儲存錯誤: {ex}");
+                return Json(new { success = false, message = "訊息保存失敗，請稍後再試。" });
+            }
+        }
     }
 }

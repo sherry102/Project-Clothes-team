@@ -13,7 +13,7 @@
     border-radius: 16px; /* 圓角邊框，讓視窗更美觀 */
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); /* 添加陰影效果 */
     /*opacity: 0;*/ /*預設隱藏*/
-    /*visibility: hidden;*/ /*預設不可見*/
+    visibility: hidden; /*預設不可見*/
     transform: scale(0.95) translateY(10px); /* 初始縮小並稍微向下移動，增加動畫效果 */
     transition: all 0.3s ease; /* 平滑過渡動畫效果 */
 }
@@ -47,7 +47,7 @@
     bottom: 150px; /* 距離底部 150px */
     right: 30px; /* 距離右側 30px */
     z-index: 1001; /* 確保氣泡始終在最上層 */
-    background: #007bff; /* 按鈕背景色為藍色 */
+    background: #0080FF; /* 按鈕背景色為藍色 */
     color: white; /* 文字顏色為白色 */
     padding: 10px 20px; /* 內距設定 */
     border-radius: 20px; /* 設定圓角 */
@@ -55,7 +55,7 @@
     cursor: pointer; /* 滑鼠懸停時顯示手形游標 */
     font-size: 14px;
     max-width: 220px;
-    display: none;
+    display: block; /* 確保顯示 */
 }
 .chat-bubble::after {
     content: '';
@@ -64,7 +64,7 @@
     right: 20px;
     width: 12px;
     height: 12px;
-    background: white;
+    background: blue;
     transform: rotate(45deg);
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.04);
 }
@@ -74,12 +74,13 @@
     visibility: visible; /* 設為可見 */
     transform: translateY(-10px); /* 讓提示文字稍微上移，增加動態效果 */
 }
+
 /* 提示文字的樣式 */
 .tips {
     position: fixed; /* 固定位置 */
     bottom: 200px; /* 距離底部 200px，顯示在氣泡按鈕上方 */
     right: 30px;
-    background: rgba(0, 0, 0, 0.75); /* 背景為半透明黑色 */
+    background: rgba(0, 0, 0, 1); /* 背景為半透明黑色 */
     color: white; /* 文字顏色為白色 */
     padding: 10px 20px;
     border-radius: 10px;
@@ -97,8 +98,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #007bff;
-    border: none;
+    background: #f8f9fa;
+    border: 2px solid black;
     border-radius: 50%; /* 設為圓形按鈕 */
     cursor: pointer;
     display: flex;
@@ -134,7 +135,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background: #007bff; /* 藍色標題背景 */
+    background: #f8f9fa; /* 藍色標題背景 */
     color: white; /* 文字顏色為白色 */
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
