@@ -202,7 +202,7 @@
 			<div class="card">
 				
 				<div class="card-body pb-0 mb-0">
-					<h5 class="card-title pb-0 fs-5 fw-bold">商品庫存 <span>| 數量少於50</span></h5>
+					<h5 class="card-title pb-0 fs-5 fw-bold">商品庫存 <span>| 數量少於30</span></h5>
 
 					<!-- 商品庫存 -->
 					<div id="barChart"></div>
@@ -772,7 +772,7 @@
 					max:50,
 				},
 				colors: [function ({ value, productInventory}) {
-					if (value <= 20) {
+					if (value <= 10) {
 						return '#dd0404'
 					} else {
 						return '#1130e5'
@@ -803,7 +803,7 @@
 					trigger: 'item'
 				},
 				legend: {
-					top: '5%',
+					top: '-5%',
 					left: 'center',
 					textStyle: {
 						fontSize: 16,

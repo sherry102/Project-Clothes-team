@@ -76,8 +76,8 @@ namespace Project.Controllers
 
             }
 
-            product_inventory.AddRange(db.Tproducts.Where(t => t.Pinventory <= 50).Select(t => t.Pinventory).ToList());
-            product_name.AddRange(db.Tproducts.Where(t => t.Pinventory <= 50).Select(t => t.Pname).ToList());
+            product_inventory.AddRange(db.Tproducts.Where(t => t.Pinventory <= 30).Select(t => t.Pinventory).ToList());
+            product_name.AddRange(db.Tproducts.Where(t => t.Pinventory <= 30).Select(t => t.Pname).ToList());
 
             ViewBag.SalesCount_TOP5_Today = (from tod in db.TorderDetails
                                              join td in db.Torders on tod.Oid equals td.Oid
