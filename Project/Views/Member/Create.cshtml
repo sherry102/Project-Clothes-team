@@ -4,15 +4,14 @@
     ViewData["Title"] = "新增會員";
 }
 
-<h1>新增會員</h1>
-
-<h4>填寫會員資訊</h4>
+<h1 class="text-center">新增會員</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+            <div class="row">
+                <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="Mname" class="control-label"></label>
                 <input asp-for="Mname" class="form-control" />
@@ -46,6 +45,9 @@
                 <input asp-for="Maddress" class="form-control" />
                 <span asp-validation-for="Maddress" class="text-danger"></span>
             </div>
+    </div>
+            <!-- 右側欄位（移到左側空白處） -->
+            <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="Mbirthday" class="control-label"></label>
                 <input type="text" asp-for="Mbirthday" class="form-control datepicker" />
@@ -77,6 +79,9 @@
                 <!-- 圖片預覽區 -->
                 <img id="photoPreview" src="#" alt="會員照片預覽" style="max-width: 200px; display: none; margin-top: 10px;" />
             </div>
+        </div>
+    </div>
+
             <div class="form-group d-flex justify-content-end mb-2">
                 <input type="submit" value="新增完成" class="btn btn-primary me-2" />
                 <a asp-action="List" class="btn btn-secondary">取消</a>
