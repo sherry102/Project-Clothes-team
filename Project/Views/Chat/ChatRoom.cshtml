@@ -490,7 +490,7 @@
                 <!-- 提案訊息項目將由JS動態生成 -->
             </div>
         </div>
-        //測試
+
         <!-- 中間主聊天區域 -->
         <div class="chat-main">
             <!-- 聊天室頂部資訊欄 -->
@@ -670,7 +670,7 @@
         const chatApp = Vue.createApp({
             data() {
                 return {
-                    userId: "1", // 目前登入的會員ID
+                    userId: "2", // 目前登入的會員ID
                     userName: "陳蟑言", // 目前登入的會員名稱
                     chatId: null, // 目前的聊天室ID
                     chatType: "proposal", // 目前的聊天類型，預設為提案訊息
@@ -752,6 +752,12 @@
                             });
                         }
                     },
+                            // 在組件卸載時
+        beforeDestroy() {
+            if (this.hubConnection) {
+                this.hubConnection.stop();
+            }
+        },
             methods: {
                 // 初始化UI和事件綁定
                 initializeUI() {
@@ -903,19 +909,53 @@
             // 初始化 SignalR 連線的方法
             async initializeSignalRConnection() {
                             try {
+                                // 如果已經有連接，先關閉
+        if (this.hubConnection) {
+            await this.hubConnection.stop();
+            // 清除所有事件處理器，確保不會重複訂閱
+            this.hubConnection.off("UpdContent");
+        }
                 // 建立 SignalR 連線
                 this.hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl(`https://localhost:7279/ChatRoom?room=${this.userId}`) // 設定 SignalR Hub 連線
                     .withAutomaticReconnect([0, 2000, 5000, 10000, null]) // 自動重連設置
                     .configureLogging(signalR.LogLevel.Debug) // 開啟詳細的日誌記錄
                     .build();
-
-            // 註冊接收訊息的事件處理器
-            this.hubConnection.on("UpdContent", this.receiveMessage);
+            // 設置接收訊息的處理器
+                this.hubConnection.on("UpdContent", (msg) => {
+                    // 過濾空訊息
+                    if (!msg.message || msg.message.trim() === "") return;
+                    //console.log("收到訊息:", content);
+                    //const roomContainer = document.querySelector("#room");
+                    if (msg.user === this.userId) {
+                        return;
+                    }
+                    else if (msg.user === "System") {
+                        this.messages.push({
+                            type: "system",
+                            content: msg.message,
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+                        });
+                    }
+                    else {
+                        // 將訊息加入Vue數據中
+                        this.messages.push({
+                            type: "received",
+                            content: msg.message,
+                            user: msg.user,
+                            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+                        });
+                    }
+                    this.scrollToBottom();
+                });
 
             // 啟動連接
             await this.hubConnection.start();
             console.log("SignalR連接成功");
+            // 如果已選擇聊天室，則加入該聊天室
+        if (this.chatId) {
+            this.joinChatRoom(this.chatId);
+        }
                             }
             catch (err) {
                 // 錯誤處理
@@ -956,17 +996,34 @@
 
             // 檢查消息是否有效
             if (!msg || !msg.message) return;
-
+                // 如果消息包含ID，優先使用ID去重
+        if (msg.MessageSendId) {
+            const isDuplicateById = this.messages.some(m =>
+                m.MessageSendId === msg.MessageSendId);
+            if (isDuplicateById) {
+                console.log("偵測到重複訊息(ID匹配)，已忽略", msg);
+                return;
+            }
+        }
             // 根據消息類型添加不同樣式
             const messageObj = {
                 type: msg.user === this.userId ? "sent" :
             msg.user === "System" ? "system" : "received",
             content: msg.message,
             time: this.formatMessageTime(),
-            timestamp: msg.timestamp || new Date().toLocaleTimeString('en-US', {hour12: false })
-                            };
-                // 檢查訊息是否已存在
-        if (this.messages.some(m => m.timestamp === messageObj.timestamp && m.content === messageObj.content)) {
+            timestamp: msg.timestamp ? new Date(msg.timestamp).getTime() : Date.now()
+            };
+                        // 檢查是否為重複訊息（時間允許 1 秒誤差）
+        const isDuplicate = this.messages.some(m =>
+            Math.abs(m.timestamp - messageObj.timestamp) < 1 &&
+            m.content === messageObj.content &&
+            m.type === messageObj.type &&
+            m.user === messageObj.user
+        );
+
+        // 如果是重複訊息，則不添加
+        if (isDuplicate) {
+            console.log("偵測到重複訊息，已忽略", messageObj);
             return;
         }
             // 如果目前有選擇聊天室，則添加訊息到當前聊天
@@ -1011,21 +1068,19 @@
                             if (!this.message.trim() || !this.hasChatSelected) return;
 
             const messageContent = this.message.trim();
-
+            // 添加用戶訊息
+            this.messages.push({
+                type: "sent",
+                content: messageContent,
+                timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+            });
+            // 立即滾動到底部
+            await this.$nextTick();
+            this.scrollToBottom();
             try {
                                 // 格式化當前時間
                                 const messageTime = this.formatMessageTime();
 
-            // 創建新訊息物件
-            const newMessage = {
-                type: "sent",
-            content: messageContent,
-            time: messageTime,
-            timestamp: new Date().toLocaleTimeString('en-US', {hour12: false })
-                                };
-
-            // 儲存到本地聊天室資料中
-            this.currentChat.messages.push(newMessage);
 
             // 更新左側列表顯示的最新訊息
             this.updateChatListItem(this.chatId, this.chatType, messageContent, messageTime);
@@ -1122,7 +1177,7 @@
             adjustInputHeight(e) {
                             const inputElement = e.target;
             // 先重置高度
-            inputElement.style.height = "40px";
+            inputElement.style.height = "12px";
             // 然後設置新高度，但不超過120px
             const newHeight = Math.min(inputElement.scrollHeight, 120);
             inputElement.style.height = newHeight + "px";
