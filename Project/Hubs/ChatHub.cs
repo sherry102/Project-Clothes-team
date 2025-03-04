@@ -25,15 +25,19 @@ namespace Project.Hubs
         public override async Task OnConnectedAsync()
         {
             string roomId = Context.GetHttpContext().Request.Query["room"]; // 獲取聊天室名稱
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId); // 將用戶加入聊天室
-            var msg = new
+            // 檢查此連接是否已加入該聊天室，避免重複加入
+            if (!_roomConnections.ContainsKey(roomId) || !_roomConnections[roomId].Contains(Context.ConnectionId))
             {
-                User = "System",
-                Message = $"新連線 ID: {Context.ConnectionId} 進入聊天室 {roomId}",
-                Timestamp = DateTime.Now.ToString("HH:mm"),
-                SystemMessage = true
-            };
-            await Clients.Group(roomId).SendAsync("UpdContent", msg);
+                await Groups.AddToGroupAsync(Context.ConnectionId, roomId); // 將用戶加入聊天室
+                var msg = new
+                {
+                    User = "System",
+                    Message = $"新連線 ID: {Context.ConnectionId} 進入聊天室",
+                    Timestamp = DateTime.Now.ToString("HH:mm"),
+                    SystemMessage = true
+                };
+                await Clients.Group(roomId).SendAsync("UpdContent", msg);
+            }
             await base.OnConnectedAsync();
         }
 
@@ -80,6 +84,7 @@ namespace Project.Hubs
             {
                 User = user,
                 Message = message,
+                MessageSendId = chatMessage.MessageId, // 添加消息ID以便前端去重
                 Timestamp = DateTime.Now.ToString("HH:mm")
             };
             await Clients.All.SendAsync("UpdContent", msg);
@@ -115,16 +120,7 @@ namespace Project.Hubs
 
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
-            // 通知聊天室有新成員加入
-            var msg = new
-            {
-                User = "System",
-                Message = $"用戶 ID: {Context.ConnectionId} 加入聊天室",
-                Timestamp = DateTime.Now.ToString("HH:mm"),
-                SystemMessage = true
-            };
 
-            await Clients.Group(roomId).SendAsync("UpdContent", msg);
 
             // 更新聊天室成員數量
             var memberCount = _roomConnections[roomId].Count;
@@ -237,88 +233,6 @@ namespace Project.Hubs
             return history.Cast<object>().ToList();
         }
 
-        /// <summary>
-        /// 刪除訊息
-        /// </summary>
-        /// <param name="messageId">消息ID</param>
-        public async Task DeleteMessage(int messageId)
-        {
-            // 檢查消息是否存在
-            var message = await _context.Tmessages.FindAsync(messageId);
-            if (message == null)
-            {
-                await Clients.Caller.SendAsync("Error", "消息不存在");
-                return;
-            }
 
-            // 檢查是否為消息發送者
-            if (message.MessageSendId.ToString() != Context.GetHttpContext().Request.Query["user"])
-            {
-                await Clients.Caller.SendAsync("Error", "您沒有權限刪除此消息");
-                return;
-            }
-
-            // 從資料庫刪除消息
-            _context.Tmessages.Remove(message);
-            await _context.SaveChangesAsync();
-
-            // 通知聊天室成員刪除該消息
-            string roomId = Context.GetHttpContext().Request.Query["room"];
-            await Clients.Group(roomId).SendAsync("MessageDeleted", messageId);
-        }
-
-        /// <summary>
-        /// 發送文件訊息
-        /// </summary>
-        /// <param name="user">用戶ID</param>
-        /// <param name="fileName">文件名稱</param>
-        /// <param name="fileUrl">文件URL</param>
-        public async Task SendFileMessage(string user, string fileName, string fileUrl)
-        {
-            string roomId = Context.GetHttpContext().Request.Query["room"];
-
-            // 確保用戶已經加入聊天室
-            if (string.IsNullOrEmpty(roomId) || !_roomConnections.ContainsKey(roomId) || !_roomConnections[roomId].Contains(Context.ConnectionId))
-            {
-                await Clients.Caller.SendAsync("Error", "您尚未加入聊天室或聊天室不存在");
-                return;
-            }
-
-            // 檢查文件數據是否為空
-            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileUrl))
-            {
-                await Clients.Caller.SendAsync("Error", "文件數據不完整");
-                return;
-            }
-
-            // 構建文件消息內容 (JSON格式存儲)
-            var fileData = JsonConvert.SerializeObject(new { FileName = fileName, FileUrl = fileUrl });
-
-            // 存入資料庫
-            var chatMessage = new Tmessage
-            {
-                ChatId = 1, // 測試用先寫死
-                MessageSendId = int.Parse(user),
-                MessageContent = fileData,
-                MessageTime = DateTime.Now
-            };
-
-            _context.Tmessages.Add(chatMessage);
-            await _context.SaveChangesAsync();
-
-            // 發送給聊天室成員
-            var msg = new
-            {
-                User = user,
-                Message = fileData,
-                Timestamp = DateTime.Now.ToString("HH:mm"),
-                MessageId = chatMessage.MessageId,
-                IsFile = true,
-                FileName = fileName,
-                FileUrl = fileUrl
-            };
-
-            await Clients.Group(roomId).SendAsync("UpdContent", msg);
-        }
     }
 }
